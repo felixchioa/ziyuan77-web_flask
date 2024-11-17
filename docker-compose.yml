@@ -15,9 +15,3 @@ services:
             - ./volumes/logs:/usr/src/app/logs
             - ./:/usr/src/app/
         restart: always
-        networks:
-            - web-flask-network
-
-networks:
-    web-flask-network:
-        external: true
