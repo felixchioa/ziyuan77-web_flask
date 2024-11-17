@@ -1,6 +1,9 @@
 import random
 from collections import Counter
-from flask import request, jsonify, render_template, current_app
+import tempfile
+import os
+import requests
+from flask import request, jsonify, render_template, current_app, send_file
 from app.logger import Logger
 
 
@@ -106,8 +109,66 @@ def calculator():
     return render_template('calculator.html')
 
 
-
 @current_app.route('/math')
 def math():
     logger.debug("Rendering math.html")
     return render_template('math.html')
+
+
+@current_app.route('/download/index', methods=['GET', 'POST'])
+def download_index():
+    logger.debug("Rendering download.html")
+    return render_template('download.html')
+
+
+@current_app.route('/download', methods=['POST'])
+def download():
+    data = request.json
+    url = data.get('url')
+
+    if not url:
+        return jsonify({'error': 'No URL provided'}), 400
+
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        }
+        response = requests.get(url, headers=headers, stream=True, timeout=10)
+        if response.status_code == 200:
+            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                for chunk in response.iter_content(chunk_size=8192):
+                    tmp_file.write(chunk)
+                tmp_file_path = tmp_file.name
+
+            return send_file(tmp_file_path, as_attachment=True, download_name='downloaded_file',
+                             mimetype='application/octet-stream')
+        else:
+            return jsonify({'error': 'Failed to download directly'}), 400
+    except Exception as e:
+        logger.error(f"Download error: {e}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if 'tmp_file_path' in locals() and os.path.exists(tmp_file_path):
+            os.remove(tmp_file_path)
+
+
+@current_app.route('/crawl', methods=['POST'])
+def crawl():
+    data = request.json
+    url = data.get('url')
+
+    if not url:
+        return jsonify({'error': 'No URL provided'}), 400
+
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        }
+        response = requests.get(url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            return jsonify({'content': response.text[:1000]})
+        else:
+            return jsonify({'error': 'Failed to crawl the URL'}), 400
+    except Exception as e:
+        logger.error(f"Crawl error: {e}")
+        return jsonify({'error': str(e)}), 500

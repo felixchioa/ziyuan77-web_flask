@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>下载器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #4a90e2;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input {
+            padding: 8px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #357ab8;
+        }
+
+        #message {
+            margin-top: 20px;
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <h1>下载器</h1>
+    <div class="form-group">
+        <input type="text" id="urlInput" placeholder="输入要下载的 URL">
+    </div>
+    <button onclick="startDownload()">开始下载</button>
+    <div id="message"></div>
+
+    <script>
+        function startDownload() {
+            const url = document.getElementById('urlInput').value;
+            if (!url) {
+                alert('请输入一个有效的 URL');
+                return;
+            }
+
+            // 尝试直接下载
+            fetch('/download', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    throw new Error('无法直接下载，尝试使用爬虫');
+                }
+            })
+            .then(blob => {
+                const a = document.createElement('a');
+                const url = window.URL.createObjectURL(blob);
+                a.href = url;
+                a.download = 'downloaded_file';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                document.getElementById('message').textContent = '文件已直接下载。';
+            })
+            .catch(error => {
+                console.log(error);
+                if (confirm('无法直接下载，是否使用爬虫下载？')) {
+                    downloadWithCrawler(url);
+                }
+            });
+        }
+
+        function downloadWithCrawler(url) {
+            fetch('/crawl', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('message').textContent = `爬虫下载失败: ${data.error}`;
+                } else {
+                    document.getElementById('message').textContent = '爬虫下载成功，内容已获取。';
+                    // 这里可以处理爬虫获取的内容
+                    console.log(data.content);
+                }
+            })
+            .catch(error => {
+                document.getElementById('message').textContent = `请求失败: ${error}`;
+            });
+        }
+    </script>
+</body>
+</html>
