@@ -38,7 +38,7 @@ def index():
 
 @current_app.route('/password', methods=['GET', 'POST'])
 def generate_password():
-    logger.debug("Generating password")
+
     if request.method == 'POST':
         length = int(request.form.get('length', 16))  # 默认长度为16
         num = request.form.get('num') == "true"
@@ -98,3 +98,16 @@ def worldtime():
 def excel():
     logger.debug("Rendering excel_if.html")
     return render_template('excel_if.html')
+
+
+@current_app.route('/calculator')
+def calculator():
+    logger.debug("Rendering calculator.html")
+    return render_template('calculator.html')
+
+
+
+@current_app.route('/math')
+def math():
+    logger.debug("Rendering math.html")
+    return render_template('math.html')

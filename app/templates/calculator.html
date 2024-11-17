@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>多功能计算器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fffacd; /* 设置为淡黄色 */
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            color: #4a90e2;
+        }
+
+        .calculator {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .display {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 18px;
+            text-align: right;
+            box-sizing: border-box;
+        }
+
+        .button {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 60px;
+            height: 60px;
+            font-size: 18px;
+            display: inline-block;
+            text-align: center;
+            line-height: 40px;
+        }
+
+        .button:hover {
+            background-color: #357ab8;
+        }
+
+        a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 10px;
+            padding: 10px 20px;
+            border: 2px solid #4a90e2;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        a:hover {
+            background-color: #4a90e2;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>多功能计算器</h1>
+    <div class="calculator">
+        <input type="text" id="display" class="display" disabled>
+        <div>
+            <button class="button" onclick="clearDisplay()">C</button>
+            <button class="button" onclick="appendToDisplay('(')">(</button>
+            <button class="button" onclick="appendToDisplay(')')">)</button>
+            <button class="button" onclick="appendToDisplay('/')">/</button>
+        </div>
+        <div>
+            <button class="button" onclick="appendToDisplay('7')">7</button>
+            <button class="button" onclick="appendToDisplay('8')">8</button>
+            <button class="button" onclick="appendToDisplay('9')">9</button>
+            <button class="button" onclick="appendToDisplay('*')">*</button>
+        </div>
+        <div>
+            <button class="button" onclick="appendToDisplay('4')">4</button>
+            <button class="button" onclick="appendToDisplay('5')">5</button>
+            <button class="button" onclick="appendToDisplay('6')">6</button>
+            <button class="button" onclick="appendToDisplay('-')">-</button>
+        </div>
+        <div>
+            <button class="button" onclick="appendToDisplay('1')">1</button>
+            <button class="button" onclick="appendToDisplay('2')">2</button>
+            <button class="button" onclick="appendToDisplay('3')">3</button>
+            <button class="button" onclick="appendToDisplay('+')">+</button>
+        </div>
+        <div>
+            <button class="button" onclick="appendToDisplay('0')">0</button>
+            <button class="button" onclick="appendToDisplay('.')">.</button>
+            <button class="button" onclick="calculateResult()">=</button>
+        </div>
+    </div>
+    <a href="/">返回首页</a>
+
+    <script>
+        // 基础功能
+        function appendToDisplay(value) {
+            document.getElementById('display').value += value;
+        }
+
+        function clearDisplay() {
+            document.getElementById('display').value = '';
+        }
+
+        function calculateResult() {
+            try {
+                const result = eval(document.getElementById('display').value);
+                document.getElementById('display').value = result;
+            } catch (error) {
+                alert('无效的表达式');
+            }
+        }
+
+        // 键盘输入支持
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            if ((key >= '0' && key <= '9') || key === '.' || key === '+' || key === '-' || key === '*' || key === '/' || key === '(' || key === ')') {
+                appendToDisplay(key);
+            } else if (key === 'Enter' || key === '=') {
+                calculateResult(); // 处理 Enter 和 = 键，计算结果
+            } else if (key === 'Backspace') {
+                const display = document.getElementById('display');
+                display.value = display.value.slice(0, -1);
+            } else if (key === 'Escape') {
+                clearDisplay();
+            }
+        });
+    </script>
+</body>
+</html>
