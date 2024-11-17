@@ -3,7 +3,7 @@ services:
         image: web-flask:0.1.0-dev
         container_name: web-flask-dev
         build:
-            context: ./docker/
+            context: ./
             dockerfile: Dockerfile
         ports:
             - "5001:8080"
