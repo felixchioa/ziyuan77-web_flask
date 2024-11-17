@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <title>多层 IF 公式生成器</title>
+        <script src="/static/js/excel.js"></script>
+        <link rel="stylesheet" href="/static/css/excel.css" />
+    </head>
+    <body>
+        <h1>多层 IF 公式生成器</h1>
+        <a href="/"> 返回 </a>
+        <form onsubmit="event.preventDefault(); generateNestedIFFormula();">
+            <div id="conditionsContainer">
+                <div class="conditionBlock">
+                    <label for="condition1">条件 1:</label>
+                    <input type="text" class="condition" placeholder="如 A1>10" /><br />
+                    <label for="trueResult1">条件为真时的结果 1:</label>
+                    <input type="text" class="trueResult" placeholder="如 大于10" /><br />
+                    <label for="falseResult1">条件为假时的结果 1:</label>
+                    <input type="text" class="falseResult" placeholder="如 小于或等于10" /><br />
+                    <button type="button" onclick="addNestedCondition(this)">添加嵌套条件</button>
+                </div>
+            </div>
+            <button type="button" onclick="addCondition()">添加条件</button><br />
+            <button type="submit">生成多层 IF 公式</button>
+        </form>
+        <p id="formulaResult"></p>
+    </body>
+</html>

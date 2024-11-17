@@ -1,0 +1,5 @@
+python_dateutil >= 2.6.0
+Flask == 2.1.1
+werkzeug == 2.1.1
+pymongo == 4.10.1
+python-dotenv==1.0.1

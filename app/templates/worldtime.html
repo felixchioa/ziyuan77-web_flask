@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>世界时区时钟</title>
+    <link rel="stylesheet" href="/static/css/worldtime.css">
+</head>
+<body>
+    <h1>世界时区时钟</h1>
+    <a href="/"> 返回首页 </a>
+    <div class="clock-container">
+        <div class="clock">
+            <h2>贝克岛时间 (UTC-12)</h2>
+            <canvas id="clockCanvasUTCMinus12" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus12"></div>
+        </div>
+        <div class="clock">
+            <h2>萨摩亚标准时间 (UTC-11)</h2>
+            <canvas id="clockCanvasUTCMinus11" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus11"></div>
+        </div>
+        <div class="clock">
+            <h2>夏威夷-阿留申标准时间 (UTC-10)</h2>
+            <canvas id="clockCanvasUTCMinus10" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus10"></div>
+        </div>
+        <div class="clock">
+            <h2>阿拉斯加标准时间 (UTC-9)</h2>
+            <canvas id="clockCanvasUTCMinus9" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus9"></div>
+        </div>
+        <div class="clock">
+            <h2>太平洋标准时间 (UTC-8)</h2>
+            <canvas id="clockCanvasUTCMinus8" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus8"></div>
+        </div>
+        <div class="clock">
+            <h2>山地标准时间 (UTC-7)</h2>
+            <canvas id="clockCanvasUTCMinus7" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus7"></div>
+        </div>
+        <div class="clock">
+            <h2>中部标准时间 (UTC-6)</h2>
+            <canvas id="clockCanvasUTCMinus6" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus6"></div>
+        </div>
+        <div class="clock">
+            <h2>东部标准时间 (UTC-5)</h2>
+            <canvas id="clockCanvasUTCMinus5" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus5"></div>
+        </div>
+        <div class="clock">
+            <h2>大西洋标准时间 (UTC-4)</h2>
+            <canvas id="clockCanvasUTCMinus4" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus4"></div>
+        </div>
+        <div class="clock">
+            <h2>巴西利亚时间 (UTC-3)</h2>
+            <canvas id="clockCanvasUTCMinus3" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus3"></div>
+        </div>
+        <div class="clock">
+            <h2>南乔治亚时间 (UTC-2)</h2>
+            <canvas id="clockCanvasUTCMinus2" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus2"></div>
+        </div>
+        <div class="clock">
+            <h2>亚速尔群岛时间 (UTC-1)</h2>
+            <canvas id="clockCanvasUTCMinus1" width="200" height="200"></canvas>
+            <div id="currentTimeUTCMinus1"></div>
+        </div>
+        <div class="clock">
+            <h2>协调世界时 (UTC)</h2>
+            <canvas id="clockCanvasUTC" width="200" height="200"></canvas>
+            <div id="currentTimeUTC"></div>
+        </div>
+        <div class="clock">
+            <h2>中欧时间 (UTC+1)</h2>
+            <canvas id="clockCanvasUTCPlus1" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus1"></div>
+        </div>
+        <div class="clock">
+            <h2>东欧时间 (UTC+2)</h2>
+            <canvas id="clockCanvasUTCPlus2" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus2"></div>
+        </div>
+        <div class="clock">
+            <h2>莫斯科时间 (UTC+3)</h2>
+            <canvas id="clockCanvasUTCPlus3" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus3"></div>
+        </div>
+        <div class="clock">
+            <h2>海湾标准时间 (UTC+4)</h2>
+            <canvas id="clockCanvasUTCPlus4" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus4"></div>
+        </div>
+        <div class="clock">
+            <h2>巴基斯坦标准时间 (UTC+5)</h2>
+            <canvas id="clockCanvasUTCPlus5" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus5"></div>
+        </div>
+        <div class="clock">
+            <h2>孟加拉国标准时间 (UTC+6)</h2>
+            <canvas id="clockCanvasUTCPlus6" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus6"></div>
+        </div>
+        <div class="clock">
+            <h2>印度支那时间 (UTC+7)</h2>
+            <canvas id="clockCanvasUTCPlus7" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus7"></div>
+        </div>
+        <div class="clock">
+            <h2>中国标准时间 (UTC+8)</h2>
+            <canvas id="clockCanvasUTCPlus8" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus8"></div>
+        </div>
+        <div class="clock">
+            <h2>日本标准时间 (UTC+9)</h2>
+            <canvas id="clockCanvasUTCPlus9" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus9"></div>
+        </div>
+        <div class="clock">
+            <h2>澳大利亚东部标准时间 (UTC+10)</h2>
+            <canvas id="clockCanvasUTCPlus10" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus10"></div>
+        </div>
+        <div class="clock">
+            <h2>所罗门群岛时间 (UTC+11)</h2>
+            <canvas id="clockCanvasUTCPlus11" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus11"></div>
+        </div>
+        <div class="clock">
+            <h2>斐济时间 (UTC+12)</h2>
+            <canvas id="clockCanvasUTCPlus12" width="200" height="200"></canvas>
+            <div id="currentTimeUTCPlus12"></div>
+        </div>
+    </div>
+    <script src="/static/js/worldtime.js"></script>
+</body>
+</html>

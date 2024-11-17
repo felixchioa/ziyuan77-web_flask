@@ -1,0 +1,23 @@
+services:
+    api:
+        image: web-flask:0.1.0-dev
+        container_name: web-flask-dev
+        build:
+            context: ./docker/
+            dockerfile: Dockerfile
+        ports:
+            - "5001:8080"
+        environment:
+            - DEBUG=false
+            - TZ=Asia/Shanghai
+            - DOCKER_CONTAINER=true
+        volumes:
+            - ./volumes/logs:/usr/src/app/logs
+            - ./:/usr/src/app/
+        restart: always
+        networks:
+            - web-flask-network
+
+networks:
+    web-flask-network:
+        external: true
