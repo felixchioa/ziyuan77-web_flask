@@ -2,16 +2,16 @@ import random
 from collections import Counter
 import tempfile
 import os
+from datetime import datetime
 import requests
-from app.db_config import get_mongo_client
 from flask import request, jsonify, render_template, current_app, send_file
+from app.db_config import get_mongo_client
 from app import socketio
 from app.logger import Logger
-from datetime import datetime
-from bson import ObjectId
 
 
 logger = Logger('routes')
+
 client = get_mongo_client()
 chat_db = client['chat']
 chat_collection = chat_db['messages']
@@ -138,9 +138,14 @@ def download():
 
     try:
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+            'User-Agent': (
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                '(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+            )
         }
-        response = requests.get(url, headers=headers, stream=True, timeout=10)
+        response = requests.get(
+            url, headers=headers, stream=True, timeout=10
+        )
         if response.status_code == 200:
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
                 for chunk in response.iter_content(chunk_size=8192):
@@ -184,9 +189,6 @@ def crawl():
 @current_app.route('/chat')
 def chat():
     return render_template('chat.html')
-
-
-
 
 
 @current_app.route('/get_messages', methods=['GET'])
