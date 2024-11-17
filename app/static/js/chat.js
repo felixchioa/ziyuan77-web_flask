@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 每0.5秒获取一次消息
-    setInterval(fetchMessages, 500);
+    setInterval(fetchMessages, 5000);
 
     sendButton.addEventListener('click', function() {
         const message = messageInput.value;
