@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实时聊天</title>
+    <link rel="stylesheet" href="/static/css/chat.css">
+</head>
+<body>
+    <h1>实时聊天</h1>
+    <div id="chat">
+        <div id="messages"></div>
+        <input id="messageInput" type="text" placeholder="输入消息...">
+        <input id="imageInput" type="file" accept="image/*">
+        <button id="sendButton">发送</button>
+    </div>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="/static/js/chat.js"></script>
+</body>
+</html>

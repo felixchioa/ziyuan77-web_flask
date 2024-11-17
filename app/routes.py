@@ -3,11 +3,18 @@ from collections import Counter
 import tempfile
 import os
 import requests
+from app.db_config import get_mongo_client
 from flask import request, jsonify, render_template, current_app, send_file
+from app import socketio
 from app.logger import Logger
+from datetime import datetime
+from bson import ObjectId
 
 
 logger = Logger('routes')
+client = get_mongo_client()
+chat_db = client['chat']
+chat_collection = chat_db['messages']
 
 
 @current_app.before_request
@@ -172,3 +179,53 @@ def crawl():
     except Exception as e:
         logger.error(f"Crawl error: {e}")
         return jsonify({'error': str(e)}), 500
+
+
+@current_app.route('/chat')
+def chat():
+    return render_template('chat.html')
+
+
+
+
+
+@current_app.route('/get_messages', methods=['GET'])
+def get_messages():
+    try:
+        # 获取当前日期
+        today = datetime.now().date()
+
+        # 从 MongoDB 中获取当天的消息
+        messages = list(chat_collection.find({
+            'timestamp': {
+                '$gte': datetime(today.year, today.month, today.day),
+                '$lt': datetime(today.year, today.month, today.day + 1)
+            }
+        }, {'_id': 0}))
+
+        logger.debug(f"Fetched messages: {messages}")
+        return jsonify({'messages': messages})
+    except Exception as e:
+        logger.error(f"Error retrieving messages from MongoDB: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@socketio.on('message')
+def handle_message(data):
+    try:
+        # 添加时间戳
+        data['timestamp'] = datetime.now()
+
+        # 保存消息到 MongoDB
+        chat_collection.insert_one(data)
+        logger.debug(f"Message saved: {data}")
+
+        # 向所有客户端广播消息
+        socketio.emit('message', data, room='broadcast')
+
+        # 返回成功确认
+        return {'success': True}
+    except Exception as e:
+        logger.error(f"Error saving message to MongoDB: {e}")
+        # 返回失败确认
+        return {'success': False}

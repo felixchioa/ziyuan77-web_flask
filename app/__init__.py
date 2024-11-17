@@ -1,4 +1,7 @@
 from flask import Flask
+from flask_socketio import SocketIO
+
+socketio = SocketIO()
 
 
 def create_app():
@@ -10,5 +13,6 @@ def create_app():
         # pylint: disable=import-outside-toplevel
         from . import routes
 
+    socketio.init_app(app)
     app.logger.debug("Routes have been registered")
     return app
