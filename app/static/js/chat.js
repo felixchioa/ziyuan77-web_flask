@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error fetching messages:', error));
     }
 
-    // 每0.5秒获取一次消息
+    // 每5秒获取一次消息
     setInterval(fetchMessages, 5000);
 
     sendButton.addEventListener('click', function() {
