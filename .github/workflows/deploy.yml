@@ -3,7 +3,7 @@ name: Deploy to ECS
 on:
     push:
         branches:
-            - dev # 触发部署的分支
+            - main # 触发部署的分支
 
 jobs:
     deploy:
@@ -19,15 +19,15 @@ jobs:
                   ssh-private-key: ${{ secrets.ECS_SSH_KEY }}
 
             - name: Deploy to ECS
-        env:
-            ECS_HOST: ${{ secrets.ECS_HOST }}
-            ECS_USER: ${{ secrets.ECS_USER }}
-            DOCKER_COMPOSE_FILE_PATH: ${{ secrets.DOCKER_COMPOSE_FILE_PATH }}
-        run: |
-            echo "Deploying application to ECS..."
-            ssh -o StrictHostKeyChecking=no $ECS_USER@$ECS_HOST "
-              cd $(dirname $DOCKER_COMPOSE_FILE_PATH) &&
-              git pull &&
-              docker compose -f $DOCKER_COMPOSE_FILE_PATH down &&
-              docker compose -f $DOCKER_COMPOSE_FILE_PATH up -d
-            "
+              env:
+                  ECS_HOST: ${{ secrets.ECS_HOST }}
+                  ECS_USER: ${{ secrets.ECS_USER }}
+                  DOCKER_COMPOSE_FILE_PATH: ${{ secrets.DOCKER_COMPOSE_FILE_PATH }}
+              run: |
+                  echo "Deploying application to ECS..."
+                  ssh -o StrictHostKeyChecking=no $ECS_USER@$ECS_HOST "
+                    cd $(dirname $DOCKER_COMPOSE_FILE_PATH) &&
+                    git pull &&
+                    docker compose -f $DOCKER_COMPOSE_FILE_PATH down &&
+                    docker compose -f $DOCKER_COMPOSE_FILE_PATH up -d
+                  "
