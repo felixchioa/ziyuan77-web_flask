@@ -1,11 +1,16 @@
 from flask import Flask
 from flask_socketio import SocketIO
+from flask_cors import CORS
+
 
 socketio = SocketIO()
 
 
 def create_app():
     app = Flask("app")
+
+    # 为整个应用启用CORS
+    CORS(app)
 
     with app.app_context():
         # 导入 routes.py 文件
