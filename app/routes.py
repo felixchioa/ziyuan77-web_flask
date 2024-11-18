@@ -3,8 +3,10 @@ from collections import Counter
 import tempfile
 import os
 from datetime import datetime
+from bson import json_util
+from bson.objectid import ObjectId
 import requests
-from flask import request, jsonify, render_template, current_app, send_file
+from flask import request, jsonify, render_template, current_app, send_file, send_from_directory
 from app.db_config import get_mongo_client
 from app import socketio
 from app.logger import Logger
@@ -218,9 +220,18 @@ def handle_message(data):
         # 添加时间戳
         data['timestamp'] = datetime.now()
 
+        # 将 datetime 对象转换为可序列化的格式
+        data['timestamp'] = json_util.dumps(data['timestamp'])
+
+        # 假设您在某处生成了 ObjectId
+        data['_id'] = ObjectId()
+
         # 保存消息到 MongoDB
         chat_collection.insert_one(data)
         logger.debug(f"Message saved: {data}")
+
+        # 将 ObjectId 转换为字符串
+        data['_id'] = str(data['_id'])
 
         # 向所有客户端广播消息
         socketio.emit('message', data, room='broadcast')
@@ -231,3 +242,9 @@ def handle_message(data):
         logger.error(f"Error saving message to MongoDB: {e}")
         # 返回失败确认
         return {'success': False}
+
+
+@current_app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(current_app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
