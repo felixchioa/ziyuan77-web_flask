@@ -47,6 +47,10 @@ def index():
     logger.debug("Rendering index.html")
     return render_template('index.html')
 
+@current_app.route('/BingSiteAuth.xml')
+def serve_bing_file():
+    return send_from_directory('static', 'BingSiteAuth.xml')
+
 
 @current_app.route('/password', methods=['GET', 'POST'])
 def generate_password():
