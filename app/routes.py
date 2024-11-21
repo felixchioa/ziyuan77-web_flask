@@ -43,7 +43,7 @@ def internal_server_error(e):
 
 
 
-@app.route('/robots.txt')
+@current_app.route('/robots.txt')
 def serve_robots():
     return send_from_directory('static', 'robots.txt')
 
