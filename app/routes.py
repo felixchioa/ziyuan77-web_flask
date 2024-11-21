@@ -42,6 +42,12 @@ def internal_server_error(e):
     return jsonify(error="Internal server error"), 500
 
 
+
+@app.route('/robots.txt')
+def serve_robots():
+    return send_from_directory('static', 'robots.txt')
+
+
 @current_app.route('/')
 def index():
     logger.debug("Rendering index.html")
