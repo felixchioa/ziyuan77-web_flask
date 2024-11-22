@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (message) {
             socket.emit("message", { type: "text", content: message }, function (ack) {
-                if (ack && ack.success) {
+                if (ack?.success) {
                     alert("消息发送成功！");
                 } else {
                     alert("消息发送失败！");
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const reader = new FileReader();
             reader.onload = function (event) {
                 socket.emit("message", { type: "image", content: event.target.result }, function (ack) {
-                    if (ack && ack.success) {
+                    if (ack?.success) {
                         alert("图片发送成功！");
                     } else {
                         alert("图片发送失败！");

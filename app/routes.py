@@ -227,6 +227,7 @@ def get_messages():
 @socketio.on('message')
 def handle_message(data):
     try:
+        logger.debug(f"Received message: {data}")
         # 添加时间戳
         data['timestamp'] = datetime.now()
 
