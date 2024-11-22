@@ -8,7 +8,7 @@ from bson.objectid import ObjectId
 import requests
 from flask import request, jsonify, render_template, current_app, send_file, send_from_directory
 from app.db_config import get_mongo_client
-from app import socketio
+from main import socketio
 from app.logger import Logger
 
 
