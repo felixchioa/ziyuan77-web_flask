@@ -47,20 +47,20 @@ document.addEventListener("DOMContentLoaded", function () {
             messageInput.value = "";
         }
 
-        if (imageFile) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                socket.emit("message", { type: "image", content: event.target.result }, function (ack) {
-                    if (ack?.success) {
-                        alert("图片发送成功！");
-                    } else {
-                        alert("图片发送失败！");
-                    }
-                });
-            };
-            reader.readAsDataURL(imageFile);
-            imageInput.value = "";
-        }
+        // if (imageFile) {
+        //     const reader = new FileReader();
+        //     reader.onload = function (event) {
+        //         socket.emit("message", { type: "image", content: event.target.result }, function (ack) {
+        //             if (ack?.success) {
+        //                 alert("图片发送成功！");
+        //             } else {
+        //                 alert("图片发送失败！");
+        //             }
+        //         });
+        //     };
+        //     reader.readAsDataURL(imageFile);
+        //     imageInput.value = "";
+        // }
     });
 
     socket.on("message", function (data) {
