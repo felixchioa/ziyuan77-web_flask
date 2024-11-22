@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sendButton.addEventListener("click", function () {
         const message = messageInput.value;
-        const imageFile = imageInput.files[0];
+        // const imageFile = imageInput.files[0];
 
         if (message) {
             socket.emit("message", { type: "text", content: message }, function (ack) {
