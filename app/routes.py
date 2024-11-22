@@ -207,16 +207,9 @@ def chat():
 def get_messages():
     try:
         # 获取当前日期
-        today = datetime.now().date()
-
         # 从 MongoDB 中获取当天的消息
-        messages = list(chat_collection.find({
-            'timestamp': {
-                '$gte': datetime(today.year, today.month, today.day),
-                '$lt': datetime(today.year, today.month, today.day + 1)
-            }
-        }, {'_id': 0}))
-
+        logger.debug("Fetching messages from MongoDB")
+        messages = list(chat_collection.find({}, {'_id': 0}).sort('timestamp', -1))
         logger.debug(f"Fetched messages: {messages}")
         return jsonify({'messages': messages})
     except Exception as e:
