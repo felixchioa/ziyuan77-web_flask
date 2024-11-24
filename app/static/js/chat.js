@@ -6,32 +6,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const friendsContainer = document.getElementById("friends-container");
     const addFriendInput = document.getElementById("addFriendInput");
     const addFriendButton = document.getElementById("addFriendButton");
-    let selectedUser = null;
     const currentUser = sessionStorage.getItem('username');
 
     function scrollToBottom() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    function formatTime(timestamp) {
-        try {
-            if (typeof timestamp === 'string') {
-                timestamp = JSON.parse(timestamp);
-            }
-
-            const date = new Date(timestamp);
-
-            if (isNaN(date.getTime())) {
-                return '';
-            }
-
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
-        } catch (error) {
-            console.error('Error formatting time:', error);
-            return '';
-        }
     }
 
     function createMessageElement(message) {
@@ -44,59 +22,48 @@ document.addEventListener("DOMContentLoaded", function () {
         timeStamp.className = "message-time";
 
         if (message.sender === currentUser) {
-            messageElement.classList.add('message-sent');
+            messageElement.classList.add("sent");
         } else {
-            messageElement.classList.add('message-received');
+            messageElement.classList.add("received");
         }
 
         messageContent.textContent = message.content;
-        const formattedTime = formatTime(message.timestamp);
-        if (formattedTime) {
-            timeStamp.textContent = formattedTime;
-        }
+        timeStamp.textContent = new Date(message.timestamp).toLocaleTimeString();
 
         messageElement.appendChild(messageContent);
         messageElement.appendChild(timeStamp);
+
         return messageElement;
     }
 
-    function showError(message) {
-        const errorDiv = document.createElement("div");
-        errorDiv.className = "error-message";
-        errorDiv.textContent = message;
-        messagesContainer.appendChild(errorDiv);
-        setTimeout(() => errorDiv.remove(), 3000);
-    }
-
     function sendMessage() {
-        const message = messageInput.value.trim();
-        if (!message || !selectedUser) return;
-
-        sendButton.disabled = true;
+        const content = messageInput.value.trim();
+        if (!content) {
+            return;
+        }
 
         const messageData = {
-            type: "text",
-            content: message,
-            timestamp: new Date(),
             sender: currentUser,
-            recipient: selectedUser
+            recipient: selectedUser, // 需要在选择好友时设置
+            content: content,
+            timestamp: new Date()
         };
 
         socket.emit("private_message", messageData, function(ack) {
             sendButton.disabled = false;
-            if (ack?.success) {
+            if (ack && ack.success) {
                 messageInput.value = "";
                 const messageElement = createMessageElement(messageData);
                 messagesContainer.appendChild(messageElement);
                 scrollToBottom();
             } else {
-                showError(ack.error || "消息发送失败，请重试");
+                showError((ack && ack.error) || "消息发送失败，请重试");
             }
         });
     }
 
-    socket.on('private_message', function(data) {
-        const messageElement = createMessageElement(data);
+    socket.on('private_message', function(messageData) {
+        const messageElement = createMessageElement(messageData);
         messagesContainer.appendChild(messageElement);
         scrollToBottom();
     });
@@ -122,9 +89,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    function selectUser(username) {
-        selectedUser = username;
-        messageInput.placeholder = `发送给 ${username}...`;
+    function selectUser(friend) {
+        selectedUser = friend;
+        // 更新UI以显示选中的好友
     }
 
     addFriendButton.onclick = function() {
@@ -145,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then((data) => {
             if (data.message) {
                 showError(data.message);
-                fetchFriends();
+                fetchFriends(); // 更新好友列表
             } else if (data.error) {
                 showError(data.error);
             }
@@ -156,30 +123,26 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     };
 
-    function initialize() {
-        fetchFriends();
+    sendButton.addEventListener("click", sendMessage);
 
-        sendButton.addEventListener("click", sendMessage);
+    messageInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
 
-        messageInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
-            }
-        });
+    messageInput.addEventListener("focus", function() {
+        setTimeout(scrollToBottom, 100);
+    });
 
-        messageInput.addEventListener("focus", function() {
-            setTimeout(scrollToBottom, 100);
-        });
+    socket.on('connect_error', function(error) {
+        showError("连接服务器失败，请检查网络连接");
+    });
 
-        socket.on('connect_error', function(error) {
-            showError("连接服务器失败，请检查网络连接");
-        });
+    socket.on('reconnect', function() {
+        showError("已重新连接到服务器");
+    });
 
-        socket.on('reconnect', function() {
-            showError("已重新连接到服务器");
-        });
-    }
-
-    initialize();
+    fetchFriends();
 });

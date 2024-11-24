@@ -176,10 +176,8 @@ def download():
 def crawl():
     data = request.json
     url = data.get('url')
-
     if not url:
         return jsonify({'error': 'No URL provided'}), 400
-
     try:
         headers = {
             'User-Agent': (
@@ -232,6 +230,13 @@ def handle_connect():
         username = session['username']
         online_users[request.sid] = username
         socketio.emit('user_list', list(online_users.values()))
+
+        # 检查未读消息
+        unread_messages = chat_collection.find({'recipient': username, 'unread': True})
+        for message in unread_messages:
+            socketio.emit('private_message', message, room=request.sid)
+            # 标记消息为已读
+            chat_collection.update_one({'_id': message['_id']}, {'$set': {'unread': False}})
 
 
 @socketio.on('disconnect')
@@ -310,14 +315,16 @@ def remove_friend():
 @socketio.on('private_message')
 def handle_private_message(data):
     try:
-        data['timestamp'] = datetime.now()
+        data['timestamp'] = datetime.now().isoformat()
         data['message_type'] = 'private'
-        chat_collection.insert_one(data)
-
+        result = chat_collection.insert_one(data)  # 存储消息
         sender = data.get('sender')
         recipient = data.get('recipient')
-
+        data['_id'] = str(result.inserted_id)
         sender_user = users_collection.find_one({'username': sender})
+        if not sender_user:
+            return {'success': False, 'error': '发送者不存在'}
+
         if recipient not in sender_user.get('friends', []):
             return {'success': False, 'error': '接收者不是您的好友'}
 
@@ -332,7 +339,12 @@ def handle_private_message(data):
             socketio.emit('private_message', data, room=request.sid)
             return {'success': True}
         else:
-            return {'success': False, 'error': '用户不在线'}
+            # 如果接收方不在线，标记消息为未读
+            chat_collection.update_one(
+                {'_id': data['_id']},
+                {'$set': {'unread': True}}
+            )
+            return {'success': True, 'message': '用户不在线，消息已存储'}
     except Exception as e:
         return {'success': False, 'error': str(e)}
 
