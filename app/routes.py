@@ -310,7 +310,7 @@ def chat():
     return render_template('chat.html')
 
 
-@current_app.route('/clean', methods=['POST'])
+@current_app.route('/clean', methods=['GET', 'POST'])
 def clean():
     # 检查请求中是否包含密码
     data = request.json
