@@ -346,6 +346,7 @@ def handle_private_message(data):
             )
             return {'success': True, 'message': '用户不在线，消息已存储'}
     except Exception as e:
+        logger.error(f"Error handling private message: {e}")
         return {'success': False, 'error': str(e)}
 
 
