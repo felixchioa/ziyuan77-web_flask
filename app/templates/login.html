@@ -15,29 +15,6 @@
         <button type="submit">登录</button>
     </form>
     <a href="/register">没有账号？注册</a>
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert(data.message);
-                    window.location.href = '/chat';
-                } else {
-                    alert(data.error);
-                }
-            });
-        });
-    </script>
+    <script src="/static/js/auth.js"></script>
 </body>
 </html>

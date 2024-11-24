@@ -7,7 +7,7 @@
 </head>
 <body>
     <h2>注册</h2>
-    <form id="registerForm">
+    <form id="registerForm" method="POST">
         <label for="username">用户名:</label>
         <input type="text" id="username" name="username" required><br><br>
         <label for="password">密码:</label>
@@ -15,29 +15,6 @@
         <button type="submit">注册</button>
     </form>
     <a href="/login">已有账号？登录</a>
-    <script>
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            fetch('/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, password }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert(data.message);
-                    window.location.href = '/login';
-                } else {
-                    alert(data.error);
-                }
-            });
-        });
-    </script>
+    <script src="/static/js/auth.js"></script>
 </body>
 </html>

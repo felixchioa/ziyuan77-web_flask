@@ -6,7 +6,8 @@ from datetime import datetime
 from bson import json_util
 from bson.objectid import ObjectId
 import requests
-from flask import request, jsonify, render_template, current_app, send_file, send_from_directory
+from flask import request, jsonify, render_template, current_app, send_file, send_from_directory, session, redirect, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
 from app.db_config import get_mongo_client
 from app import socketio
 from app.logger import Logger
@@ -254,14 +255,15 @@ def favicon():
 
 @current_app.route('/socket.io')
 def socketio_route():
-
+    return "This is an example response"
 
 @current_app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-
+        data = request.json
+        username = data.get('username')
+        password = data.get('password')
+        print(username, password)
         if not username or not password:
             return jsonify({'error': '用户名和密码不能为空'}), 400
 
