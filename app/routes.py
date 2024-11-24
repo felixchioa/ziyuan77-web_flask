@@ -214,7 +214,7 @@ def get_messages():
         logger.debug("Fetching messages from MongoDB")
         messages = list(chat_collection.find({}, {'_id': 0}).sort('timestamp', -1))
         logger.debug(f"Fetched messages: {messages}")
-        return jsonify({'messages': messages})
+        return jsonify({'messages': messages[::-1]})
     except Exception as e:
         logger.error(f"Error retrieving messages from MongoDB: {e}")
         return jsonify({'error': str(e)}), 500
@@ -308,3 +308,25 @@ def chat():
     if 'username' not in session:
         return redirect(url_for('login'))
     return render_template('chat.html')
+
+
+@current_app.route('/clean', methods=['POST'])
+def clean():
+    # 检查请求中是否包含密码
+    data = request.json
+    password = data.get('password')
+
+    # 假设你有一个预定义的密码
+    predefined_password = "Passw0rdQq20120301xhdndmm"
+
+    if password != predefined_password:
+        return jsonify({'error': '密码错误'}), 403
+
+    try:
+        # 清空消息集合
+        chat_collection.delete_many({})
+        logger.info("All messages have been deleted.")
+        return jsonify({'message': '所有消息已被清空'}), 200
+    except Exception as e:
+        logger.error(f"Error cleaning messages: {e}")
+        return jsonify({'error': str(e)}), 500
