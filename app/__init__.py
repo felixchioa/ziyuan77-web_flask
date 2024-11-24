@@ -1,7 +1,10 @@
+import os
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_cors import CORS
+from dotenv import load_dotenv
 
+load_dotenv()
 
 socketio = SocketIO()
 
@@ -11,6 +14,7 @@ def create_app():
 
     # 为整个应用启用CORS
     CORS(app)
+    app.secret_key = os.getenv('SECRET_KEY', 'default_secret_key')
 
     with app.app_context():
         # 导入 routes.py 文件

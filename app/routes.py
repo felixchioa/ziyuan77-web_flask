@@ -6,7 +6,10 @@ from datetime import datetime
 from bson import json_util
 from bson.objectid import ObjectId
 import requests
-from flask import request, jsonify, render_template, current_app, send_file, send_from_directory, session, redirect, url_for
+from flask import (
+    request, jsonify, render_template, current_app, send_file,
+    send_from_directory, session, redirect, url_for
+)
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.db_config import get_mongo_client
 from app import socketio
@@ -44,7 +47,6 @@ def internal_server_error(e):
     return jsonify(error="Internal server error"), 500
 
 
-
 @current_app.route('/robots.txt')
 def serve_robots():
     return send_from_directory('static', 'robots.txt')
@@ -54,6 +56,7 @@ def serve_robots():
 def index():
     logger.debug("Rendering index.html")
     return render_template('index.html')
+
 
 @current_app.route('/BingSiteAuth.xml')
 def serve_bing_file():
@@ -188,7 +191,10 @@ def crawl():
 
     try:
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+            'User-Agent': (
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                '(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+            )
         }
         response = requests.get(url, headers=headers, timeout=10)
         if response.status_code == 200:
@@ -198,8 +204,6 @@ def crawl():
     except Exception as e:
         logger.error(f"Crawl error: {e}")
         return jsonify({'error': str(e)}), 500
-
-
 
 
 @current_app.route('/get_messages', methods=['GET'])
@@ -257,6 +261,7 @@ def favicon():
 def socketio_route():
     return "This is an example response"
 
+
 @current_app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -276,6 +281,7 @@ def register():
         return jsonify({'message': '注册成功'}), 201
     return render_template('register.html')
 
+
 @current_app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -290,10 +296,12 @@ def login():
         return jsonify({'error': '用户名或密码错误'}), 400
     return render_template('login.html')
 
+
 @current_app.route('/logout')
 def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
+
 
 @current_app.route('/chat')
 def chat():
