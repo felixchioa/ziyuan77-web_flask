@@ -413,3 +413,7 @@ def clean():
     except Exception as e:
         logger.error(f"Error cleaning messages: {e}")
         return jsonify({'error': str(e)}), 500
+
+@current_app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(current_app.static_folder, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
