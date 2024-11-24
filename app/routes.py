@@ -279,8 +279,9 @@ def register():
 @current_app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+        data = request.json
+        username = data.get('username')
+        password = data.get('password')
 
         user = users_collection.find_one({'username': username})
         if user and check_password_hash(user['password'], password):
