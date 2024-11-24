@@ -17,6 +17,7 @@ logger = Logger('routes')
 client = get_mongo_client()
 chat_db = client['chat']
 chat_collection = chat_db['messages']
+users_collection = chat_db['users']
 
 
 @current_app.before_request
@@ -198,9 +199,6 @@ def crawl():
         return jsonify({'error': str(e)}), 500
 
 
-@current_app.route('/chat')
-def chat():
-    return render_template('chat.html')
 
 
 @current_app.route('/get_messages', methods=['GET'])
@@ -256,4 +254,46 @@ def favicon():
 
 @current_app.route('/socket.io')
 def socketio_route():
-    return "This is an example response"
+
+
+@current_app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if not username or not password:
+            return jsonify({'error': '用户名和密码不能为空'}), 400
+
+        if users_collection.find_one({'username': username}):
+            return jsonify({'error': '用户名已存在'}), 400
+
+        hashed_password = generate_password_hash(password)
+        users_collection.insert_one({'username': username, 'password': hashed_password})
+
+        return jsonify({'message': '注册成功'}), 201
+    return render_template('register.html')
+
+@current_app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        user = users_collection.find_one({'username': username})
+        if user and check_password_hash(user['password'], password):
+            session['username'] = username
+            return jsonify({'message': '登录成功'}), 200
+        return jsonify({'error': '用户名或密码错误'}), 400
+    return render_template('login.html')
+
+@current_app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('login'))
+
+@current_app.route('/chat')
+def chat():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('chat.html')

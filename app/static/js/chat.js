@@ -1,8 +1,8 @@
+// app/static/js/chat.js
 document.addEventListener("DOMContentLoaded", function () {
     const socket = io();
     const messages = document.getElementById("messages");
     const messageInput = document.getElementById("messageInput");
-    const imageInput = document.getElementById("imageInput");
     const sendButton = document.getElementById("sendButton");
 
     // 定期获取并显示历史消息
@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sendButton.addEventListener("click", function () {
         const message = messageInput.value;
-        // const imageFile = imageInput.files[0];
 
         if (message) {
             socket.emit("message", { type: "text", content: message }, function (ack) {
@@ -46,21 +45,6 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             messageInput.value = "";
         }
-
-        // if (imageFile) {
-        //     const reader = new FileReader();
-        //     reader.onload = function (event) {
-        //         socket.emit("message", { type: "image", content: event.target.result }, function (ack) {
-        //             if (ack?.success) {
-        //                 alert("图片发送成功！");
-        //             } else {
-        //                 alert("图片发送失败！");
-        //             }
-        //         });
-        //     };
-        //     reader.readAsDataURL(imageFile);
-        //     imageInput.value = "";
-        // }
     });
 
     socket.on("message", function (data) {
