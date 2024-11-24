@@ -1,16 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
     const socket = io();
-    const messages = document.getElementById("messages");
     const messagesContainer = document.getElementById("messages-container");
     const messageInput = document.getElementById("messageInput");
     const sendButton = document.getElementById("sendButton");
+    const friendsContainer = document.getElementById("friends-container");
+    const addFriendInput = document.getElementById("addFriendInput");
+    const addFriendButton = document.getElementById("addFriendButton");
+    let selectedUser = null;
+    const currentUser = sessionStorage.getItem('username');
 
-    // 滚动到底部的函数
     function scrollToBottom() {
-        messages.scrollTop = messages.scrollHeight;
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    // 格式化时间的函数
     function formatTime(timestamp) {
         try {
             if (typeof timestamp === 'string') {
@@ -32,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // 创建消息元素的函数
     function createMessageElement(message) {
         const messageElement = document.createElement("div");
         const messageContent = document.createElement("div");
@@ -42,15 +43,13 @@ document.addEventListener("DOMContentLoaded", function () {
         messageContent.className = "message-content";
         timeStamp.className = "message-time";
 
-        if (message.type === "text") {
-            messageContent.textContent = message.content;
-        } else if (message.type === "image") {
-            const img = document.createElement("img");
-            img.src = message.content;
-            img.style.maxWidth = "100%";
-            messageContent.appendChild(img);
+        if (message.sender === currentUser) {
+            messageElement.classList.add('message-sent');
+        } else {
+            messageElement.classList.add('message-received');
         }
 
+        messageContent.textContent = message.content;
         const formattedTime = formatTime(message.timestamp);
         if (formattedTime) {
             timeStamp.textContent = formattedTime;
@@ -61,7 +60,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return messageElement;
     }
 
-    // 显示错误消息
     function showError(message) {
         const errorDiv = document.createElement("div");
         errorDiv.className = "error-message";
@@ -70,59 +68,96 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => errorDiv.remove(), 3000);
     }
 
-    // 发送消息的处理
     function sendMessage() {
         const message = messageInput.value.trim();
-        if (message) {
-            sendButton.disabled = true;
+        if (!message || !selectedUser) return;
 
-            socket.emit("message", {
-                type: "text",
-                content: message,
-                timestamp: new Date()
-            }, function (ack) {
-                sendButton.disabled = false;
+        sendButton.disabled = true;
 
-                if (ack?.success) {
-                    messageInput.value = "";
-                    scrollToBottom();
-                } else {
-                    showError("消息发送失败，请重试");
-                }
-            });
-        }
+        const messageData = {
+            type: "text",
+            content: message,
+            timestamp: new Date(),
+            sender: currentUser,
+            recipient: selectedUser
+        };
+
+        socket.emit("private_message", messageData, function(ack) {
+            sendButton.disabled = false;
+            if (ack?.success) {
+                messageInput.value = "";
+                const messageElement = createMessageElement(messageData);
+                messagesContainer.appendChild(messageElement);
+                scrollToBottom();
+            } else {
+                showError(ack.error || "消息发送失败，请重试");
+            }
+        });
     }
 
-    // 定期获取并显示历史消息
-    function fetchMessages() {
-        fetch("/get_messages")
+    socket.on('private_message', function(data) {
+        const messageElement = createMessageElement(data);
+        messagesContainer.appendChild(messageElement);
+        scrollToBottom();
+    });
+
+    function fetchFriends() {
+        fetch("/get_friends")
             .then((response) => response.json())
             .then((data) => {
-                if (data.messages) {
-                    const wasAtBottom =
-                        messages.scrollHeight - messages.scrollTop === messages.clientHeight;
-                    messagesContainer.innerHTML = "";
-
-                    data.messages.forEach((message) => {
-                        const messageElement = createMessageElement(message);
-                        messagesContainer.appendChild(messageElement);
+                if (data.friends) {
+                    friendsContainer.innerHTML = "";
+                    data.friends.forEach((friend) => {
+                        const friendElement = document.createElement('div');
+                        friendElement.className = 'friend-item';
+                        friendElement.textContent = friend;
+                        friendElement.onclick = () => selectUser(friend);
+                        friendsContainer.appendChild(friendElement);
                     });
-
-                    if (wasAtBottom) {
-                        scrollToBottom();
-                    }
                 }
             })
             .catch((error) => {
-                console.error("Error fetching messages:", error);
-                showError("获取消息失败，请检查网络连接");
+                console.error("Error fetching friends:", error);
+                showError("获取好友列表失败，请检查网络连接");
             });
     }
 
-    // 初始化
+    function selectUser(username) {
+        selectedUser = username;
+        messageInput.placeholder = `发送给 ${username}...`;
+    }
+
+    addFriendButton.onclick = function() {
+        const friendUsername = addFriendInput.value.trim();
+        if (!friendUsername) {
+            showError("请输入好友用户名");
+            return;
+        }
+
+        fetch("/add_friend", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ friend_username: friendUsername })
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.message) {
+                showError(data.message);
+                fetchFriends();
+            } else if (data.error) {
+                showError(data.error);
+            }
+        })
+        .catch((error) => {
+            console.error("Error adding friend:", error);
+            showError("添加好友失败，请检查网络连接");
+        });
+    };
+
     function initialize() {
-        fetchMessages();
-        setInterval(fetchMessages, 30000);
+        fetchFriends();
 
         sendButton.addEventListener("click", sendMessage);
 
@@ -137,19 +172,12 @@ document.addEventListener("DOMContentLoaded", function () {
             setTimeout(scrollToBottom, 100);
         });
 
-        socket.on("message", function (data) {
-            const messageElement = createMessageElement(data);
-            messagesContainer.appendChild(messageElement);
-            scrollToBottom();
-        });
-
         socket.on('connect_error', function(error) {
             showError("连接服务器失败，请检查网络连接");
         });
 
         socket.on('reconnect', function() {
             showError("已重新连接到服务器");
-            fetchMessages();
         });
     }
 

@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
             e.preventDefault();
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
+            sessionStorage.setItem('username', username);
 
             fetch("/login", {
                 method: "POST",

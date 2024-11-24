@@ -15,13 +15,14 @@ from app.db_config import get_mongo_client
 from app import socketio
 from app.logger import Logger
 
-
 logger = Logger('routes')
 
 client = get_mongo_client()
 chat_db = client['chat']
 chat_collection = chat_db['messages']
 users_collection = chat_db['users']
+
+online_users = {}
 
 
 @current_app.before_request
@@ -65,24 +66,20 @@ def serve_bing_file():
 
 @current_app.route('/password', methods=['GET', 'POST'])
 def generate_password():
-
     if request.method == 'POST':
-        length = int(request.form.get('length', 16))  # 默认长度为16
+        length = int(request.form.get('length', 16))
         num = request.form.get('num') == "true"
         letter = request.form.get('letter') == "true"
         symbol = request.form.get('symbol') == "true"
         required_chars = request.form.get('requiredChars', '')
 
-        # 检查必须包含的字符是否超过长度限制
         if len(required_chars) > length:
             return jsonify(error="必须包含的字符长度超过密码总长度"), 400
 
-        # 定义字符集
         num_list = '0123456789'
         letter_list = 'abcdefghijklmnopqrstuvwxyz'
         symbol_list = '!@#$%^&*()-_+=[]{}|;:,.<>?/~`'
 
-        # 根据用户选择生成密码
         char_pool = ""
         if num:
             char_pool += num_list
@@ -91,25 +88,19 @@ def generate_password():
         if symbol:
             char_pool += symbol_list
 
-        # 检查字符池是否为空
         if not char_pool:
             return jsonify(error="请至少选择一个字符集（数字、字母或符号）"), 400
 
-        # 生成密码并检查条件
         password = ""
         if char_pool:
             while True:
-                # 先添加必须包含的字符
                 password = required_chars
-                # 生成剩余的随机字符
                 remaining_length = length - len(required_chars)
                 password += ''.join(random.choice(char_pool) for _ in range(remaining_length))
-                # 检查每个字符是否最多出现两次（不包括required_chars）
                 char_count = Counter(password[len(required_chars):])
                 if all(count <= 2 for count in char_count.values()):
                     break
 
-        # 返回生成的密码
         return jsonify(password=password)
     else:
         return render_template('password.html')
@@ -209,8 +200,6 @@ def crawl():
 @current_app.route('/get_messages', methods=['GET'])
 def get_messages():
     try:
-        # 获取当前日期
-        # 从 MongoDB 中获取当天的消息
         logger.debug("Fetching messages from MongoDB")
         messages = list(chat_collection.find({}, {'_id': 0}).sort('timestamp', -1))
         logger.debug(f"Fetched messages: {messages}")
@@ -224,42 +213,128 @@ def get_messages():
 def handle_message(data):
     try:
         logger.debug(f"Received message: {data}")
-        # 添加时间戳
         data['timestamp'] = datetime.now()
-
-        # 将 datetime 对象转换为可序列化的格式
         data['timestamp'] = json_util.dumps(data['timestamp'])
-
-        # 假设您在某处生成了 ObjectId
         data['_id'] = ObjectId()
-
-        # 保存消息到 MongoDB
         chat_collection.insert_one(data)
         logger.debug(f"Message saved: {data}")
-
-        # 将 ObjectId 转换为字符串
         data['_id'] = str(data['_id'])
-
-        # 向所有客户端广播消息
         socketio.emit('message', data, room='broadcast')
-
-        # 返回成功确认
         return {'success': True}
     except Exception as e:
         logger.error(f"Error saving message to MongoDB: {e}")
-        # 返回失败确认
         return {'success': False}
 
 
-@current_app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(current_app.root_path, 'static'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+@socketio.on('connect')
+def handle_connect():
+    if 'username' in session:
+        username = session['username']
+        online_users[request.sid] = username
+        socketio.emit('user_list', list(online_users.values()))
 
 
-@current_app.route('/socket.io')
-def socketio_route():
-    return "This is an example response"
+@socketio.on('disconnect')
+def handle_disconnect():
+    if request.sid in online_users:
+        del online_users[request.sid]
+        socketio.emit('user_list', list(online_users.values()))
+
+
+@current_app.route('/add_friend', methods=['POST'])
+def add_friend():
+    if 'username' not in session:
+        return jsonify({'error': '用户未登录'}), 401
+
+    data = request.json
+    friend_username = data.get('friend_username')
+
+    if not friend_username:
+        return jsonify({'error': '好友用户名不能为空'}), 400
+
+    if friend_username == session['username']:
+        return jsonify({'error': '不能添加自己为好友'}), 400
+
+    user = users_collection.find_one({'username': session['username']})
+    friend = users_collection.find_one({'username': friend_username})
+
+    if not friend:
+        return jsonify({'error': '好友用户不存在'}), 404
+
+    if friend_username in user.get('friends', []):
+        return jsonify({'error': '该用户已经是您的好友'}), 400
+
+    users_collection.update_one(
+        {'username': session['username']},
+        {'$push': {'friends': friend_username}}
+    )
+
+    users_collection.update_one(
+        {'username': friend_username},
+        {'$push': {'friends': session['username']}})
+    return jsonify({'message': '好友添加成功'}), 200
+
+
+@current_app.route('/get_friends', methods=['GET'])
+def get_friends():
+    if 'username' not in session:
+        return jsonify({'error': '用户未登录'}), 401
+
+    user = users_collection.find_one({'username': session['username']})
+    if not user:
+        return jsonify({'error': '用户不存在'}), 404
+
+    friends = user.get('friends', [])
+    return jsonify({'friends': friends}), 200
+
+
+@current_app.route('/remove_friend', methods=['POST'])
+def remove_friend():
+    if 'username' not in session:
+        return jsonify({'error': '用户未登录'}), 401
+
+    data = request.json
+    friend_username = data.get('friend_username')
+
+    if not friend_username:
+        return jsonify({'error': '好友用户名不能为空'}), 400
+
+    users_collection.update_one(
+        {'username': session['username']},
+        {'$pull': {'friends': friend_username}}
+    )
+
+    return jsonify({'message': '好友已删除'}), 200
+
+
+@socketio.on('private_message')
+def handle_private_message(data):
+    try:
+        data['timestamp'] = datetime.now()
+        data['message_type'] = 'private'
+        chat_collection.insert_one(data)
+
+        sender = data.get('sender')
+        recipient = data.get('recipient')
+
+        sender_user = users_collection.find_one({'username': sender})
+        if recipient not in sender_user.get('friends', []):
+            return {'success': False, 'error': '接收者不是您的好友'}
+
+        recipient_sid = None
+        for sid, username in online_users.items():
+            if username == recipient:
+                recipient_sid = sid
+                break
+
+        if recipient_sid:
+            socketio.emit('private_message', data, room=recipient_sid)
+            socketio.emit('private_message', data, room=request.sid)
+            return {'success': True}
+        else:
+            return {'success': False, 'error': '用户不在线'}
+    except Exception as e:
+        return {'success': False, 'error': str(e)}
 
 
 @current_app.route('/register', methods=['GET', 'POST'])
@@ -268,7 +343,6 @@ def register():
         data = request.json
         username = data.get('username')
         password = data.get('password')
-        print(username, password)
         if not username or not password:
             return jsonify({'error': '用户名和密码不能为空'}), 400
 
@@ -276,7 +350,7 @@ def register():
             return jsonify({'error': '用户名已存在'}), 400
 
         hashed_password = generate_password_hash(password)
-        users_collection.insert_one({'username': username, 'password': hashed_password})
+        users_collection.insert_one({'username': username, 'password': hashed_password, 'friends': []})
 
         return jsonify({'message': '注册成功'}), 201
     return render_template('register.html')
@@ -312,18 +386,14 @@ def chat():
 
 @current_app.route('/clean', methods=['GET', 'POST'])
 def clean():
-    # 检查请求中是否包含密码
     data = request.json
     password = data.get('password')
-
-    # 假设你有一个预定义的密码
     predefined_password = "Passw0rdQq20120301xhdndmm"
 
     if password != predefined_password:
         return jsonify({'error': '密码错误'}), 403
 
     try:
-        # 清空消息集合
         chat_collection.delete_many({})
         logger.info("All messages have been deleted.")
         return jsonify({'message': '所有消息已被清空'}), 200
