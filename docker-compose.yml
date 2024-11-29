@@ -1,7 +1,7 @@
 services:
     api:
-        image: web-flask:0.1.0-dev
-        container_name: web-flask-dev
+        image: flask:0.1.0
+        container_name: flask
         build:
             context: ./
             dockerfile: Dockerfile
@@ -20,7 +20,7 @@ services:
 
     mongo:
         image: mongo:5.0
-        container_name: ziyuan77-db
+        container_name: mongo-db
         restart: always
         environment:
             MONGO_INITDB_ROOT_USERNAME: root
@@ -32,7 +32,7 @@ services:
 
     mongo-express:
         image: mongo-express
-        container_name: ziyuan-db-express
+        container_name: mongo-db-express
         restart: always
         ports:
             - 8082:8081
