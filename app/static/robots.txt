@@ -1,4 +1,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://ziyuan77.com/sitemap_location.xml
+Sitemap: http://ziyuan77.com/sitemap_location.xml
