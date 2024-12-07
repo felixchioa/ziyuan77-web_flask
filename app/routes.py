@@ -63,6 +63,9 @@ def index():
 def serve_bing_file():
     return send_from_directory('static', 'BingSiteAuth.xml')
 
+@current_app.route('/sitemap_location.xml')
+def serve_sitemap():
+    return send_from_directory('static', 'sitemap_location.xml')
 
 @current_app.route('/password', methods=['GET', 'POST'])
 def generate_password():
