@@ -1,7 +1,7 @@
 services:
     api:
         image: web-flask:0.1.0-dev
-        container_name: web-flask-dev
+        container_name: ziyuan77-web
         build:
             context: ./
             dockerfile: Dockerfile
