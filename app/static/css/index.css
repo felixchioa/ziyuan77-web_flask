@@ -1,60 +1,77 @@
+/* 设置页面的基本样式 */
 body {
     font-family: Arial, sans-serif;
-    background-color: #fffacd;
-    color: #333;
+    line-height: 1.6;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-}
-
-h1 {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    color: #4a90e2;
-}
-
-.clock-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    max-width: 1200px;
-    padding: 0 20px;
-}
-
-.clock {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 10px;
-}
-
-.clock h2 {
-    margin-bottom: 10px;
+    background-color: #f4f4f9;
     color: #333;
 }
 
-#currentTime {
-    font-size: 18px;
-    margin-top: 10px;
-    color: #4a90e2;
+/* 容器样式 */
+.container {
+    display: flex;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
-a {
-    color: #4a90e2;
-    text-decoration: none;
-    font-size: 18px;
-    margin: 10px;
-    padding: 10px 20px;
-    border: 2px solid #4a90e2;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
+/* 侧边栏样式 */
+.sidebar {
+    width: 25%;
+    padding: 20px;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    margin-right: 20px;
 }
 
-a:hover {
-    background-color: #4a90e2;
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 10px;
+    background-color: #007bff;
     color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #0056b3;
+}
+
+/* 内容样式 */
+.content {
+    width: 75%;
+    padding: 20px;
+}
+
+.content h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.content h3 {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+/* 音乐播放器样式 */
+audio {
+    width: 100%;
+    margin: 20px 0;
+    display: block;
 }

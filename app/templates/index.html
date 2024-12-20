@@ -2,49 +2,27 @@
 <html lang="zh-CN">
     <head>
         <meta charset="UTF-8" />
-        <meta name="description" content="资源77提供在线工具合集，包括密码生成器、世界时间、Excel工具、计算器、数学工具及免费下载资源，简化您的日常需求。">
-        <title>在线工具合集 - 密码生成器, 世界时间, Excel工具, 计算器, 数学工具, 下载资源</title>
+        <title>主页</title>
         <link rel="stylesheet" href="/static/css/index.css" />
     </head>
     <body>
-        <h1>时区时钟</h1>
-        <div class="clock-container">
-            <div class="clock">
-                <h2>美国东部时间 (EST)</h2>
-                <canvas id="clockCanvasEST" width="200" height="200"></canvas>
-                <div id="currentTimeEST"></div>
+        <div class="container">
+            <div class="sidebar">
+                <ul>
+                    <li><a href="/projects">项目</a></li>
+                    <li><a href="/daily">日常</a></li>
+                    <li><a href="/tools">工具</a></li>
+                </ul>
             </div>
-            <div class="clock">
-                <h2>协调世界时 (UTC)</h2>
-                <canvas id="clockCanvasUTC" width="200" height="200"></canvas>
-                <div id="currentTimeUTC"></div>
-            </div>
-            <div class="clock">
-                <h2>新西兰标准时间 (NZST)</h2>
-                <canvas id="clockCanvasNZST" width="200" height="200"></canvas>
-                <div id="currentTimeNZST"></div>
-            </div>
-            <div class="clock">
-                <h2>中部标准时间 (CST)</h2>
-                <canvas id="clockCanvasCST" width="200" height="200"></canvas>
-                <div id="currentTimeCST"></div>
-            </div>
-            <div class="clock">
-                <h2>中国标准时间 (CST)</h2>
-                <canvas id="clockCanvasChina" width="200" height="200"></canvas>
-                <div id="currentTimeChina"></div>
+            <div class="content">
+                <h1>ziyuan77的网站</h1>
+                <h3>欢迎来到ziyuan77的网站，这里提供各种有用的工具和资源。</h3>
+                <audio controls>
+                    <source src="/static/audio/index.mp3" type="audio/mpeg">
+                    您的浏览器不支持音频元素。
+                </audio>
             </div>
         </div>
-        <a href="/password"> 安全密码生成器 </a>
-        <a href="https://xyz.ziyuan77.com"> 元科技的脉搏 </a>
-        <a href="/worldtime"> 世界时间 </a>
-        <a href="/excel"> Excel公式生成器 </a>
-        <a href="/calculator"> 多功能计算器 </a>
-        <a href="/math"> 数学计算生成器 </a>
-        <a href="/download/index"> 下载器 </a>
-        <a href="/chat"> 实时聊天 </a>
-        <!--<a href="http://server.xhdndmm.cn:5244"> 资源站 </a>-->
-        <!--<a href="https://xhdndmm.cn"> 我朋友的网站 </a>-->
         <script src="/static/js/index.js"></script>
     </body>
 </html>

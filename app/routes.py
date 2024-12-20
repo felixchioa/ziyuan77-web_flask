@@ -59,6 +59,21 @@ def index():
     return render_template('index.html')
 
 
+@current_app.route('/projects')
+def projects():
+    logger.debug("Rendering projects.html")
+    return render_template('projects.html')
+
+@current_app.route('/tools')
+def tools():
+    logger.debug("Rendering tools.html")
+    return render_template('tools.html')
+
+@current_app.route('/daily')
+def daily():
+    logger.debug("Rendering daily.html")
+    return render_template('daily.html')
+
 @current_app.route('/BingSiteAuth.xml')
 def serve_bing_file():
     return send_from_directory('static', 'BingSiteAuth.xml')
@@ -174,7 +189,7 @@ def download():
         if 'tmp_file_path' in locals() and os.path.exists(tmp_file_path):
             os.remove(tmp_file_path)
 
-
+# 此至 422 行为聊天
 @current_app.route('/crawl', methods=['POST'])
 def crawl():
     data = request.json
@@ -420,3 +435,4 @@ def clean():
 @current_app.route('/favicon.ico')
 def favicon():
     return send_from_directory(current_app.static_folder, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+

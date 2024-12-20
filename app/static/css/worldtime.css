@@ -1,72 +1,69 @@
+/* 设置页面的基本样式 */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #fffacd;
-    color: #333;
+    line-height: 1.6;
     margin: 0;
     padding: 0;
+    background-color: #f0f2f5;
+    color: #333;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
-    overflow-y: auto;
-}
-
-h1 {
-    margin: 20px 0;
-    color: #4a90e2;
-    font-size: 2em;
-    text-align: center;
-}
-
-.clock-container {
-    display: flex;
     justify-content: center;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 30px;
-    max-width: 1400px;
-    padding: 20px;
+    min-height: 100vh;
 }
 
-.clock {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 220px;
+/* 标题样式 */
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+/* 返回按钮样式 */
+a img {
+    width: 50px;
+    height: auto;
+    margin-bottom: 20px;
     transition: transform 0.3s;
 }
 
-.clock:hover {
-    transform: translateY(-5px);
+a img:hover {
+    transform: scale(1.1);
+}
+
+/* 时钟容器样式 */
+.clock-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 时钟样式 */
+.clock {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    padding: 20px;
+    text-align: center;
+    width: 220px;
 }
 
 .clock h2 {
-    margin-bottom: 10px;
-    color: #333;
     font-size: 1.2em;
-    text-align: center;
+    margin-bottom: 10px;
+    color: #007bff;
 }
 
-canvas {
+.clock canvas {
     margin-bottom: 10px;
 }
 
-#currentTime {
+.clock div {
     font-size: 1em;
-    color: #4a90e2;
-    text-align: center;
-}
-
-@media (max-width: 768px) {
-    .clock-container {
-        gap: 20px;
-    }
-
-    .clock {
-        width: 180px;
-    }
+    color: #333;
 }
