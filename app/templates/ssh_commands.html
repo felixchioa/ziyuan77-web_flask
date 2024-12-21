@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="常用SSH命令及其参数的详细说明。">
+    <title>SSH命令详解</title>
+    <link rel="stylesheet" href="/static/css/ssh_commands.css">
+</head>
+<body>
+    <a href="/projects"><img src="/static/images/back.png" alt="logo" /></a>
+    <a href="/"><img src="/static/images/home.png" alt="logo" /></a>
+    <h1>常用SSH命令及其参数</h1>
+    <div class="command-list">
+        <div class="command">
+            <h2>1. ssh</h2>
+            <p><strong>用途：</strong>用于远程登录到另一台计算机。</p>
+            <p><strong>示例：</strong>ssh user@hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-p [port]</code>：指定连接的端口号。</li>
+                <li><code>-i [identity_file]</code>：指定私钥文件。</li>
+                <li><code>-L [local_port:remote_host:remote_port]</code>：设置本地端口转发。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>2. scp</h2>
+            <p><strong>用途：</strong>用于在本地和远程主机之间安全复制文件。</p>
+            <p><strong>示例：</strong>scp file.txt user@hostname:/path/to/destination</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-r</code>：递归复制目录及其内容。</li>
+                <li><code>-P [port]</code>：指定连接的端口号。</li>
+                <li><code>-i [identity_file]</code>：指定私钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>3. sftp</h2>
+            <p><strong>用途：</strong>用于通过SSH传输文件的交互式文件传输程序。</p>
+            <p><strong>示例：</strong>sftp user@hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-P [port]</code>：指定连接的端口号。</li>
+                <li><code>-i [identity_file]</code>：指定私钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>4. ssh-keygen</h2>
+            <p><strong>用途：</strong>用于生成、管理和转换认证密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t rsa -b 2048</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定要创建的密钥类型。</li>
+                <li><code>-b [bits]</code>：指定密钥的位数。</li>
+                <li><code>-f [filename]</code>：指定密钥文件的名称。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>5. ssh-copy-id</h2>
+            <p><strong>用途：</strong>用于将本地生成的公钥复制到远程主机的授权密钥文件中。</p>
+            <p><strong>示例：</strong>ssh-copy-id user@hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-i [identity_file]</code>：指定要复制的公钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>6. ssh-agent</h2>
+            <p><strong>用途：</strong>用于启动一个持有私钥的代理程序。</p>
+            <p><strong>示例：</strong>eval "$(ssh-agent -s)"</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-s</code>：生成适用于sh的命令。</li>
+                <li><code>-c</code>：生成适用于csh的命令。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>7. ssh-add</h2>
+            <p><strong>用途：</strong>用于将私钥添加到ssh-agent中。</p>
+            <p><strong>示例：</strong>ssh-add ~/.ssh/id_rsa</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-l</code>：列出当前ssh-agent中添加的密钥。</li>
+                <li><code>-d</code>：从ssh-agent中删除指定的密钥。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>8. ssh-config</h2>
+            <p><strong>用途：</strong>用于配置SSH客户端的选项。</p>
+            <p><strong>示例：</strong>在<code>~/.ssh/config</code>中配置主机别名。</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>Host</code>：指定主机别名。</li>
+                <li><code>HostName</code>：指定实际的主机名。</li>
+                <li><code>User</code>：指定默认用户名。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>9. sshfs</h2>
+            <p><strong>用途：</strong>用于通过SSH挂载远程文件系统。</p>
+            <p><strong>示例：</strong>sshfs user@hostname:/remote/path /local/mountpoint</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-o [option]</code>：指定挂载选项。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>10. rsync</h2>
+            <p><strong>用途：</strong>用于快速同步文件和目录。</p>
+            <p><strong>示例：</strong>rsync -avz /local/path user@hostname:/remote/path</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-a</code>：归档模式，保留文件权限等。</li>
+                <li><code>-v</code>：详细输出。</li>
+                <li><code>-z</code>：压缩传输。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>11. ssh-keyscan</h2>
+            <p><strong>用途：</strong>从远程主机收集公钥。</p>
+            <p><strong>示例：</strong>ssh-keyscan hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+                <li><code>-p [port]</code>：指定端口号。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>12. ssh-keysign</h2>
+            <p><strong>用途：</strong>用于签署主机密钥。</p>
+            <p><strong>示例：</strong>ssh-keysign</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-h</code>：显示帮助信息。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>13. sshd</h2>
+            <p><strong>用途：</strong>SSH守护进程，用于处理SSH连接。</p>
+            <p><strong>示例：</strong>sshd</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-D</code>：不以守护进程方式运行。</li>
+                <li><code>-p [port]</code>：指定监听端口。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>14. ssh-keygen -R</h2>
+            <p><strong>用途：</strong>从已知主机文件中删除主机。</p>
+            <p><strong>示例：</strong>ssh-keygen -R hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-R [hostname]</code>：指定要删除的主机名。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>15. ssh-keygen -F</h2>
+            <p><strong>用途：</strong>查找已知主机文件中的主机。</p>
+            <p><strong>示例：</strong>ssh-keygen -F hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-F [hostname]</code>：指定要查找的主机名。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>16. ssh-keygen -l</h2>
+            <p><strong>用途：</strong>显示公钥文件的指纹。</p>
+            <p><strong>示例：</strong>ssh-keygen -l -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-l</code>：显示指纹。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>17. ssh-keygen -y</h2>
+            <p><strong>用途：</strong>从私钥文件中提取公钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -y -f /path/to/private_key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-y</code>：输出公钥。</li>
+                <li><code>-f [file]</code>：指定私钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>18. ssh-keygen -e</h2>
+            <p><strong>用途：</strong>将OpenSSH格式的公钥转换为RFC 4716格式。</p>
+            <p><strong>示例：</strong>ssh-keygen -e -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-e</code>：输出RFC 4716格式。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>19. ssh-keygen -i</h2>
+            <p><strong>用途：</strong>将RFC 4716格式的公钥转换为OpenSSH格式。</p>
+            <p><strong>示例：</strong>ssh-keygen -i -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-i</code>：输入RFC 4716格式。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>20. ssh-keygen -A</h2>
+            <p><strong>用途：</strong>生成所有缺失的主机密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -A</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-A</code>：生成所有缺失的主机密钥。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>21. ssh-keygen -t ed25519</h2>
+            <p><strong>用途：</strong>生成ed25519类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t ed25519</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>22. ssh-keygen -t ecdsa</h2>
+            <p><strong>用途：</strong>生成ecdsa类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t ecdsa</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>23. ssh-keygen -t dsa</h2>
+            <p><strong>用途：</strong>生成dsa类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t dsa</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>24. ssh-keygen -t rsa1</h2>
+            <p><strong>用途：</strong>生成rsa1类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t rsa1</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>25. ssh-keygen -t rsa</h2>
+            <p><strong>用途：</strong>生成rsa类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t rsa</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>26. ssh-keygen -b 4096</h2>
+            <p><strong>用途：</strong>生成4096位的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -b 4096</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-b [bits]</code>：指定密钥的位数。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>27. ssh-keygen -C</h2>
+            <p><strong>用途：</strong>为密钥添加注释。</p>
+            <p><strong>示例：</strong>ssh-keygen -C "my key"</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-C [comment]</code>：指定注释。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>28. ssh-keygen -q</h2>
+            <p><strong>用途：</strong>静默模式，不输出任何信息。</p>
+            <p><strong>示例：</strong>ssh-keygen -q</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-q</code>：静默模式。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>29. ssh-keygen -N</h2>
+            <p><strong>用途：</strong>为密钥设置密码。</p>
+            <p><strong>示例：</strong>ssh-keygen -N "password"</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-N [new_passphrase]</code>：指定新密码。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>30. ssh-keygen -f</h2>
+            <p><strong>用途：</strong>指定密钥文件名。</p>
+            <p><strong>示例：</strong>ssh-keygen -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-f [filename]</code>：指定文件名。</li>
+            </ul>
+        </div>
+        <!-- 继续添加更多命令 -->
+        <div class="command">
+            <h2>31. ssh-keygen -p</h2>
+            <p><strong>用途：</strong>更改现有私钥的密码。</p>
+            <p><strong>示例：</strong>ssh-keygen -p -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-p</code>：更改密码。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>32. ssh-keygen -H</h2>
+            <p><strong>用途：</strong>哈希已知主机文件。</p>
+            <p><strong>示例：</strong>ssh-keygen -H -f /path/to/known_hosts</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-H</code>：哈希模式。</li>
+                <li><code>-f [file]</code>：指定文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>33. ssh-keygen -U</h2>
+            <p><strong>用途：</strong>从FIDO设备中提取公钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -U -f /path/to/fido_key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-U</code>：从FIDO设备中提取。</li>
+                <li><code>-f [file]</code>：指定文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>34. ssh-keygen -K</h2>
+            <p><strong>用途：</strong>将FIDO设备的密钥添加到ssh-agent。</p>
+            <p><strong>示例：</strong>ssh-keygen -K -f /path/to/fido_key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-K</code>：添加到ssh-agent。</li>
+                <li><code>-f [file]</code>：指定文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>35. ssh-keygen -X</h2>
+            <p><strong>用途：</strong>将OpenSSH格式的公钥转换为X.509格式。</p>
+            <p><strong>示例：</strong>ssh-keygen -X -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-X</code>：输出X.509格式。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>36. ssh-keygen -Y</h2>
+            <p><strong>用途：</strong>从X.509格式的公钥转换为OpenSSH格式。</p>
+            <p><strong>示例：</strong>ssh-keygen -Y -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-Y</code>：输入X.509格式。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>37. ssh-keygen -O</h2>
+            <p><strong>用途：</strong>指定FIDO设备的选项。</p>
+            <p><strong>示例：</strong>ssh-keygen -O resident</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-O [option]</code>：指定选项。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>38. ssh-keygen -Q</h2>
+            <p><strong>用途：</strong>检查公钥是否在已知主机文件中。</p>
+            <p><strong>示例：</strong>ssh-keygen -Q -f /path/to/known_hosts</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-Q</code>：检查模式。</li>
+                <li><code>-f [file]</code>：指定文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>39. ssh-keygen -I</h2>
+            <p><strong>用途：</strong>指定证书的身份。</p>
+            <p><strong>示例：</strong>ssh-keygen -I "identity"</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-I [identity]</code>：指定身份。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>40. ssh-keygen -V</h2>
+            <p><strong>用途：</strong>指定证书的有效期。</p>
+            <p><strong>示例：</strong>ssh-keygen -V "20230101:20240101"</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-V [validity_interval]</code>：指定有效期。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>41. ssh-keygen -z</h2>
+            <p><strong>用途：</strong>指定证书的序列号。</p>
+            <p><strong>示例：</strong>ssh-keygen -z 1234</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-z [serial_number]</code>：指定序列号。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>42. ssh-keygen -n</h2>
+            <p><strong>用途：</strong>指定证书的主机名。</p>
+            <p><strong>示例：</strong>ssh-keygen -n "hostname"</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-n [name]</code>：指定主机名。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>43. ssh-keygen -s</h2>
+            <p><strong>用途：</strong>使用CA签署密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -s ca_key -I identity -n hostname -V +52w user_key.pub</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-s [ca_key]</code>：指定CA密钥。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>44. ssh-keygen -L</h2>
+            <p><strong>用途：</strong>显示证书的详细信息。</p>
+            <p><strong>示例：</strong>ssh-keygen -L -f user_key-cert.pub</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-L</code>：显示详细信息。</li>
+                <li><code>-f [file]</code>：指定证书文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>45. ssh-keygen -R</h2>
+            <p><strong>用途：</strong>从已知主机文件中删除主机。</p>
+            <p><strong>示例：</strong>ssh-keygen -R hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-R [hostname]</code>：指定要删除的主机名。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>46. ssh-keygen -F</h2>
+            <p><strong>用途：</strong>查找已知主机文件中的主机。</p>
+            <p><strong>示例：</strong>ssh-keygen -F hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-F [hostname]</code>：指定要查找的主机名。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>47. ssh-keygen -l</h2>
+            <p><strong>用途：</strong>显示公钥文件的指纹。</p>
+            <p><strong>示例：</strong>ssh-keygen -l -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-l</code>：显示指纹。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>48. ssh-keygen -y</h2>
+            <p><strong>用途：</strong>从私钥文件中提取公钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -y -f /path/to/private_key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-y</code>：输出公钥。</li>
+                <li><code>-f [file]</code>：指定私钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>49. ssh-keygen -e</h2>
+            <p><strong>用途：</strong>将OpenSSH格式的公钥转换为RFC 4716格式。</p>
+            <p><strong>示例：</strong>ssh-keygen -e -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-e</code>：输出RFC 4716格式。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>50. ssh-keygen -i</h2>
+            <p><strong>用途：</strong>将RFC 4716格式的公钥转换为OpenSSH格式。</p>
+            <p><strong>示例：</strong>ssh-keygen -i -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-i</code>：输入RFC 4716格式。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>51. ssh-keygen -A</h2>
+            <p><strong>用途：</strong>生成所有缺失的主机密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -A</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-A</code>：生成所有缺失的主机密钥。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>52. ssh-keygen -t ed25519</h2>
+            <p><strong>用途：</strong>生成ed25519类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t ed25519</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>53. ssh-keygen -t ecdsa</h2>
+            <p><strong>用途：</strong>生成ecdsa类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t ecdsa</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>54. ssh-keygen -t dsa</h2>
+            <p><strong>用途：</strong>生成dsa类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t dsa</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>55. ssh-keygen -t rsa1</h2>
+            <p><strong>用途：</strong>生成rsa1类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t rsa1</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>56. ssh-keygen -t rsa</h2>
+            <p><strong>用途：</strong>生成rsa类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t rsa</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>57. ssh-keygen -b 4096</h2>
+            <p><strong>用途：</strong>生成4096位的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -b 4096</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-b [bits]</code>：指定密钥的位数。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>58. ssh-keygen -C</h2>
+            <p><strong>用途：</strong>为密钥添加注释。</p>
+            <p><strong>示例：</strong>ssh-keygen -C "my key"</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-C [comment]</code>：指定注释。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>59. ssh-keygen -q</h2>
+            <p><strong>用途：</strong>静默模式，不输出任何信息。</p>
+            <p><strong>示例：</strong>ssh-keygen -q</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-q</code>：静默模式。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>60. ssh-keygen -N</h2>
+            <p><strong>用途：</strong>为密钥设置密码。</p>
+            <p><strong>示例：</strong>ssh-keygen -N "password"</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-N [new_passphrase]</code>：指定新密码。</li>
+            </ul>
+        </div>
+        <div class="command"></div>
+            <h2>61. ssh-keygen -f</h2>
+            <p><strong>用途：</strong>指定密钥文件的名称。</p>
+            <p><strong>示例：</strong>ssh-keygen -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-f [filename]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>62. ssh-keygen -K</h2>
+            <p><strong>用途：</strong>将FIDO密钥存储到硬件设备。</p>
+            <p><strong>示例：</strong>ssh-keygen -K</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-K</code>：存储FIDO密钥。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>63. ssh-keygen -U</h2>
+            <p><strong>用途：</strong>从硬件设备中删除FIDO密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -U</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-U</code>：删除FIDO密钥。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>64. ssh-keygen -D</h2>
+            <p><strong>用途：</strong>从硬件设备中下载FIDO密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -D</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-D</code>：下载FIDO密钥。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>65. ssh-keygen -H</h2>
+            <p><strong>用途：</strong>哈希已知主机文件。</p>
+            <p><strong>示例：</strong>ssh-keygen -H -f /path/to/known_hosts</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-H</code>：哈希模式。</li>
+                <li><code>-f [file]</code>：指定文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>66. ssh-keygen -R</h2>
+            <p><strong>用途：</strong>从已知主机文件中删除主机。</p>
+            <p><strong>示例：</strong>ssh-keygen -R hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-R [hostname]</code>：指定要删除的主机名。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>67. ssh-keygen -F</h2>
+            <p><strong>用途：</strong>查找已知主机文件中的主机。</p>
+            <p><strong>示例：</strong>ssh-keygen -F hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-F [hostname]</code>：指定要查找的主机名。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>68. ssh-keygen -l</h2>
+            <p><strong>用途：</strong>显示公钥文件的指纹。</p>
+            <p><strong>示例：</strong>ssh-keygen -l -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-l</code>：显示指纹。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>69. ssh-keygen -y</h2>
+            <p><strong>用途：</strong>从私钥文件中提取公钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -y -f /path/to/private_key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-y</code>：输出公钥。</li>
+                <li><code>-f [file]</code>：指定私钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>70. ssh-keygen -e</h2>
+            <p><strong>用途：</strong>将OpenSSH格式的公钥转换为RFC 4716格式。</p>
+            <p><strong>示例：</strong>ssh-keygen -e -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-e</code>：输出RFC 4716格式。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>71. ssh-keygen -i</h2>
+            <p><strong>用途：</strong>将RFC 4716格式的公钥转换为OpenSSH格式。</p>
+            <p><strong>示例：</strong>ssh-keygen -i -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-i</code>：输入RFC 4716格式。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>72. ssh-keygen -A</h2>
+            <p><strong>用途：</strong>生成所有缺失的主机密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -A</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-A</code>：生成所有缺失的主机密钥。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>73. ssh-keygen -t ed25519</h2>
+            <p><strong>用途：</strong>生成ed25519类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t ed25519</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>74. ssh-keygen -t ecdsa</h2>
+            <p><strong>用途：</strong>生成ecdsa类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t ecdsa</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>75. ssh-keygen -t dsa</h2>
+            <p><strong>用途：</strong>生成dsa类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t dsa</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>76. ssh-keygen -t rsa1</h2>
+            <p><strong>用途：</strong>生成rsa1类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t rsa1</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>77. ssh-keygen -t rsa</h2>
+            <p><strong>用途：</strong>生成rsa类型的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -t rsa</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-t [type]</code>：指定密钥类型。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>78. ssh-keygen -b 4096</h2>
+            <p><strong>用途：</strong>生成4096位的密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -b 4096</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-b [bits]</code>：指定密钥的位数。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>79. ssh-keygen -C</h2>
+            <p><strong>用途：</strong>为密钥添加注释。</p>
+            <p><strong>示例：</strong>ssh-keygen -C "my key"</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-C [comment]</code>：指定注释。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>80. ssh-keygen -q</h2>
+            <p><strong>用途：</strong>静默模式，不输出任何信息。</p>
+            <p><strong>示例：</strong>ssh-keygen -q</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-q</code>：静默模式。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>81. ssh-keygen -N</h2>
+            <p><strong>用途：</strong>为密钥设置密码。</p>
+            <p><strong>示例：</strong>ssh-keygen -N "password"</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-N [new_passphrase]</code>：指定新密码。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>82. ssh-keygen -f</h2>
+            <p><strong>用途：</strong>指定密钥文件的名称。</p>
+            <p><strong>示例：</strong>ssh-keygen -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-f [filename]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>83. ssh-keygen -K</h2>
+            <p><strong>用途：</strong>将FIDO密钥存储到硬件设备。</p>
+            <p><strong>示例：</strong>ssh-keygen -K</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-K</code>：存储FIDO密钥。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>84. ssh-keygen -U</h2>
+            <p><strong>用途：</strong>从硬件设备中删除FIDO密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -U</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-U</code>：删除FIDO密钥。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>85. ssh-keygen -D</h2>
+            <p><strong>用途：</strong>从硬件设备中下载FIDO密钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -D</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-D</code>：下载FIDO密钥。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>86. ssh-keygen -H</h2>
+            <p><strong>用途：</strong>哈希已知主机文件。</p>
+            <p><strong>示例：</strong>ssh-keygen -H -f /path/to/known_hosts</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-H</code>：哈希模式。</li>
+                <li><code>-f [file]</code>：指定文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>87. ssh-keygen -R</h2>
+            <p><strong>用途：</strong>从已知主机文件中删除主机。</p>
+            <p><strong>示例：</strong>ssh-keygen -R hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-R [hostname]</code>：指定要删除的主机名。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>88. ssh-keygen -F</h2>
+            <p><strong>用途：</strong>查找已知主机文件中的主机。</p>
+            <p><strong>示例：</strong>ssh-keygen -F hostname</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-F [hostname]</code>：指定要查找的主机名。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>89. ssh-keygen -l</h2>
+            <p><strong>用途：</strong>显示公钥文件的指纹。</p>
+            <p><strong>示例：</strong>ssh-keygen -l -f /path/to/key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-l</code>：显示指纹。</li>
+                <li><code>-f [file]</code>：指定密钥文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>90. ssh-keygen -y</h2>
+            <p><strong>用途：</strong>从私钥文件中提取公钥。</p>
+            <p><strong>示例：</strong>ssh-keygen -y -f /path/to/private_key</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-y</code>：输出公钥。</li>
+                <li><code>-f [file]</code>：指定私钥文件。</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

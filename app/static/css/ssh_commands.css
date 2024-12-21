@@ -1,0 +1,70 @@
+/* 设置页面的基本样式 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+/* 标题样式 */
+h1 {
+    font-size: 2.5em;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #007bff;
+}
+
+/* 命令列表样式 */
+.command-list {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* 单个命令块样式 */
+.command {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 20px;
+    transition: transform 0.3s;
+}
+
+.command:hover {
+    transform: translateY(-5px);
+}
+
+/* 命令标题样式 */
+.command h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #007bff;
+}
+
+/* 命令描述和参数样式 */
+.command p {
+    margin-bottom: 10px;
+}
+
+.command ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.command ul li {
+    background-color: #e9ecef;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    padding: 10px;
+    font-family: monospace;
+}
+
+/* 代码块样式 */
+code {
+    background-color: #e9ecef;
+    border-radius: 4px;
+    padding: 2px 4px;
+    font-family: monospace;
+}

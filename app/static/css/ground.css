@@ -1,0 +1,42 @@
+/* 设置页面的基本样式 */
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    background-color: #f4f4f9 /* 背景色为黑色，突出科技感 */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;/* 文字颜色为白色，确保在黑色背景上可读 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 标题样式 */
+h1 {
+    font-size: 2.5em;
+    color: #000000; /* 突出显示的颜色 */
+    margin-bottom: 20px;
+}
+
+/* 链接样式 */
+a {
+    color: #000000;
+    text-decoration: none;
+    margin: 10px;
+    font-size: 1.2em;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #ff0000; /* 悬停时改变颜色 */
+    text-decoration: underline;
+}
+
+/* 图像样式 */
+img {
+    width: 32px;
+    height: 32px;
+    margin: 0 10px;
+    vertical-align: middle;
+}

@@ -1,0 +1,53 @@
+/* 设置页面的基本样式 */
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100%;
+    background-color: #000; /* 背景色为黑色，突出科技感 */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff; /* 文字颜色为白色，确保在黑色背景上可读 */
+}
+
+/* 确保 canvas 占满整个页面 */
+canvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* 将 canvas 放在最底层 */
+    pointer-events: none; /* 允许点击穿透 canvas */
+}
+
+/* 可选：为页面上的其他元素设置样式 */
+h1 {
+    position: relative;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2.5em;
+    color: #00ffcc; /* 与背景粒子颜色相匹配 */
+}
+
+p {
+    position: relative;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: #ccc;
+}
+
+/* 链接样式 */
+a {
+    position: relative;
+    z-index: 1; /* 确保链接在 canvas 之上 */
+    color: #00ffcc;
+    text-decoration: none;
+    margin: 10px;
+    display: inline-block;
+}
+
+a:hover {
+    text-decoration: underline;
+}

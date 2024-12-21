@@ -189,6 +189,32 @@ def download():
         if 'tmp_file_path' in locals() and os.path.exists(tmp_file_path):
             os.remove(tmp_file_path)
 
+@current_app.route('/ssh_commands')
+def ssh_commands():
+    logger.debug("Rendering ssh_commands.html")
+    return render_template('ssh_commands.html')
+
+@current_app.route('/ground1')
+def ground1():
+    logger.debug("Rendering ground1.html")
+    return render_template('ground1.html')
+
+@current_app.route('/ground2')
+def ground2():
+    logger.debug("Rendering ground2.html")
+    return render_template('ground2.html')
+
+@current_app.route('/ground')
+def ground():
+    logger.debug("Rendering ground.html")
+    return render_template('ground.html')
+
+
+@current_app.route('/ground3')
+def ground3():
+    logger.debug("Rendering ground3.html")
+    return render_template('ground3.html')
+
 # 此至 422 行为聊天
 @current_app.route('/crawl', methods=['POST'])
 def crawl():
@@ -435,4 +461,3 @@ def clean():
 @current_app.route('/favicon.ico')
 def favicon():
     return send_from_directory(current_app.static_folder, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
