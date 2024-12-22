@@ -215,6 +215,23 @@ def ground3():
     logger.debug("Rendering ground3.html")
     return render_template('ground3.html')
 
+
+@current_app.route('/text')
+def text():
+    logger.debug("Rendering text.html")
+    return render_template('text.html')
+
+
+@current_app.route('/cmd_commands')
+def cmd_commands():
+    logger.debug("Rendering cmd_commands.html")
+    return render_template('cmd_commands.html')
+
+@current_app.route('/web')
+def web():
+    logger.debug("Rendering web.html")
+    return render_template('web.html')
+
 # 此至 422 行为聊天
 @current_app.route('/crawl', methods=['POST'])
 def crawl():

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="详细的建站教程，包括域名注册、服务器准备、网站开发和部署。">
+    <title>建站教程</title>
+    <link rel="stylesheet" href="/static/css/web.css">
+</head>
+<body>
+    <header>
+        <h1>建站教程</h1>
+        <p>从零开始创建你的网站</p>
+        <a href="/"><img src="/static/images/home.png" alt="logo" /></a>
+        <a href="/text"><img src="/static/images/back.png" alt="logo" /></a>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#introduction">简介</a></li>
+            <li><a href="#domain">域名注册</a></li>
+            <li><a href="#server">服务器准备</a></li>
+            <li><a href="#setup">环境搭建</a></li>
+            <li><a href="#html">HTML基础</a></li>
+            <li><a href="#css">CSS样式</a></li>
+            <li><a href="#javascript">JavaScript交互</a></li>
+            <li><a href="#deployment">网站部署</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="introduction">
+            <h2>简介</h2>
+            <p>本教程将指导你如何从头开始创建一个简单的网站。我们将介绍域名注册、服务器准备、HTML、CSS和JavaScript的基础知识，并展示如何将网站部署到互联网上。</p>
+            <p>无论你是初学者还是有经验的开发者，这个教程都将为你提供有价值的信息和技巧。</p>
+        </section>
+        <section id="domain">
+            <h2>域名注册</h2>
+            <p>在开始建站之前，你需要为你的网站选择并注册一个域名。以下是一些步骤和建议：</p>
+            <ol>
+                <li><strong>选择域名：</strong>选择一个易于记忆且与网站内容相关的域名。确保域名简短、易拼写，并尽量使用常见的顶级域（如.com、.net）。</li>
+                <li><strong>检查可用性：</strong>使用域名注册商提供的工具检查你选择的域名是否可用。</li>
+                <li><strong>注册域名：</strong>通过域名注册商注册你的域名。以下是一些常用的域名注册商：
+                    <ul>
+                        <li><a href="https://www.godaddy.com" target="_blank">GoDaddy</a></li>
+                        <li><a href="https://www.namecheap.com" target="_blank">Namecheap</a></li>
+                        <li><a href="https://www.bluehost.com" target="_blank">Bluehost</a></li>
+                    </ul>
+                </li>
+                <li><strong>配置DNS：</strong>在注册域名后，你需要配置DNS设置，将域名指向你的服务器IP地址。</li>
+            </ol>
+            <p>域名是你在互联网上的身份标识，选择一个合适的域名是成功建站的重要一步。</p>
+        </section>
+        <section id="server">
+            <h2>服务器准备</h2>
+            <p>你需要一个服务器来托管你的网站。以下是一些步骤和建议：</p>
+            <ol>
+                <li><strong>选择服务器类型：</strong>根据你的网站需求选择合适的服务器类型（共享主机、VPS、专用服务器等）。</li>
+                <li><strong>选择服务器提供商：</strong>以下是一些常用的服务器提供商：
+                    <ul>
+                        <li><a href="https://aws.amazon.com" target="_blank">Amazon Web Services (AWS)</a></li>
+                        <li><a href="https://www.digitalocean.com" target="_blank">DigitalOcean</a></li>
+                        <li><a href="https://www.linode.com" target="_blank">Linode</a></li>
+                    </ul>
+                </li>
+                <li><strong>设置服务器环境：</strong>安装必要的软件（如Apache/Nginx、MySQL、PHP等）并配置服务器。</li>
+                <li><strong>安全配置：</strong>确保你的服务器安全，包括设置防火墙、SSH密钥认证等。</li>
+            </ol>
+            <p>选择合适的服务器和配置是确保网站稳定运行的关键。</p>
+        </section>
+        <section id="setup">
+            <h2>环境搭建</h2>
+            <p>在开始开发之前，你需要安装一些工具：</p>
+            <ul>
+                <li><strong>文本编辑器：</strong>用于编写代码。推荐使用<a href="https://code.visualstudio.com/" target="_blank">Visual Studio Code</a>。</li>
+                <li><strong>Web浏览器：</strong>用于测试和查看网站。推荐使用<a href="https://www.google.com/chrome/" target="_blank">Google Chrome</a>或<a href="https://www.mozilla.org/firefox/" target="_blank">Mozilla Firefox</a>。</li>
+                <li><strong>版本控制工具：</strong>用于管理代码版本。推荐使用<a href="https://git-scm.com/" target="_blank">Git</a>。</li>
+                <li><strong>包管理器：</strong>用于管理项目依赖。对于JavaScript项目，推荐使用<a href="https://nodejs.org/" target="_blank">Node.js</a>和npm。</li>
+            </ul>
+            <p>确保你的开发环境设置正确，以提高开发效率和代码质量。</p>
+        </section>
+        <section id="html">
+            <h2>HTML基础</h2>
+            <p>HTML是构建网页的基础。以下是一个简单的HTML结构示例：</p>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;我的网站&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;欢迎来到我的网站&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+            </code></pre>
+            <p>学习HTML的基本标签和结构是创建网页的第一步。以下是一些常用的HTML标签：</p>
+            <ul>
+                <li><code>&lt;p&gt;</code>：段落标签，用于定义文本段落。</li>
+                <li><code>&lt;a&gt;</code>：链接标签，用于创建超链接。</li>
+                <li><code>&lt;img&gt;</code>：图像标签，用于嵌入图像。</li>
+                <li><code>&lt;ul&gt;</code>和<code>&lt;li&gt;</code>：无序列表和列表项标签。</li>
+                <li><code>&lt;table&gt;</code>：表格标签，用于创建表格。</li>
+            </ul>
+            <p>掌握这些基本标签后，你可以开始构建更复杂的网页结构。</p>
+        </section>
+        <section id="css">
+            <h2>CSS样式</h2>
+            <p>CSS用于为网页添加样式。以下是一个简单的CSS示例：</p>
+            <pre><code>body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+}
+h1 {
+    color: #0056b3;
+}
+            </code></pre>
+            <p>通过CSS，你可以控制网页的布局、颜色、字体等。以下是一些常用的CSS属性：</p>
+            <ul>
+                <li><code>color</code>：设置文本颜色。</li>
+                <li><code>background-color</code>：设置背景颜色。</li>
+                <li><code>font-size</code>：设置字体大小。</li>
+                <li><code>margin</code>和<code>padding</code>：设置元素的外边距和内边距。</li>
+                <li><code>border</code>：设置元素的边框。</li>
+            </ul>
+            <p>使用CSS可以让你的网站更加美观和用户友好。</p>
+        </section>
+        <section id="javascript">
+            <h2>JavaScript交互</h2>
+            <p>JavaScript用于为网页添加交互功能。以下是一个简单的JavaScript示例：</p>
+            <pre><code>document.addEventListener('DOMContentLoaded', function() {
+    alert('欢迎访问我的网站！');
+});
+            </code></pre>
+            <p>JavaScript可以用于处理用户输入、动态更新内容、与服务器通信等。以下是一些常用的JavaScript功能：</p>
+            <ul>
+                <li><strong>DOM操作：</strong>使用JavaScript可以动态修改网页内容和结构。</li>
+                <li><strong>事件处理：</strong>响应用户的点击、输入等操作。</li>
+                <li><strong>异步请求：</strong>通过AJAX与服务器进行数据交换。</li>
+                <li><strong>动画效果：</strong>使用JavaScript创建动态效果。</li>
+            </ul>
+            <p>掌握JavaScript可以让你的网站更加生动和互动。</p>
+        </section>
+        <section id="deployment">
+            <h2>网站部署</h2>
+            <p>一旦你的网站完成，你可以使用以下服务将其部署到互联网上：</p>
+            <ul>
+                <li><a href="https://pages.github.com" target="_blank">GitHub Pages</a>：适合静态网站。</li>
+                <li><a href="https://www.netlify.com" target="_blank">Netlify</a>：支持静态和动态网站。</li>
+                <li><a href="https://vercel.com" target="_blank">Vercel</a>：支持现代Web应用程序。</li>
+            </ul>
+            <p>选择一个适合你需求的部署平台，并按照其指南进行操作。以下是一些部署步骤的详细说明：</p>
+            <ol>
+                <li><strong>准备代码：</strong>确保你的代码在本地运行良好，并使用版本控制工具（如Git）进行管理。</li>
+                <li><strong>选择平台：</strong>根据你的网站类型选择合适的部署平台。</li>
+                <li><strong>配置部署设置：</strong>根据平台的要求配置部署设置，如域名绑定、环境变量等。</li>
+                <li><strong>测试部署：</strong>在部署完成后，测试网站的各项功能，确保一切正常。</li>
+            </ol>
+            <p>部署是网站上线的最后一步，确保每个细节都处理得当。</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 建站教程. 保留所有权利。</p>
+    </footer>
+</body>
+</html>
