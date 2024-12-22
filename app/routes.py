@@ -232,6 +232,11 @@ def web():
     logger.debug("Rendering web.html")
     return render_template('web.html')
 
+@current_app.route('/win11')
+def win11():
+    logger.debug("Rendering win11.html")
+    return render_template('win11.html')
+
 # 此至 422 行为聊天
 @current_app.route('/crawl', methods=['POST'])
 def crawl():
