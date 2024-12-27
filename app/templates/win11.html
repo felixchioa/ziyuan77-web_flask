@@ -1,166 +1,194 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Windows 11 安装方法指南">
-    <title>Windows 11 安装指南</title>
-    <link rel="stylesheet" href="/static/css/win11.css">
-</head>
-<body>
-    <a href="/projects"><img src="/static/images/back.png" alt="logo" /></a>
-    <a href="/"><img src="/static/images/home.png" alt="logo" /></a>
-    <header>
-        <h1>Windows 11 安装指南</h1>
-        <p>详细介绍各种安装方法</p>
-    </header>
-    <nav>
-        <h2>目录</h2>
-        <ul>
-            <li><a href="#introduction">简介</a></li>
-            <li><a href="#requirements">系统要求</a></li>
-            <li><a href="#usb_installation">USB 安装</a></li>
-            <li><a href="#iso_installation">ISO 文件安装</a></li>
-            <li><a href="#network_installation">网络安装</a></li>
-            <li><a href="#upgrade_installation">升级安装</a></li>
-            <li><a href="#troubleshooting">故障排除</a></li>
-            <li><a href="#faq">常见问题</a></li>
-            <li><a href="#conclusion">结论</a></li>
-        </ul>
-    </nav>
-    <main>
-        <section id="introduction">
-            <h2>简介</h2>
-            <p>Windows 11 是微软最新发布的操作系统，提供了许多新功能和改进。本文将详细介绍如何通过多种方法安装 Windows 11。</p>
-            <p>无论您是家庭用户还是企业用户，Windows 11 都提供了灵活的安装选项，以满足不同的需求。</p>
-            <p>在开始之前，请确保您已备份所有重要数据，以防在安装过程中出现意外情况。</p>
-        </section>
-        <section id="requirements">
-            <h2>系统要求</h2>
-            <p>在安装 Windows 11 之前，请确保您的计算机满足以下最低系统要求：</p>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="description" content="Windows 11 安装方法指南" />
+        <title>Windows 11 安装指南</title>
+        <link rel="stylesheet" href="/static/css/win11.css" />
+    </head>
+    <body>
+        <a href="/projects"><img src="/static/images/back.png" alt="logo" /></a>
+        <a href="/"><img src="/static/images/home.png" alt="logo" /></a>
+        <header>
+            <h1>Windows 11 安装指南</h1>
+            <p>详细介绍各种安装方法</p>
+        </header>
+        <nav>
+            <h2>目录</h2>
             <ul>
-                <li>处理器：1 GHz 或更快的支持 64 位的处理器</li>
-                <li>内存：4 GB 或更大</li>
-                <li>存储：64 GB 或更大的存储设备</li>
-                <li>固件：支持 UEFI 和安全启动</li>
-                <li>TPM：受信任的平台模块 (TPM) 版本 2.0</li>
-                <li>显卡：支持 DirectX 12 或更高版本的显卡</li>
-                <li>显示器：对角线大于 9 英寸，分辨率为 720p 或更高</li>
+                <li><a href="#introduction">简介</a></li>
+                <li><a href="#requirements">系统要求</a></li>
+                <li><a href="#usb_installation">USB 安装</a></li>
+                <li><a href="#iso_installation">ISO 文件安装</a></li>
+                <li><a href="#network_installation">网络安装</a></li>
+                <li><a href="#upgrade_installation">升级安装</a></li>
+                <li><a href="#troubleshooting">故障排除</a></li>
+                <li><a href="#faq">常见问题</a></li>
+                <li><a href="#conclusion">结论</a></li>
             </ul>
-            <p>此外，某些功能可能需要特定的硬件支持，例如：</p>
-            <ul>
-                <li>Windows Hello 需要红外摄像头或指纹读取器。</li>
-                <li>DirectStorage 需要 NVMe SSD 和 DirectX 12 GPU。</li>
-                <li>自动 HDR 需要 HDR 显示器。</li>
-            </ul>
-            <p>确保您的设备驱动程序已更新，以获得最佳的兼容性和性能。</p>
-        </section>
-        <section id="usb_installation">
-            <h2>USB 安装</h2>
-            <p>通过 USB 驱动器安装 Windows 11 是最常见的方法之一。以下是详细步骤：</p>
-            <ol>
-                <li>准备一个至少 8 GB 的 USB 驱动器。</li>
-                <li>下载 Windows 11 安装介质创建工具。</li>
-                <li>运行工具并选择“为另一台电脑创建安装介质”。</li>
-                <li>选择语言、版本和架构，然后选择 USB 驱动器作为目标。</li>
-                <li>完成后，将 USB 驱动器插入目标计算机并重启。</li>
-                <li>进入 BIOS 设置，设置 USB 驱动器为启动设备。</li>
-                <li>保存更改并退出 BIOS，计算机将从 USB 驱动器启动。</li>
-                <li>按照屏幕上的说明进行安装。</li>
-            </ol>
-            <p>注意：确保备份重要数据，以防安装过程中出现问题。</p>
-            <p>在安装过程中，您可能会遇到以下问题：</p>
-            <ul>
-                <li><strong>USB 驱动器无法识别：</strong>确保 USB 驱动器已正确插入，并在 BIOS 中启用 USB 启动选项。</li>
-                <li><strong>安装程序无法找到硬盘：</strong>检查硬盘连接，并确保在 BIOS 中启用 AHCI 模式。</li>
-            </ul>
-
-        </section>
-        <section id="iso_installation">
-            <h2>ISO 文件安装</h2>
-            <p>通过 ISO 文件安装 Windows 11 适用于虚拟机或没有 USB 驱动器的情况。以下是详细步骤：</p>
-            <ol>
-                <li>下载 Windows 11 ISO 文件。</li>
-                <li>在 Windows 10 上，右键单击 ISO 文件并选择“装载”。</li>
-                <li>打开装载的驱动器并运行 setup.exe。</li>
-                <li>选择“立即安装”，并按照屏幕上的说明进行操作。</li>
-                <li>选择保留个人文件和应用程序，或选择全新安装。</li>
-                <li>完成安装后，计算机将自动重启。</li>
-            </ol>
-            <p>注意：确保计算机有足够的存储空间来装载 ISO 文件。</p>
-            <p>在虚拟机中安装时，请确保分配足够的内存和处理器资源，以确保流畅的操作体验。</p>
-            <p>这里提供一些下载路径，按速度合理选择</p>
-            <p>获取 ISO 文件：<a href="https://www.microsoft.com/zh-cn/software-download/windows11" target="_blank">官方源</a></p>
-            {% comment %} <p>获取 ISO 文件：<a href="https://file.ziyuan77.com/d/home/文件/资源/系统/windows/Win11_24H2_Chinese_Simplified_x64.iso?sign=HC5Ct5WFe5s3xi1XxI_vouF9Dha2ZtSAbk2RxSC9xBo=:0" target="_blank">镜像源 1（24H2）</a></p> {% endcomment %}
-            {% comment %} <p>获取 ISO 文件：<a href="https://file.ziyuan77.com/d/home/文件/资源/系统/windows/Win11_23H2_Chinese_Simplified_x64v2.iso?sign=hBA4kEwNaCZj0l0dz79NVNVOGM7BnQhaLZOS7thw_wQ=:0" target="_blank">镜像源 1（23H2）</a></p> {% endcomment %}
-            {% comment %} <p>获取 ISO 文件：<a href="http://server.xhdndmm.cn:5244/d/公开/资源/系统/windows/Win11_23H2_Chinese_Simplified_x64v2.iso?sign=WLJS7FaImXpkklVmYGKduguFk3bTLKlSlm6NhtmBFdk=:0" target="_blank">镜像源 2（23H2）</a></p> {% endcomment %}
-            {% comment %} <p>获取 ISO 文件：<a href="http://server.xhdndmm.cn:5244/d/公开/资源/系统/windows/Win11_24H2_Chinese_Simplified_x64.iso?sign=P9j332zHgK_xTd6Xy11GI20ayxn8feBo2iNWZs1lKCk=:0" target="_blank">镜像源 2（24H2）</a></p> {% endcomment %}
-        </section>
-        <section id="network_installation">
-            <h2>网络安装</h2>
-            <p>网络安装适用于企业环境，使用 Windows 部署服务 (WDS) 进行安装。以下是详细步骤：</p>
-            <ol>
-                <li>在服务器上配置 Windows 部署服务。</li>
-                <li>将 Windows 11 安装映像添加到 WDS 服务器。</li>
-                <li>在客户端计算机上，通过网络启动进入 WDS。</li>
-                <li>选择 Windows 11 映像并开始安装。</li>
-                <li>按照屏幕上的说明完成安装。</li>
-            </ol>
-            <p>注意：网络安装需要配置网络环境和服务器。</p>
-            <p>在配置 WDS 时，请确保网络带宽足够，以支持多个客户端同时安装。</p>
-        </section>
-        <section id="upgrade_installation">
-            <h2>升级安装</h2>
-            <p>如果您已经运行 Windows 10，可以通过升级安装 Windows 11。以下是详细步骤：</p>
-            <ol>
-                <li>确保 Windows 10 已更新到最新版本。</li>
-                <li>打开 Windows 更新，检查是否有 Windows 11 升级提示。</li>
-                <li>如果有，选择“下载并安装”。</li>
-                <li>按照屏幕上的说明完成升级。</li>
-                <li>升级完成后，计算机将自动重启。</li>
-            </ol>
-            <p>注意：升级安装保留个人文件和应用程序。</p>
-            <p>在升级过程中，确保电源稳定，以防止意外中断。</p>
-        </section>
-        <section id="troubleshooting">
-            <h2>故障排除</h2>
-            <p>在安装过程中可能会遇到一些问题。以下是一些常见问题及解决方法：</p>
-            <ul>
-                <li><strong>问题：</strong>无法启动安装程序。<br>
-                    <strong>解决方法：</strong>检查 BIOS 设置，确保 USB 或 ISO 文件正确装载。</li>
-                <li><strong>问题：</strong>安装过程中出现错误代码。<br>
-                    <strong>解决方法：</strong>查找错误代码的具体含义，并根据微软支持文档进行解决。</li>
-                <li><strong>问题：</strong>安装后无法启动系统。<br>
-                    <strong>解决方法：</strong>检查启动顺序，确保硬盘设置为第一启动设备。</li>
-                <li><strong>问题：</strong>网络安装速度慢。<br>
-                    <strong>解决方法：</strong>检查网络连接，确保带宽足够，并减少同时安装的客户端数量。</li>
-            </ul>
-            <p>在遇到问题时，保持冷静，逐步排查问题的根源。</p>
-        </section>
-        <section id="faq">
-            <h2>常见问题</h2>
-            <p>以下是一些关于 Windows 11 安装的常见问题：</p>
-            <ul>
-                <li><strong>问：</strong>我可以在不满足系统要求的计算机上安装 Windows 11 吗？<br>
-                    <strong>答：</strong>不建议这样做，因为可能会导致系统不稳定或无法获得更新。</li>
-                <li><strong>问：</strong>安装 Windows 11 需要多长时间？<br>
-                    <strong>答：</strong>这取决于计算机的性能和安装方法，通常需要 30 分钟到 1 小时。</li>
-                <li><strong>问：</strong>我可以在虚拟机上安装 Windows 11 吗？<br>
-                    <strong>答：</strong>可以，使用 ISO 文件安装是一个不错的选择。</li>
-                <li><strong>问：</strong>如何检查我的计算机是否支持 Windows 11？<br>
-                    <strong>答：</strong>使用微软提供的 PC Health Check 工具进行检查。</li>
-                <li><strong>问：</strong>如何获取 Windows 11 的 ISO 文件？<br>
-                    <strong>答：</strong>使用微软提供的官方源，或者使用镜像源。</li>
-
-            </ul>
-        </section>
-        <section id="conclusion">
-            <h2>结论</h2>
-            <p>Windows 11 提供了多种安装方法，用户可以根据自己的需求选择合适的方法。无论是通过 USB、ISO 还是网络安装，确保备份重要数据并满足系统要求是成功安装的关键。</p>
-            <p>在安装完成后，建议检查系统更新，确保所有驱动程序和安全补丁都是最新的。</p>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2024 Windows 11 安装指南. 保留所有权利。</p>
-    </footer>
-</body>
+        </nav>
+        <main>
+            <section id="introduction">
+                <h2>简介</h2>
+                <p>
+                    Windows 11 是微软最新发布的操作系统，提供了许多新功能和改进。本文将详细介绍如何通过多种方法安装
+                    Windows 11。
+                </p>
+                <p>无论您是家庭用户还是企业用户，Windows 11 都提供了灵活的安装选项，以满足不同的需求。</p>
+                <p>在开始之前，请确保您已备份所有重要数据，以防在安装过程中出现意外情况。</p>
+            </section>
+            <section id="requirements">
+                <h2>系统要求</h2>
+                <p>在安装 Windows 11 之前，请确保您的计算机满足以下最低系统要求：</p>
+                <ul>
+                    <li>处理器：1 GHz 或更快的支持 64 位的处理器</li>
+                    <li>内存：4 GB 或更大</li>
+                    <li>存储：64 GB 或更大的存储设备</li>
+                    <li>固件：支持 UEFI 和安全启动</li>
+                    <li>TPM：受信任的平台模块 (TPM) 版本 2.0</li>
+                    <li>显卡：支持 DirectX 12 或更高版本的显卡</li>
+                    <li>显示器：对角线大于 9 英寸，分辨率为 720p 或更高</li>
+                </ul>
+                <p>此外，某些功能可能需要特定的硬件支持，例如：</p>
+                <ul>
+                    <li>Windows Hello 需要红外摄像头或指纹读取器。</li>
+                    <li>DirectStorage 需要 NVMe SSD 和 DirectX 12 GPU。</li>
+                    <li>自动 HDR 需要 HDR 显示器。</li>
+                </ul>
+                <p>确保您的设备驱动程序已更新，以获得最佳的兼容性和性能。</p>
+            </section>
+            <section id="usb_installation">
+                <h2>USB 安装</h2>
+                <p>通过 USB 驱动器安装 Windows 11 是最常见的方法之一。以下是详细步骤：</p>
+                <ol>
+                    <li>准备一个至少 8 GB 的 USB 驱动器。</li>
+                    <li>下载 Windows 11 安装介质创建工具。</li>
+                    <li>运行工具并选择“为另一台电脑创建安装介质”。</li>
+                    <li>选择语言、版本和架构，然后选择 USB 驱动器作为目标。</li>
+                    <li>完成后，将 USB 驱动器插入目标计算机并重启。</li>
+                    <li>进入 BIOS 设置，设置 USB 驱动器为启动设备。</li>
+                    <li>保存更改并退出 BIOS，计算机将从 USB 驱动器启动。</li>
+                    <li>按照屏幕上的说明进行安装。</li>
+                </ol>
+                <p>注意：确保备份重要数据，以防安装过程中出现问题。</p>
+                <p>在安装过程中，您可能会遇到以下问题：</p>
+                <ul>
+                    <li>
+                        <strong>USB 驱动器无法识别：</strong>确保 USB 驱动器已正确插入，并在 BIOS 中启用 USB 启动选项。
+                    </li>
+                    <li><strong>安装程序无法找到硬盘：</strong>检查硬盘连接，并确保在 BIOS 中启用 AHCI 模式。</li>
+                </ul>
+            </section>
+            <section id="iso_installation">
+                <h2>ISO 文件安装</h2>
+                <p>通过 ISO 文件安装 Windows 11 适用于虚拟机或没有 USB 驱动器的情况。以下是详细步骤：</p>
+                <ol>
+                    <li>下载 Windows 11 ISO 文件。</li>
+                    <li>在 Windows 10 上，右键单击 ISO 文件并选择“装载”。</li>
+                    <li>打开装载的驱动器并运行 setup.exe。</li>
+                    <li>选择“立即安装”，并按照屏幕上的说明进行操作。</li>
+                    <li>选择保留个人文件和应用程序，或选择全新安装。</li>
+                    <li>完成安装后，计算机将自动重启。</li>
+                </ol>
+                <p>注意：确保计算机有足够的存储空间来装载 ISO 文件。</p>
+                <p>在虚拟机中安装时，请确保分配足够的内存和处理器资源，以确保流畅的操作体验。</p>
+                <p>这里提供一些下载路径，按速度合理选择</p>
+                <p>
+                    获取 ISO 文件：<a href="https://www.microsoft.com/zh-cn/software-download/windows11" target="_blank"
+                        >官方源</a
+                    >
+                </p>
+                <!-- <p>获取 ISO 文件：<a href="https://file.ziyuan77.com/d/home/文件/资源/系统/windows/Win11_24H2_Chinese_Simplified_x64.iso?sign=HC5Ct5WFe5s3xi1XxI_vouF9Dha2ZtSAbk2RxSC9xBo=:0" target="_blank">镜像源 1（24H2）</a></p>
+            <p>获取 ISO 文件：<a href="https://file.ziyuan77.com/d/home/文件/资源/系统/windows/Win11_23H2_Chinese_Simplified_x64v2.iso?sign=hBA4kEwNaCZj0l0dz79NVNVOGM7BnQhaLZOS7thw_wQ=:0" target="_blank">镜像源 1（23H2）</a></p>
+            <p>获取 ISO 文件：<a href="http://server.xhdndmm.cn:5244/d/公开/资源/系统/windows/Win11_23H2_Chinese_Simplified_x64v2.iso?sign=WLJS7FaImXpkklVmYGKduguFk3bTLKlSlm6NhtmBFdk=:0" target="_blank">镜像源 2（23H2）</a></p>
+            <p>获取 ISO 文件：<a href="http://server.xhdndmm.cn:5244/d/公开/资源/系统/windows/Win11_24H2_Chinese_Simplified_x64.iso?sign=P9j332zHgK_xTd6Xy11GI20ayxn8feBo2iNWZs1lKCk=:0" target="_blank">镜像源 2（24H2）</a></p> -->
+            </section>
+            <section id="network_installation">
+                <h2>网络安装</h2>
+                <p>网络安装适用于企业环境，使用 Windows 部署服务 (WDS) 进行安装。以下是详细步骤：</p>
+                <ol>
+                    <li>在服务器上配置 Windows 部署服务。</li>
+                    <li>将 Windows 11 安装映像添加到 WDS 服务器。</li>
+                    <li>在客户端计算机上，通过网络启动进入 WDS。</li>
+                    <li>选择 Windows 11 映像并开始安装。</li>
+                    <li>按照屏幕上的说明完成安装。</li>
+                </ol>
+                <p>注意：网络安装需要配置网络环境和服务器。</p>
+                <p>在配置 WDS 时，请确保网络带宽足够，以支持多个客户端同时安装。</p>
+            </section>
+            <section id="upgrade_installation">
+                <h2>升级安装</h2>
+                <p>如果您已经运行 Windows 10，可以通过升级安装 Windows 11。以下是详细步骤：</p>
+                <ol>
+                    <li>确保 Windows 10 已更新到最新版本。</li>
+                    <li>打开 Windows 更新，检查是否有 Windows 11 升级提示。</li>
+                    <li>如果有，选择“下载并安装”。</li>
+                    <li>按照屏幕上的说明完成升级。</li>
+                    <li>升级完成后，计算机将自动重启。</li>
+                </ol>
+                <p>注意：升级安装保留个人文件和应用程序。</p>
+                <p>在升级过程中，确保电源稳定，以防止意外中断。</p>
+            </section>
+            <section id="troubleshooting">
+                <h2>故障排除</h2>
+                <p>在安装过程中可能会遇到一些问题。以下是一些常见问题及解决方法：</p>
+                <ul>
+                    <li>
+                        <strong>问题：</strong>无法启动安装程序。<br />
+                        <strong>解决方法：</strong>检查 BIOS 设置，确保 USB 或 ISO 文件正确装载。
+                    </li>
+                    <li>
+                        <strong>问题：</strong>安装过程中出现错误代码。<br />
+                        <strong>解决方法：</strong>查找错误代码的具体含义，并根据微软支持文档进行解决。
+                    </li>
+                    <li>
+                        <strong>问题：</strong>安装后无法启动系统。<br />
+                        <strong>解决方法：</strong>检查启动顺序，确保硬盘设置为第一启动设备。
+                    </li>
+                    <li>
+                        <strong>问题：</strong>网络安装速度慢。<br />
+                        <strong>解决方法：</strong>检查网络连接，确保带宽足够，并减少同时安装的客户端数量。
+                    </li>
+                </ul>
+                <p>在遇到问题时，保持冷静，逐步排查问题的根源。</p>
+            </section>
+            <section id="faq">
+                <h2>常见问题</h2>
+                <p>以下是一些关于 Windows 11 安装的常见问题：</p>
+                <ul>
+                    <li>
+                        <strong>问：</strong>我可以在不满足系统要求的计算机上安装 Windows 11 吗？<br />
+                        <strong>答：</strong>不建议这样做，因为可能会导致系统不稳定或无法获得更新。
+                    </li>
+                    <li>
+                        <strong>问：</strong>安装 Windows 11 需要多长时间？<br />
+                        <strong>答：</strong>这取决于计算机的性能和安装方法，通常需要 30 分钟到 1 小时。
+                    </li>
+                    <li>
+                        <strong>问：</strong>我可以在虚拟机上安装 Windows 11 吗？<br />
+                        <strong>答：</strong>可以，使用 ISO 文件安装是一个不错的选择。
+                    </li>
+                    <li>
+                        <strong>问：</strong>如何检查我的计算机是否支持 Windows 11？<br />
+                        <strong>答：</strong>使用微软提供的 PC Health Check 工具进行检查。
+                    </li>
+                    <li>
+                        <strong>问：</strong>如何获取 Windows 11 的 ISO 文件？<br />
+                        <strong>答：</strong>使用微软提供的官方源，或者使用镜像源。
+                    </li>
+                </ul>
+            </section>
+            <section id="conclusion">
+                <h2>结论</h2>
+                <p>
+                    Windows 11 提供了多种安装方法，用户可以根据自己的需求选择合适的方法。无论是通过 USB、ISO
+                    还是网络安装，确保备份重要数据并满足系统要求是成功安装的关键。
+                </p>
+                <p>在安装完成后，建议检查系统更新，确保所有驱动程序和安全补丁都是最新的。</p>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2024 Windows 11 安装指南. 保留所有权利。</p>
+        </footer>
+    </body>
 </html>
