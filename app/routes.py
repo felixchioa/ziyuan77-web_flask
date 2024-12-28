@@ -483,3 +483,65 @@ def clean():
 @current_app.route('/favicon.ico')
 def favicon():
     return send_from_directory(current_app.static_folder, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+games = {}
+
+@current_app.route('/gomoku')
+def gomoku():
+    return render_template('gomoku.html')
+
+
+
+@current_app.route('/join_game', methods=['POST'])
+def join_game():
+    room = request.json.get('room')
+    if room not in games:
+        return jsonify({'error': '房间不存在'}), 404
+
+    game = games[room]
+    player_number = None
+    if len(game['players']) < 2:
+        player_number = len(game['players']) + 1
+        game['players'].append(player_number)
+    return jsonify({'message': '加入游戏成功', 'room': room, 'player': player_number}), 200
+
+@current_app.route('/create_game', methods=['POST'])
+def create_game():
+    room = request.json.get('room')
+    if not room:
+        return jsonify({'error': '房间号不能为空'}), 400
+    if room in games:
+        return jsonify({'error': '房间已存在'}), 400
+    games[room] = {'board': [[0]*15 for _ in range(15)], 'turn': 1, 'players': []}
+    return jsonify({'message': '游戏创建成功', 'room': room}), 200
+
+@current_app.route('/make_move', methods=['POST'])
+def make_move():
+    room = request.json.get('room')
+    x = int(request.json.get('x'))
+    y = int(request.json.get('y'))
+    player = int(request.json.get('player'))
+
+    if not room or x is None or y is None or player is None:
+        return jsonify({'error': '请求数据不完整'}), 400
+
+    if room not in games:
+        return jsonify({'error': '房间不存在'}), 404
+
+    game = games[room]
+
+    if player not in [1, 2]:
+        return jsonify({'error': '无效的玩家'}), 400
+
+    if game['turn'] != player:
+        return jsonify({'error': '不是你的回合'}), 400
+
+    if not (0 <= x < 15 and 0 <= y < 15):
+        return jsonify({'error': '无效的坐标'}), 400
+
+    if game['board'][x][y] != 0:
+        return jsonify({'error': '无效的移动'}), 400
+
+    game['board'][x][y] = player
+    game['turn'] = 3 - player  # 切换玩家
+    return jsonify({'message': '移动成功', 'board': game['board'], 'player': 3 - player}), 200
