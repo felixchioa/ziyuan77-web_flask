@@ -14,6 +14,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.db_config import get_mongo_client
 from app import socketio
 from app.logger import Logger
+from flask_socketio import emit, join_room
 
 logger = Logger('routes')
 
@@ -64,23 +65,28 @@ def projects():
     logger.debug("Rendering projects.html")
     return render_template('projects.html')
 
+
 @current_app.route('/tools')
 def tools():
     logger.debug("Rendering tools.html")
     return render_template('tools.html')
+
 
 @current_app.route('/daily')
 def daily():
     logger.debug("Rendering daily.html")
     return render_template('daily.html')
 
+
 @current_app.route('/BingSiteAuth.xml')
 def serve_bing_file():
     return send_from_directory('static', 'BingSiteAuth.xml')
 
+
 @current_app.route('/sitemap_location.xml')
 def serve_sitemap():
     return send_from_directory('static', 'sitemap_location.xml')
+
 
 @current_app.route('/password', methods=['GET', 'POST'])
 def generate_password():
@@ -189,20 +195,24 @@ def download():
         if 'tmp_file_path' in locals() and os.path.exists(tmp_file_path):
             os.remove(tmp_file_path)
 
+
 @current_app.route('/ssh_commands')
 def ssh_commands():
     logger.debug("Rendering ssh_commands.html")
     return render_template('ssh_commands.html')
+
 
 @current_app.route('/ground1')
 def ground1():
     logger.debug("Rendering ground1.html")
     return render_template('ground1.html')
 
+
 @current_app.route('/ground2')
 def ground2():
     logger.debug("Rendering ground2.html")
     return render_template('ground2.html')
+
 
 @current_app.route('/ground')
 def ground():
@@ -227,10 +237,12 @@ def cmd_commands():
     logger.debug("Rendering cmd_commands.html")
     return render_template('cmd_commands.html')
 
+
 @current_app.route('/web')
 def web():
     logger.debug("Rendering web.html")
     return render_template('web.html')
+
 
 @current_app.route('/win11')
 def win11():
@@ -238,6 +250,8 @@ def win11():
     return render_template('win11.html')
 
 # 此至 422 行为聊天
+
+
 @current_app.route('/crawl', methods=['POST'])
 def crawl():
     data = request.json
@@ -480,16 +494,18 @@ def clean():
         logger.error(f"Error cleaning messages: {e}")
         return jsonify({'error': str(e)}), 500
 
+
 @current_app.route('/favicon.ico')
 def favicon():
     return send_from_directory(current_app.static_folder, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
+
 games = {}
+
 
 @current_app.route('/gomoku')
 def gomoku():
     return render_template('gomoku.html')
-
 
 
 @current_app.route('/join_game', methods=['POST'])
@@ -505,6 +521,7 @@ def join_game():
         game['players'].append(player_number)
     return jsonify({'message': '加入游戏成功', 'room': room, 'player': player_number}), 200
 
+
 @current_app.route('/create_game', methods=['POST'])
 def create_game():
     room = request.json.get('room')
@@ -514,6 +531,33 @@ def create_game():
         return jsonify({'error': '房间已存在'}), 400
     games[room] = {'board': [[0]*15 for _ in range(15)], 'turn': 1, 'players': []}
     return jsonify({'message': '游戏创建成功', 'room': room}), 200
+
+
+@socketio.on('join')
+def on_join(data):
+    room = data['room']
+    join_room(room)
+    emit('message', {'msg': f'{data["username"]} has entered the room.'}, room=room)
+
+
+def check_winner(board, player):
+    # 检查所有可能的胜利方向
+    directions = [(1, 0), (0, 1), (1, 1), (1, -1)]
+    for x in range(15):
+        for y in range(15):
+            if board[x][y] == player:
+                for dx, dy in directions:
+                    count = 0
+                    for step in range(5):
+                        nx, ny = x + step * dx, y + step * dy
+                        if 0 <= nx < 15 and 0 <= ny < 15 and board[nx][ny] == player:
+                            count += 1
+                        else:
+                            break
+                    if count == 5:
+                        return True
+    return False
+
 
 @current_app.route('/make_move', methods=['POST'])
 def make_move():
@@ -543,5 +587,52 @@ def make_move():
         return jsonify({'error': '无效的移动'}), 400
 
     game['board'][x][y] = player
+
+    # 检查胜负
+    if check_winner(game['board'], player):
+        if 'scores' not in game:
+            game['scores'] = {1: 0, 2: 0}
+        game['scores'][player] += 1
+
+        socketio.emit('game_over', {'winner': player, 'board': game['board'], 'scores': game['scores']}, room=room)
+        reset_game(room)
+        return jsonify({'message': f'玩家{player}获胜!', 'board': game['board']}), 200
+
     game['turn'] = 3 - player  # 切换玩家
+
+    # 使用 WebSocket 上下文中的房间标识符
+    socketio.emit('update_board', {'board': game['board'], 'turn': game['turn']}, room=room)
+
     return jsonify({'message': '移动成功', 'board': game['board'], 'player': 3 - player}), 200
+
+
+def reset_game(room):
+    games[room]['board'] = [[0]*15 for _ in range(15)]
+    games[room]['turn'] = 1
+
+
+@current_app.route('/reset_game', methods=['POST'])
+def reset_game_route():
+    room = request.json.get('room')
+    if room in games:
+        reset_game(room)
+        socketio.emit('reset_board', room=room)
+        return jsonify({'message': '游戏已重置'}), 200
+    return jsonify({'error': '房间不存在'}), 404
+
+
+@current_app.route('/close_room', methods=['POST'])
+def close_room():
+    room = request.json.get('room')
+    if room in games:
+        del games[room]
+        socketio.emit('close_room', room=room)
+        return jsonify({'message': '房间已关闭'}), 200
+    return jsonify({'error': '房间不存在'}), 404
+
+
+@socketio.on('leave')
+def on_leave(data):
+    room = data['room']
+    leave_room(room)
+    emit('message', {'msg': f'{data["username"]} has left the room.'}, room=room)

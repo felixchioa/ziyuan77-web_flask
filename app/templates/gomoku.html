@@ -7,97 +7,10 @@
     </head>
     <body>
         <h1>五子棋</h1>
+        <div id="current-turn">当前回合: 玩家1</div>
+        <div id="scores" style="position: absolute; top: 10px; right: 10px">玩家1: 0, 玩家2: 0</div>
         <div id="board"></div>
-        <script>
-            const room = prompt("请输入房间号:");
-            let player;
-
-            fetch("/create_game", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ room: room }),
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if (data.error) {
-                        alert(data.error);
-                        joinGame(room);
-                    } else {
-                        alert(data.message);
-                        player = 1; // 创建者自动成为玩家1
-                        initBoard();
-                    }
-                });
-
-            function joinGame(room) {
-                fetch("/join_game", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ room: room }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.error) {
-                            alert(data.error);
-                        } else {
-                            alert(data.message);
-                            player = 2; // 获取分配的玩家编号
-                            initBoard();
-                        }
-                    });
-            }
-
-            function initBoard() {
-                const boardElement = document.getElementById("board");
-                boardElement.innerHTML = "";
-                for (let i = 0; i < 15; i++) {
-                    for (let j = 0; j < 15; j++) {
-                        const cell = document.createElement("div");
-                        cell.className = "cell";
-                        cell.dataset.x = i;
-                        cell.dataset.y = j;
-                        cell.addEventListener("click", makeMove);
-                        boardElement.appendChild(cell);
-                    }
-                }
-            }
-
-            function makeMove(event) {
-                if (player === null) {
-                    alert("您是观战者，不能下棋。");
-                    return;
-                }
-                const x = event.target.dataset.x;
-                const y = event.target.dataset.y;
-                fetch("/make_move", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ room: room, x: x, y: y, player: player }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if (data.error) {
-                            alert(data.error);
-                        } else {
-                            updateBoard(data.board);
-                        }
-                    });
-            }
-
-            function updateBoard(board) {
-                const cells = document.querySelectorAll(".cell");
-                cells.forEach((cell) => {
-                    const x = cell.dataset.x;
-                    const y = cell.dataset.y;
-                    cell.textContent = board[x][y] === 0 ? "" : board[x][y] === 1 ? "X" : "O";
-                });
-            }
-        </script>
+        <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+        <script src="{{ url_for('static', filename='js/gomoku.js') }}"></script>
     </body>
 </html>
