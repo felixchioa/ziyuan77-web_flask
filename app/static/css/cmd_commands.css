@@ -1,4 +1,4 @@
-/* 设置页面的基本样式 */
+/* 基础样式 */
 body, html {
     margin: 0;
     padding: 0;
@@ -8,59 +8,138 @@ body, html {
     line-height: 1.6;
 }
 
-h1 {
-    text-align: center;
-    margin-top: 20px;
-    color: #0056b3;
+/* 布局容器 */
+.container {
+    display: flex;
+    min-height: 100vh;
 }
 
-.command-list {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+/* 侧边栏样式 */
+.sidebar {
+    width: 300px;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
 }
 
-.command {
-    margin-bottom: 20px;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+/* 主内容区域 */
+.content {
+    margin-left: 300px;
+    padding: 20px 40px;
+    flex-grow: 1;
 }
 
-.command:last-child {
-    border-bottom: none;
+/* 侧边栏标题 */
+.sidebar h2 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #555;
 }
 
-h2 {
-    font-size: 1.5em;
-    color: #333;
-}
-
-p {
-    margin: 5px 0;
-}
-
-ul {
-    list-style-type: none;
+/* 侧边栏导航 */
+.sidebar ul {
+    list-style: none;
     padding: 0;
 }
 
-li {
-    background: #e7f1ff;
-    margin: 5px 0;
-    padding: 5px;
-    border-radius: 4px;
+.sidebar li {
+    margin: 8px 0;
 }
 
+.sidebar a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.sidebar a:hover {
+    color: #0056b3;
+}
+
+/* 命令块样式 */
+.command {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.command h2 {
+    color: #0056b3;
+    margin-top: 0;
+    border-bottom: 2px solid #0056b3;
+    padding-bottom: 10px;
+}
+
+.command p {
+    margin: 10px 0;
+}
+
+/* 代码样式 */
 code {
-    background-color: #e7e7e7;
-    padding: 2px 4px;
+    background-color: #f8f9fa;
+    padding: 2px 6px;
     border-radius: 4px;
     font-family: 'Courier New', Courier, monospace;
 }
 
-strong {
+/* 导航按钮 */
+.nav-buttons {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.nav-buttons img {
+    width: 32px;
+    height: 32px;
+    margin-left: 10px;
+    transition: transform 0.3s;
+}
+
+.nav-buttons img:hover {
+    transform: scale(1.1);
+}
+
+/* 分类标题 */
+.category-title {
+    margin-top: 40px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #0056b3;
     color: #0056b3;
+}
+
+/* 命令列表样式 */
+.command-list {
+    list-style: none;
+    padding: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+    
+    .content {
+        margin-left: 0;
+        padding: 20px;
+    }
+    
+    .container {
+        flex-direction: column;
+    }
+    
+    .nav-buttons {
+        position: static;
+        text-align: right;
+        padding: 10px;
+    }
 }
