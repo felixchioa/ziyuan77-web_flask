@@ -14,7 +14,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.db_config import get_mongo_client
 from app import socketio
 from app.logger import Logger
-from flask_socketio import emit, join_room
+from flask_socketio import emit, join_room, leave_room
 
 logger = Logger('routes')
 
@@ -537,7 +537,7 @@ def create_game():
 def on_join(data):
     room = data['room']
     join_room(room)
-    emit('message', {'msg': f'{data["username"]} has entered the room.'}, room=room)
+    emit('message', {'msg': 'A player has entered the room.'}, room=room)
 
 
 def check_winner(board, player):
@@ -636,3 +636,271 @@ def on_leave(data):
     room = data['room']
     leave_room(room)
     emit('message', {'msg': f'{data["username"]} has left the room.'}, room=room)
+
+"""
+围棋代码,未修复bug,暂时注释
+@current_app.route('/go')
+def go():
+    return render_template('go.html')
+
+# 创建一个新的游戏字典来存储围棋游戏
+go_games = {}
+
+@current_app.route('/create_go_game', methods=['POST'])
+def create_go_game():
+    room = request.json.get('room')
+    if not room:
+        return jsonify({'error': '房间号不能为空'}), 400
+    if room in go_games:
+        return jsonify({'error': '房间已存在'}), 400
+    
+    go_games[room] = {
+        'board': [[0]*19 for _ in range(19)],
+        'turn': 1,  # 1代表黑棋，2代表白棋
+        'players': [],
+        'last_board': None,  # 用于检查劫争
+        'captured': {1: 0, 2: 0},  # 记录双方提子数
+        'pass_count': 0  # 记录连续PASS的次数
+    }
+    return jsonify({'message': '游戏创建成功', 'room': room}), 200
+
+@current_app.route('/join_go_game', methods=['POST'])
+def join_go_game():
+    room = request.json.get('room')
+    if room not in go_games:
+        return jsonify({'error': '房间不存在'}), 404
+
+    game = go_games[room]
+    player_number = None
+    if len(game['players']) < 2:
+        player_number = len(game['players']) + 1
+        game['players'].append(player_number)
+    return jsonify({
+        'message': '加入游戏成功', 
+        'room': room, 
+        'player': player_number
+    }), 200
+
+def count_liberties(board, x, y, checked=None):
+    计算一个棋子或棋组的气
+    if checked is None:
+        checked = set()
+    
+    if not (0 <= x < 19 and 0 <= y < 19):
+        return 0
+    
+    position = (x, y)
+    if position in checked:
+        return 0
+        
+    checked.add(position)
+    color = board[x][y]
+    if color == 0:
+        return 1
+    
+    liberties = 0
+    for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+        next_x, next_y = x + dx, y + dy
+        if 0 <= next_x < 19 and 0 <= next_y < 19:
+            if board[next_x][next_y] == 0:
+                liberties += 1
+            elif board[next_x][next_y] == color:
+                liberties += count_liberties(board, next_x, next_y, checked)
+    return liberties
+
+def is_valid_move(game, x, y, player):
+    检查是否是有效的落子
+    board = game['board']
+    if board[x][y] != 0:
+        return False
+        
+    # 临时落子以检查是否自杀或劫争
+    board[x][y] = player
+    
+    # 检查是否有气
+    has_liberties = count_liberties(board, x, y) > 0
+    
+    # 如果没气，检查是否能提对方的子
+    if not has_liberties:
+        can_capture = False
+        for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+            next_x, next_y = x + dx, y + dy
+            if 0 <= next_x < 19 and 0 <= next_y < 19:
+                if board[next_x][next_y] == 3 - player:
+                    if count_liberties(board, next_x, next_y) == 0:
+                        can_capture = True
+                        break
+        if not can_capture:
+            board[x][y] = 0  # 恢复棋盘
+            return False
+            
+    # 检查劫争
+    if game['last_board']:
+        # 比较当前局面与上一局面
+        if all(board[i][j] == game['last_board'][i][j] 
+               for i in range(19) for j in range(19)):
+            board[x][y] = 0
+            return False
+            
+    board[x][y] = 0  # 恢复棋盘
+    return True
+
+@current_app.route('/make_go_move', methods=['POST'])
+def make_go_move():
+    data = request.json
+    room = data.get('room')
+    player = int(data.get('player'))
+    is_pass = data.get('pass', False)
+    
+    if room not in go_games:
+        return jsonify({'error': '房间不存在'}), 404
+        
+    game = go_games[room]
+    
+    # 检查是否是该玩家的回合
+    if game['turn'] != player:
+        return jsonify({'error': '不是你的回合'}), 400
+    
+    if is_pass:
+        game['pass_count'] += 1
+        if game['pass_count'] >= 2:
+            # 游戏结束，计算胜负
+            result = calculate_score(game)
+            socketio.emit('go_game_over', result, room=room)
+            return jsonify(result), 200
+        game['turn'] = 3 - player
+        socketio.emit('update_go_board', {
+            'board': game['board'],
+            'turn': game['turn'],
+            'captured': game['captured']
+        }, room=room)
+        return jsonify({'message': '玩家选择PASS'}), 200
+    
+    # 非 pass 的情况
+    x = int(data.get('x'))
+    y = int(data.get('y'))
+    
+    game['pass_count'] = 0  # 重置连续PASS计数
+    
+    if not is_valid_move(game, x, y, player):
+        return jsonify({'error': '无效的移动'}), 400
+        
+    # 保存当前局面用于劫争检查
+    game['last_board'] = [row[:] for row in game['board']]
+    
+    # 落子
+    game['board'][x][y] = player
+    
+    # 检查并提取死子
+    captured = check_and_remove_dead_stones(game, x, y, player)
+    game['captured'][player] += captured
+    
+    game['turn'] = 3 - player
+    
+    socketio.emit('update_go_board', {
+        'board': game['board'],
+        'turn': game['turn'],
+        'captured': game['captured']
+    }, room=room)
+    
+    return jsonify({
+        'message': '移动成功',
+        'board': game['board'],
+        'captured': game['captured']
+    }), 200
+
+def check_and_remove_dead_stones(game, x, y, player):
+    检查并提取死子，返回提子数量
+    captured = 0
+    board = game['board']
+    for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+        next_x, next_y = x + dx, y + dy
+        if 0 <= next_x < 19 and 0 <= next_y < 19:
+            if board[next_x][next_y] == 3 - player:
+                if count_liberties(board, next_x, next_y) == 0:
+                    captured += remove_group(game, next_x, next_y)
+    return captured
+
+def remove_group(game, x, y):
+    移除一个死棋组，返回提子数量
+    count = 0
+    color = game['board'][x][y]
+    stack = [(x, y)]
+    removed = set()
+    
+    while stack:
+        curr_x, curr_y = stack.pop()
+        if (curr_x, curr_y) in removed:
+            continue
+            
+        if game['board'][curr_x][curr_y] == color:
+            game['board'][curr_x][curr_y] = 0
+            removed.add((curr_x, curr_y))
+            count += 1
+            
+            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+                next_x, next_y = curr_x + dx, curr_y + dy
+                if 0 <= next_x < 19 and 0 <= next_y < 19:
+                    if game['board'][next_x][next_y] == color:
+                        stack.append((next_x, next_y))
+    
+    return count
+
+def calculate_score(game):
+    计算游戏最终得分
+    board = game['board']
+    territory = [[0]*19 for _ in range(19)]
+    black_territory = 0
+    white_territory = 0
+    
+    # 计算领地
+    for i in range(19):
+        for j in range(19):
+            if board[i][j] == 0:
+                # 使用flood fill算法确定空点属于谁的领地
+                territory_color = determine_territory(board, i, j)
+                if territory_color == 1:
+                    black_territory += 1
+                elif territory_color == 2:
+                    white_territory += 1
+    
+    # 最终得分 = 领地 + 提子数
+    black_score = black_territory + game['captured'][1]
+    white_score = white_territory + game['captured'][2] + 6.5  # 贴目
+    
+    return {
+        'black_score': black_score,
+        'white_score': white_score,
+        'winner': 1 if black_score > white_score else 2,
+        'territory': territory
+    }
+
+def determine_territory(board, x, y):
+    确定一片空地属于谁的领地
+    checked = set()
+    stack = [(x, y)]
+    empty_points = set()
+    borders = set()
+    
+    while stack:
+        curr_x, curr_y = stack.pop()
+        if (curr_x, curr_y) in checked:
+            continue
+            
+        checked.add((curr_x, curr_y))
+        if board[curr_x][curr_y] == 0:
+            empty_points.add((curr_x, curr_y))
+            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+                next_x, next_y = curr_x + dx, curr_y + dy
+                if 0 <= next_x < 19 and 0 <= next_y < 19:
+                    if board[next_x][next_y] == 0:
+                        stack.append((next_x, next_y))
+                    else:
+                        borders.add((next_x, next_y))
+    
+    # 判断边界都是同色则属于该颜色的领地
+    border_colors = {board[x][y] for x, y in borders}
+    if len(border_colors) == 1:
+        return border_colors.pop()
+    return 0  # 中立点
+"""

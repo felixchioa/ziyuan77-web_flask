@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>围棋</title>
+    <style>
+        #board {
+            margin: 20px auto;
+            position: relative;
+            width: 760px;
+            height: 760px;
+            background-color: #DEB887;
+        }
+        .grid {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            box-sizing: border-box;
+            border: 1px solid #000;
+        }
+        .stone {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin: 2px;
+        }
+        .black {
+            background-color: #000;
+        }
+        .white {
+            background-color: #fff;
+        }
+        .star-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #000;
+            border-radius: 50%;
+            margin: 16px;
+        }
+        #game-info {
+            text-align: center;
+            margin: 20px;
+        }
+        .button {
+            margin: 10px;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-info">
+        <div id="current-turn">当前回合: 黑棋</div>
+        <div id="captured">提子数 - 黑: 0, 白: 0</div>
+        <button id="pass-button" class="button">PASS</button>
+        <button id="resign-button" class="button">认输</button>
+    </div>
+    <div id="board"></div>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+        let currentPlayer = 1;
+        let myPlayer = null;
+        let room = null;
+        
+        // 初始化棋盘
+        const board = document.getElementById('board');
+        for (let i = 0; i < 19; i++) {
+            for (let j = 0; j < 19; j++) {
+                const grid = document.createElement('div');
+                grid.className = 'grid';
+                grid.style.left = (j * 40) + 'px';
+                grid.style.top = (i * 40) + 'px';
+                grid.dataset.x = i;
+                grid.dataset.y = j;
+                board.appendChild(grid);
+                
+                // 添加星位
+                if ((i === 3 || i === 9 || i === 15) && 
+                    (j === 3 || j === 9 || j === 15)) {
+                    const star = document.createElement('div');
+                    star.className = 'star-point';
+                    grid.appendChild(star);
+                }
+            }
+        }
+        
+        // 处理落子
+        board.addEventListener('click', async (e) => {
+            if (currentPlayer !== myPlayer) return;
+            
+            const grid = e.target.closest('.grid');
+            if (!grid) return;
+            
+            const x = parseInt(grid.dataset.x);
+            const y = parseInt(grid.dataset.y);
+            
+            try {
+                const response = await fetch('/make_go_move', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        room,
+                        x,
+                        y,
+                        player: myPlayer
+                    }),
+                });
+                
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+        
+        // 处理PASS
+        document.getElementById('pass-button').addEventListener('click', async () => {
+            if (currentPlayer !== myPlayer) return;
+            
+            try {
+                const response = await fetch('/make_go_move', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        room,
+                        pass: true,
+                        player: myPlayer
+                    }),
+                });
+                
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+        
+        // 更新棋盘显示
+        function updateBoard(boardData) {
+            const grids = document.querySelectorAll('.grid');
+            grids.forEach(grid => {
+                const x = parseInt(grid.dataset.x);
+                const y = parseInt(grid.dataset.y);
+                
+                // 清除现有棋子
+                const existingStone = grid.querySelector('.stone');
+                if (existingStone) {
+                    grid.removeChild(existingStone);
+                }
+                
+                // 添加新棋子
+                if (boardData[x][y] !== 0) {
+                    const stone = document.createElement('div');
+                    stone.className = `stone ${boardData[x][y] === 1 ? 'black' : 'white'}`;
+                    grid.appendChild(stone);
+                }
+            });
+        }
+        
+        // WebSocket事件处理
+        socket.on('update_go_board', (data) => {
+            updateBoard(data.board);
+            currentPlayer = data.turn;
+            document.getElementById('current-turn').textContent = 
+                `当前回合: ${currentPlayer === 1 ? '黑棋' : '白棋'}`;
+            document.getElementById('captured').textContent = 
+                `提子数 - 黑: ${data.captured[1]}, 白: ${data.captured[2]}`;
+        });
+        
+        socket.on('go_game_over', (result) => {
+            alert(`游戏结束!\n黑棋得分: ${result.black_score}\n白棋得分: ${result.white_score}\n` +
+                  `胜者: ${result.winner === 1 ? '黑棋' : '白棋'}`);
+        });
+        
+        // 初始化游戏
+        async function initGame() {
+            room = prompt('请输入房间号:');
+            if (!room) return;
+            
+            try {
+                // 尝试创建新房间
+                let response = await fetch('/create_go_game', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ room }),
+                });
+                
+                // 如果房间已存在，加入房间
+                if (!response.ok) {
+                    response = await fetch('/join_go_game', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ room }),
+                    });
+                }
+                
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                
+                myPlayer = data.player;
+                alert(`你是${myPlayer === 1 ? '黑棋' : '白棋'}`);
+                
+                socket.emit('join', { room });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        initGame();
+    </script>
+</body>
+</html> 
