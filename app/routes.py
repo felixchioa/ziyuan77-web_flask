@@ -639,23 +639,36 @@ def make_move():
 
     # 落子
     game['board'][x][y] = player
-    game['last_move'] = {'x': x, 'y': y, 'player': player}  # 添加 player 信息
+    game['last_move'] = {'x': x, 'y': y, 'player': player}
 
     # 检查胜负
     if check_winner(game['board'], player):
         game['scores'][player] += 1
+        # 先重置回合为黑方
+        game['turn'] = 1
+        
+        # 重置游戏前先广播最后一步
+        socketio.emit('update_board', {
+            'board': game['board'],
+            'turn': 1,  # 确保显示为黑方回合
+            'last_move': game['last_move']
+        }, room=room)
+        
+        # 延迟一小段时间后再发送游戏结束消息
+        socketio.sleep(0.5)
         socketio.emit('game_over', {
             'winner': player,
             'board': game['board'],
             'scores': game['scores'],
+            'turn': 1,  # 确保显示为黑方回合
             'last_move': game['last_move']
         }, room=room)
-        game['turn'] = 1
+        
         reset_game(room)
         return jsonify({
             'message': f'玩家{player}获胜!',
             'board': game['board'],
-            'turn': game['turn'],
+            'turn': 1,
             'last_move': game['last_move']
         }), 200
 
@@ -680,6 +693,7 @@ def make_move():
 def reset_game(room):
     games[room]['board'] = [[0]*15 for _ in range(15)]
     games[room]['turn'] = 1
+    games[room]['last_move'] = None
 
 
 @current_app.route('/reset_game', methods=['POST'])
