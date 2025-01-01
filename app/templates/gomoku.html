@@ -19,8 +19,8 @@
 
         #board {
             position: relative;
-            width: 600px;
-            height: 600px;
+            width: 560px;
+            height: 560px;
             background: #DEB887;
             padding: 20px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -48,17 +48,15 @@
         }
 
         .cell::before {
-            left: 50%;
-            height: 100%;
+            left: 20px;
+            height: 40px;
             width: 1px;
-            transform: translateX(-50%);
         }
 
         .cell::after {
-            top: 50%;
-            width: 100%;
+            top: 20px;
+            width: 40px;
             height: 1px;
-            transform: translateY(-50%);
         }
 
         /* 棋子样式 */
@@ -188,14 +186,14 @@
             // 添加横坐标
             const xCoord = document.createElement('div');
             xCoord.className = 'coordinate coordinate-x';
-            xCoord.style.left = (i * 40 + 20) + 'px';
+            xCoord.style.left = (i * 40) + 'px';
             xCoord.textContent = letters[i];
             board.appendChild(xCoord);
 
             // 添加纵坐标
             const yCoord = document.createElement('div');
             yCoord.className = 'coordinate coordinate-y';
-            yCoord.style.top = (i * 40 + 20) + 'px';
+            yCoord.style.top = (i * 40) + 'px';
             yCoord.textContent = 15 - i;
             board.appendChild(yCoord);
         }
@@ -205,8 +203,8 @@
             for (let j = 0; j < 15; j++) {
                 const cell = document.createElement('div');
                 cell.className = 'cell';
-                cell.style.left = (j * 40 + 20) + 'px';
-                cell.style.top = (i * 40 + 20) + 'px';
+                cell.style.left = (j * 40) + 'px';
+                cell.style.top = (i * 40) + 'px';
                 cell.dataset.x = i;
                 cell.dataset.y = j;
                 board.appendChild(cell);
