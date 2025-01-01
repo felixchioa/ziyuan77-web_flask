@@ -1,16 +1,408 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <title>五子棋</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
-    </head>
-    <body>
-        <h1>五子棋</h1>
-        <div id="current-turn">当前回合: 玩家1</div>
-        <div id="scores" style="position: absolute; top: 10px; right: 10px">玩家1: 0, 玩家2: 0</div>
-        <div id="board"></div>
-        <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-        <script src="{{ url_for('static', filename='js/gomoku.js') }}"></script>
-    </body>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>五子棋</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: 'Microsoft YaHei', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            margin: 20px 0;
+        }
+
+        #board {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            background: #DEB887;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            border: 2px solid #8B4513;
+            border-radius: 2px;
+            margin: 20px auto;
+        }
+
+        .cell {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            box-sizing: border-box;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        /* 棋盘网格线 */
+        .cell::before, .cell::after {
+            content: '';
+            position: absolute;
+            background-color: #000;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .cell::before {
+            left: 50%;
+            height: 100%;
+            width: 1px;
+            transform: translateX(-50%);
+        }
+
+        .cell::after {
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            transform: translateY(-50%);
+        }
+
+        /* 棋子样式 */
+        .piece {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+            pointer-events: none;
+        }
+
+        .black {
+            background: radial-gradient(circle at 30% 30%, #444, #000);
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        .white {
+            background: radial-gradient(circle at 30% 30%, #fff, #ddd);
+            border: 1px solid #ccc;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 坐标标注 */
+        .coordinate {
+            position: absolute;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .coordinate-x {
+            bottom: -25px;
+            text-align: center;
+            width: 40px;
+        }
+
+        .coordinate-y {
+            right: -25px;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        #game-info {
+            text-align: center;
+            margin: 20px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #current-turn {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        #scores {
+            font-size: 16px;
+            color: #666;
+            position: static;
+            margin: 10px 0;
+        }
+
+        /* 最后一手标记 */
+        .last-move::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 添加悬停效果 */
+        .cell:hover::before {
+            content: '';
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.1);
+            top: 2px;
+            left: 2px;
+            pointer-events: none;
+        }
+
+        /* 添加删除按钮样式 */
+        #delete-room {
+            background-color: #dc3545;
+            margin-top: 10px;
+        }
+
+        #delete-room:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-info">
+        <div id="current-turn">当前回合: 黑棋</div>
+        <div id="scores">黑棋: 0 胜 | 白棋: 0 胜</div>
+        <button id="delete-room" class="button">删除房间</button>
+    </div>
+    <div id="board"></div>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+        let currentPlayer = 1;
+        let myPlayer = null;
+        let room = null;
+        let lastMove = null;
+
+        // 初始化棋盘
+        const board = document.getElementById('board');
+        
+        // 添加坐标标注
+        const letters = 'ABCDEFGHIJKLMNO';
+        for (let i = 0; i < 15; i++) {
+            // 添加横坐标
+            const xCoord = document.createElement('div');
+            xCoord.className = 'coordinate coordinate-x';
+            xCoord.style.left = (i * 40 + 20) + 'px';
+            xCoord.textContent = letters[i];
+            board.appendChild(xCoord);
+
+            // 添加纵坐标
+            const yCoord = document.createElement('div');
+            yCoord.className = 'coordinate coordinate-y';
+            yCoord.style.top = (i * 40 + 20) + 'px';
+            yCoord.textContent = 15 - i;
+            board.appendChild(yCoord);
+        }
+
+        // 创建棋盘网格
+        for (let i = 0; i < 15; i++) {
+            for (let j = 0; j < 15; j++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.style.left = (j * 40 + 20) + 'px';
+                cell.style.top = (i * 40 + 20) + 'px';
+                cell.dataset.x = i;
+                cell.dataset.y = j;
+                board.appendChild(cell);
+            }
+        }
+
+        board.addEventListener('click', async (e) => {
+            console.log('Current player:', currentPlayer); // 调试日志
+            console.log('My player:', myPlayer); // 调试日志
+            
+            if (currentPlayer !== myPlayer) {
+                alert('不是你的回合');
+                return;
+            }
+            
+            const cell = e.target.closest('.cell');
+            if (!cell) return;
+            
+            const x = parseInt(cell.dataset.x);
+            const y = parseInt(cell.dataset.y);
+            
+            try {
+                const response = await fetch('/make_move', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        room,
+                        x,
+                        y,
+                        player: myPlayer
+                    }),
+                });
+                
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                // 不在这里更新回合，等待服务器的广播
+                console.log('Move response:', data); // 调试日志
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // 修改 updateBoard 函数，分离棋盘更新和回合更新
+        function updateBoard(boardData) {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                const x = parseInt(cell.dataset.x);
+                const y = parseInt(cell.dataset.y);
+                
+                // 清除现有棋子
+                const existingPiece = cell.querySelector('.piece');
+                if (existingPiece) {
+                    cell.removeChild(existingPiece);
+                }
+                
+                // 添加新棋子
+                if (boardData[x][y] !== 0) {
+                    const piece = document.createElement('div');
+                    piece.className = `piece ${boardData[x][y] === 1 ? 'black' : 'white'}`;
+                    cell.appendChild(piece);
+                }
+            });
+        }
+
+        // 初始化游戏
+        async function initGame() {
+            room = prompt('请输入房间号:');
+            if (!room) {
+                location.reload(); // 如果用户取消输入，刷新页面
+                return;
+            }
+            
+            try {
+                // 尝试创建新房间
+                let response = await fetch('/create_game', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ room }),
+                });
+                
+                // 如果房间已存在，加入房间
+                if (!response.ok) {
+                    response = await fetch('/join_game', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ room }),
+                    });
+                }
+                
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    location.reload(); // 如果出错，刷新页面
+                    return;
+                }
+                
+                myPlayer = data.player;
+                alert(`你是${myPlayer === 1 ? '黑棋' : '白棋'}`);
+                
+                socket.emit('join', { room });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('连接失败，请刷新页面重试');
+                location.reload();
+            }
+        }
+
+        // 修改 WebSocket 事件处理
+        socket.on('update_board', (data) => {
+            console.log('Received update_board:', data); // 调试日志
+            
+            // 强制更新当前回合
+            currentPlayer = data.turn;
+            
+            // 更新棋盘显示
+            updateBoard(data.board);
+            
+            // 直接更新回合显示
+            document.getElementById('current-turn').textContent = 
+                `当前回合: ${currentPlayer === 1 ? '黑棋' : '白棋'}`;
+        });
+
+        socket.on('game_over', (data) => {
+            console.log('Received game_over:', data); // 添加调试日志
+            updateBoard(data.board);
+            document.getElementById('scores').textContent = 
+                `黑棋: ${data.scores[1]} 胜 | 白棋: ${data.scores[2]} 胜`;
+            alert(`${data.winner === 1 ? '黑棋' : '白棋'}获胜！`);
+        });
+
+        // 添加删除房间的处理函数
+        document.getElementById('delete-room').addEventListener('click', async () => {
+            if (!room) {
+                alert('未加入任何房间');
+                return;
+            }
+
+            if (!confirm('确定要删除房间吗？这将结束当前游戏。')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/delete_game', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ room }),
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                alert('房间已删除');
+                location.reload(); // 刷新页面
+            } catch (error) {
+                console.error('Error:', error);
+                alert('删除房间失败');
+            }
+        });
+
+        // 添加监听房间删除的事件
+        socket.on('game_deleted', (data) => {
+            alert(data.message);
+            location.reload(); // 刷新页面
+        });
+
+        // 添加断开连接的处理
+        socket.on('player_disconnected', (data) => {
+            alert(data.message);
+            location.reload(); // 刷新页面
+        });
+
+        // 添加页面关闭事件处理
+        window.addEventListener('beforeunload', () => {
+            if (room) {
+                socket.emit('disconnect');
+            }
+        });
+
+        // 启动游戏
+        initGame();
+    </script>
+    
+</body>
 </html>

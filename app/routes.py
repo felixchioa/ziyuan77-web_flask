@@ -24,6 +24,7 @@ chat_collection = chat_db['messages']
 users_collection = chat_db['users']
 
 online_users = {}
+user_rooms = {}  # 用于跟踪用户与房间的关系
 
 
 @current_app.before_request
@@ -321,9 +322,20 @@ def handle_connect():
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    if request.sid in online_users:
-        del online_users[request.sid]
-        socketio.emit('user_list', list(online_users.values()))
+    sid = request.sid  # 获取断开连接的用户的session id
+    if sid in user_rooms:
+        room = user_rooms[sid]
+        if room in games:
+            # 通知房间内的其他玩家
+            socketio.emit('player_disconnected', {
+                'message': '对方已断开连接，房间已关闭'
+            }, room=room)
+            
+            # 删除房间
+            del games[room]
+            
+            # 清理用户房间记录
+            del user_rooms[sid]
 
 
 @current_app.route('/add_friend', methods=['POST'])
@@ -511,15 +523,24 @@ def gomoku():
 @current_app.route('/join_game', methods=['POST'])
 def join_game():
     room = request.json.get('room')
+    if not room:
+        return jsonify({'error': '房间号不能为空'}), 400
+        
     if room not in games:
         return jsonify({'error': '房间不存在'}), 404
 
     game = games[room]
-    player_number = None
-    if len(game['players']) < 2:
-        player_number = len(game['players']) + 1
-        game['players'].append(player_number)
-    return jsonify({'message': '加入游戏成功', 'room': room, 'player': player_number}), 200
+    if len(game['players']) >= 2:
+        return jsonify({'error': '房间已满'}), 400
+
+    # 第二个玩家是白棋
+    game['players'].append(2)
+    
+    return jsonify({
+        'message': '加入游戏成功',
+        'player': 2,
+        'room': room
+    }), 200
 
 
 @current_app.route('/create_game', methods=['POST'])
@@ -529,14 +550,30 @@ def create_game():
         return jsonify({'error': '房间号不能为空'}), 400
     if room in games:
         return jsonify({'error': '房间已存在'}), 400
-    games[room] = {'board': [[0]*15 for _ in range(15)], 'turn': 1, 'players': []}
-    return jsonify({'message': '游戏创建成功', 'room': room}), 200
+    
+    games[room] = {
+        'board': [[0]*15 for _ in range(15)],
+        'turn': 1,  # 1代表黑棋，2代表白棋
+        'players': [],
+        'scores': {1: 0, 2: 0}
+    }
+    
+    # 第一个玩家是黑棋
+    games[room]['players'].append(1)
+    
+    return jsonify({
+        'message': '游戏创建成功',
+        'player': 1,
+        'room': room
+    }), 200
 
 
 @socketio.on('join')
 def on_join(data):
     room = data['room']
     join_room(room)
+    # 记录用户与房间的关系
+    user_rooms[request.sid] = room
     emit('message', {'msg': 'A player has entered the room.'}, room=room)
 
 
@@ -561,10 +598,11 @@ def check_winner(board, player):
 
 @current_app.route('/make_move', methods=['POST'])
 def make_move():
-    room = request.json.get('room')
-    x = int(request.json.get('x'))
-    y = int(request.json.get('y'))
-    player = int(request.json.get('player'))
+    data = request.json
+    room = data.get('room')
+    x = int(data.get('x'))
+    y = int(data.get('y'))
+    player = int(data.get('player'))
 
     if not room or x is None or y is None or player is None:
         return jsonify({'error': '请求数据不完整'}), 400
@@ -574,9 +612,7 @@ def make_move():
 
     game = games[room]
 
-    if player not in [1, 2]:
-        return jsonify({'error': '无效的玩家'}), 400
-
+    # 检查是否是该玩家的回合
     if game['turn'] != player:
         return jsonify({'error': '不是你的回合'}), 400
 
@@ -584,26 +620,40 @@ def make_move():
         return jsonify({'error': '无效的坐标'}), 400
 
     if game['board'][x][y] != 0:
-        return jsonify({'error': '无效的移动'}), 400
+        return jsonify({'error': '该位置已有棋子'}), 400
 
+    # 落子
     game['board'][x][y] = player
 
     # 检查胜负
     if check_winner(game['board'], player):
-        if 'scores' not in game:
-            game['scores'] = {1: 0, 2: 0}
         game['scores'][player] += 1
-
-        socketio.emit('game_over', {'winner': player, 'board': game['board'], 'scores': game['scores']}, room=room)
+        socketio.emit('game_over', {
+            'winner': player,
+            'board': game['board'],
+            'scores': game['scores']
+        }, room=room)
         reset_game(room)
-        return jsonify({'message': f'玩家{player}获胜!', 'board': game['board']}), 200
+        return jsonify({
+            'message': f'玩家{player}获胜!',
+            'board': game['board'],
+            'turn': game['turn']
+        }), 200
 
-    game['turn'] = 3 - player  # 切换玩家
+    # 切换回合
+    game['turn'] = 3 - player
 
-    # 使用 WebSocket 上下文中的房间标识符
-    socketio.emit('update_board', {'board': game['board'], 'turn': game['turn']}, room=room)
+    # 广播更新
+    socketio.emit('update_board', {
+        'board': game['board'],
+        'turn': game['turn']
+    }, room=room)
 
-    return jsonify({'message': '移动成功', 'board': game['board'], 'player': 3 - player}), 200
+    return jsonify({
+        'message': '移动成功',
+        'board': game['board'],
+        'turn': game['turn']
+    }), 200
 
 
 def reset_game(room):
@@ -637,271 +687,20 @@ def on_leave(data):
     leave_room(room)
     emit('message', {'msg': f'{data["username"]} has left the room.'}, room=room)
 
-"""
-围棋代码,未修复bug,暂时注释
-@current_app.route('/go')
-def go():
-    return render_template('go.html')
 
-# 创建一个新的游戏字典来存储围棋游戏
-go_games = {}
-
-@current_app.route('/create_go_game', methods=['POST'])
-def create_go_game():
+@current_app.route('/delete_game', methods=['POST'])
+def delete_game():
     room = request.json.get('room')
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
-    if room in go_games:
-        return jsonify({'error': '房间已存在'}), 400
-    
-    go_games[room] = {
-        'board': [[0]*19 for _ in range(19)],
-        'turn': 1,  # 1代表黑棋，2代表白棋
-        'players': [],
-        'last_board': None,  # 用于检查劫争
-        'captured': {1: 0, 2: 0},  # 记录双方提子数
-        'pass_count': 0  # 记录连续PASS的次数
-    }
-    return jsonify({'message': '游戏创建成功', 'room': room}), 200
-
-@current_app.route('/join_go_game', methods=['POST'])
-def join_go_game():
-    room = request.json.get('room')
-    if room not in go_games:
-        return jsonify({'error': '房间不存在'}), 404
-
-    game = go_games[room]
-    player_number = None
-    if len(game['players']) < 2:
-        player_number = len(game['players']) + 1
-        game['players'].append(player_number)
-    return jsonify({
-        'message': '加入游戏成功', 
-        'room': room, 
-        'player': player_number
-    }), 200
-
-def count_liberties(board, x, y, checked=None):
-    计算一个棋子或棋组的气
-    if checked is None:
-        checked = set()
-    
-    if not (0 <= x < 19 and 0 <= y < 19):
-        return 0
-    
-    position = (x, y)
-    if position in checked:
-        return 0
         
-    checked.add(position)
-    color = board[x][y]
-    if color == 0:
-        return 1
-    
-    liberties = 0
-    for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
-        next_x, next_y = x + dx, y + dy
-        if 0 <= next_x < 19 and 0 <= next_y < 19:
-            if board[next_x][next_y] == 0:
-                liberties += 1
-            elif board[next_x][next_y] == color:
-                liberties += count_liberties(board, next_x, next_y, checked)
-    return liberties
-
-def is_valid_move(game, x, y, player):
-    检查是否是有效的落子
-    board = game['board']
-    if board[x][y] != 0:
-        return False
-        
-    # 临时落子以检查是否自杀或劫争
-    board[x][y] = player
-    
-    # 检查是否有气
-    has_liberties = count_liberties(board, x, y) > 0
-    
-    
-    # 如果没气，检查是否能提对方的子
-    if not has_liberties:
-        can_capture = False
-        for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
-            next_x, next_y = x + dx, y + dy
-            if 0 <= next_x < 19 and 0 <= next_y < 19:
-                if board[next_x][next_y] == 3 - player:
-                    if count_liberties(board, next_x, next_y) == 0:
-                        can_capture = True
-                        break
-        if not can_capture:
-            board[x][y] = 0  # 恢复棋盘
-            return False
-            
-    # 检查劫争
-    if game['last_board']:
-        # 比较当前局面与上一局面
-        if all(board[i][j] == game['last_board'][i][j] 
-               for i in range(19) for j in range(19)):
-            board[x][y] = 0
-            return False
-            
-    board[x][y] = 0  # 恢复棋盘
-    return True
-
-@current_app.route('/make_go_move', methods=['POST'])
-def make_go_move():
-    data = request.json
-    room = data.get('room')
-    player = int(data.get('player'))
-    is_pass = data.get('pass', False)
-    
-    if room not in go_games:
+    if room not in games:
         return jsonify({'error': '房间不存在'}), 404
         
-    game = go_games[room]
+    # 通知房间内的所有玩家游戏已被删除
+    socketio.emit('game_deleted', {'message': '房间已被删除'}, room=room)
     
-    # 检查是否是该玩家的回合
-    if game['turn'] != player:
-        return jsonify({'error': '不是你的回合'}), 400
+    # 删除房间
+    del games[room]
     
-    if is_pass:
-        game['pass_count'] += 1
-        if game['pass_count'] >= 2:
-            # 游戏结束，计算胜负
-            result = calculate_score(game)
-            socketio.emit('go_game_over', result, room=room)
-            return jsonify(result), 200
-        game['turn'] = 3 - player
-        socketio.emit('update_go_board', {
-            'board': game['board'],
-            'turn': game['turn'],
-            'captured': game['captured']
-        }, room=room)
-        return jsonify({'message': '玩家选择PASS'}), 200
-    
-    # 非 pass 的情况
-    x = int(data.get('x'))
-    y = int(data.get('y'))
-    
-    game['pass_count'] = 0  # 重置连续PASS计数
-    
-    if not is_valid_move(game, x, y, player):
-        return jsonify({'error': '无效的移动'}), 400
-        
-    # 保存当前局面用于劫争检查
-    game['last_board'] = [row[:] for row in game['board']]
-    
-    # 落子
-    game['board'][x][y] = player
-    
-    # 检查并提取死子
-    captured = check_and_remove_dead_stones(game, x, y, player)
-    game['captured'][player] += captured
-    
-    game['turn'] = 3 - player
-    
-    socketio.emit('update_go_board', {
-        'board': game['board'],
-        'turn': game['turn'],
-        'captured': game['captured']
-    }, room=room)
-    
-    return jsonify({
-        'message': '移动成功',
-        'board': game['board'],
-        'captured': game['captured']
-    }), 200
-
-def check_and_remove_dead_stones(game, x, y, player):
-    检查并提取死子，返回提子数量
-    captured = 0
-    board = game['board']
-    for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
-        next_x, next_y = x + dx, y + dy
-        if 0 <= next_x < 19 and 0 <= next_y < 19:
-            if board[next_x][next_y] == 3 - player:
-                if count_liberties(board, next_x, next_y) == 0:
-                    captured += remove_group(game, next_x, next_y)
-    return captured
-
-def remove_group(game, x, y):
-    移除一个死棋组，返回提子数量
-    count = 0
-    color = game['board'][x][y]
-    stack = [(x, y)]
-    removed = set()
-    
-    while stack:
-        curr_x, curr_y = stack.pop()
-        if (curr_x, curr_y) in removed:
-            continue
-            
-        if game['board'][curr_x][curr_y] == color:
-            game['board'][curr_x][curr_y] = 0
-            removed.add((curr_x, curr_y))
-            count += 1
-            
-            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
-                next_x, next_y = curr_x + dx, curr_y + dy
-                if 0 <= next_x < 19 and 0 <= next_y < 19:
-                    if game['board'][next_x][next_y] == color:
-                        stack.append((next_x, next_y))
-    
-    return count
-
-def calculate_score(game):
-    计算游戏最终得分
-    board = game['board']
-    territory = [[0]*19 for _ in range(19)]
-    black_territory = 0
-    white_territory = 0
-    
-    # 计算领地
-    for i in range(19):
-        for j in range(19):
-            if board[i][j] == 0:
-                # 使用flood fill算法确定空点属于谁的领地
-                territory_color = determine_territory(board, i, j)
-                if territory_color == 1:
-                    black_territory += 1
-                elif territory_color == 2:
-                    white_territory += 1
-    
-    # 最终得分 = 领地 + 提子数
-    black_score = black_territory + game['captured'][1]
-    white_score = white_territory + game['captured'][2] + 6.5  # 贴目
-    
-    return {
-        'black_score': black_score,
-        'white_score': white_score,
-        'winner': 1 if black_score > white_score else 2,
-        'territory': territory
-    }
-
-def determine_territory(board, x, y):
-    确定一片空地属于谁的领地
-    checked = set()
-    stack = [(x, y)]
-    empty_points = set()
-    borders = set()
-    
-    while stack:
-        curr_x, curr_y = stack.pop()
-        if (curr_x, curr_y) in checked:
-            continue
-            
-        checked.add((curr_x, curr_y))
-        if board[curr_x][curr_y] == 0:
-            empty_points.add((curr_x, curr_y))
-            for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
-                next_x, next_y = curr_x + dx, curr_y + dy
-                if 0 <= next_x < 19 and 0 <= next_y < 19:
-                    if board[next_x][next_y] == 0:
-                        stack.append((next_x, next_y))
-                    else:
-                        borders.add((next_x, next_y))
-    
-    # 判断边界都是同色则属于该颜色的领地
-    border_colors = {board[x][y] for x, y in borders}
-    if len(border_colors) == 1:
-        return border_colors.pop()
-    return 0  # 中立点
-"""
+    return jsonify({'message': '房间删除成功'}), 200
