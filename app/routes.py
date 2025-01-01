@@ -1045,13 +1045,6 @@ def background_task():
         socketio.sleep(5)
 
 
-@socketio.on('connect')
-def handle_connect():
-    if session.get('is_admin'):
-        print("Admin connected, starting background task")
-        socketio.start_background_task(background_task)
-
-
 @socketio.on('update_interval')
 def handle_interval_update(data):
     if session.get('is_admin'):
