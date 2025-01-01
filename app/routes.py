@@ -720,6 +720,7 @@ def is_valid_move(game, x, y, player):
     # 检查是否有气
     has_liberties = count_liberties(board, x, y) > 0
     
+    
     # 如果没气，检查是否能提对方的子
     if not has_liberties:
         can_capture = False
