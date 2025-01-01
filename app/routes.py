@@ -2,7 +2,7 @@ import random
 from collections import Counter
 import tempfile
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from bson import json_util
 from bson.objectid import ObjectId
 import requests
@@ -58,6 +58,16 @@ def serve_robots():
 @current_app.route('/')
 def index():
     logger.debug("Rendering index.html")
+    # 生成会话ID
+    if 'user_id' not in session:
+        session['user_id'] = str(ObjectId())
+
+    # 更新用户最后在线时间
+    online_users[session['user_id']] = datetime.now()
+
+    # 清理过期用户
+    cleanup_online_users()
+
     return render_template('index.html')
 
 
@@ -307,35 +317,18 @@ def handle_message(data):
 
 @socketio.on('connect')
 def handle_connect():
-    if 'username' in session:
-        username = session['username']
-        online_users[request.sid] = username
-        socketio.emit('user_list', list(online_users.values()))
-
-        # 检查未读消息
-        unread_messages = chat_collection.find({'recipient': username, 'unread': True})
-        for message in unread_messages:
-            socketio.emit('private_message', message, room=request.sid)
-            # 标记消息为已读
-            chat_collection.update_one({'_id': message['_id']}, {'$set': {'unread': False}})
+    """处理用户连接"""
+    if 'user_id' in session:
+        online_users[session['user_id']] = datetime.now()
+        emit('update_online_count', {'count': len(online_users)}, broadcast=True)
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    sid = request.sid  # 获取断开连接的用户的session id
-    if sid in user_rooms:
-        room = user_rooms[sid]
-        if room in games:
-            # 通知房间内的其他玩家
-            socketio.emit('player_disconnected', {
-                'message': '对方已断开连接，房间已关闭'
-            }, room=room)
-            
-            # 删除房间
-            del games[room]
-            
-            # 清理用户房间记录
-            del user_rooms[sid]
+    """处理用户断开连接"""
+    if 'user_id' in session:
+        online_users.pop(session['user_id'], None)
+        emit('update_online_count', {'count': len(online_users)}, broadcast=True)
 
 
 @current_app.route('/add_friend', methods=['POST'])
@@ -786,3 +779,31 @@ def surrender():
 
     reset_game(room)
     return jsonify({'message': '认输成功'}), 200
+
+
+def cleanup_online_users():
+    """清理超时的用户"""
+    current_time = datetime.now()
+    timeout = timedelta(minutes=5)  # 5分钟超时
+    expired = [sid for sid, last_seen in online_users.items() 
+              if current_time - last_seen > timeout]
+    for sid in expired:
+        online_users.pop(sid, None)
+
+
+@socketio.on('chat_message')
+def handle_chat_message(data):
+    """处理聊天消息"""
+    room = data.get('room')
+    message = data.get('message')
+    player = data.get('player')
+    
+    if not room or not message or player not in [1, 2]:
+        return
+    
+    # 广播消息到房间
+    emit('chat_message', {
+        'message': message,
+        'player': player,
+        'timestamp': datetime.now().strftime('%H:%M:%S')
+    }, room=room)

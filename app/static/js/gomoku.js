@@ -43,6 +43,10 @@ const socket = io();
             yCoord.style.top = (i * 40) + 'px';
             yCoord.textContent = 15 - i;
             board.appendChild(yCoord);
+
+            // 在创建坐标标注时设置 CSS 变量
+            xCoord.style.setProperty('--x', i);
+            yCoord.style.setProperty('--y', i);
         }
 
         // 创建棋盘网格
@@ -55,6 +59,10 @@ const socket = io();
                 cell.dataset.x = i;
                 cell.dataset.y = j;
                 board.appendChild(cell);
+
+                // 在创建棋盘格子时设置 CSS 变量
+                cell.style.setProperty('--x', j);
+                cell.style.setProperty('--y', i);
             }
         }
 
@@ -656,18 +664,41 @@ const socket = io();
             }
         });
 
-        // 添加记录落子的函数
+        // 修改添加落子记录的函数
         function addMoveToHistory(x, y, player) {
             const movesList = document.getElementById('moves-list');
-            const moveNumber = movesList.children.length + 1;
+            const moveNumber = movesList.querySelectorAll('.move-item').length + 1;
             const letter = letters[y];
             const number = 15 - x;
             
-            const moveItem = document.createElement('div');
+            // 创建新的记录项
+            const moveItem = document.createElement('li');
             moveItem.className = `move-item ${player === 1 ? 'black' : 'white'}`;
             moveItem.textContent = `${moveNumber}. ${player === 1 ? '黑' : '白'} ${letter}${number}`;
             
-            movesList.appendChild(moveItem);
+            // 检查是否需要创建新的块
+            if (moveNumber % 20 === 1) { // 每20步创建一个新块
+                const blockDiv = document.createElement('div');
+                blockDiv.className = 'moves-block';
+                
+                const header = document.createElement('div');
+                header.className = 'block-header';
+                header.textContent = `第 ${Math.floor((moveNumber-1)/20) + 1} 块`;
+                
+                const moveList = document.createElement('ul');
+                moveList.className = 'move-list';
+                
+                blockDiv.appendChild(header);
+                blockDiv.appendChild(moveList);
+                movesList.appendChild(blockDiv);
+            }
+            
+            // 获取最后一个块的列表并添加记录
+            const lastBlock = movesList.lastElementChild;
+            const moveList = lastBlock.querySelector('.move-list');
+            moveList.appendChild(moveItem);
+            
+            // 自动滚动到最新记录
             movesList.scrollTop = movesList.scrollHeight;
         }
 
@@ -748,6 +779,45 @@ const socket = io();
         requestAnimationFrame(function updateUTC() {
             updateUTCTime();
             requestAnimationFrame(updateUTC);
+        });
+
+        // 添加聊天相关代码
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-message');
+        const chatMessages = document.getElementById('chat-messages');
+
+        // 发送消息
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            socket.emit('chat_message', {
+                room,
+                message,
+                player: myPlayer
+            });
+            
+            chatInput.value = '';
+        }
+
+        // 监听发送按钮点击
+        sendButton.addEventListener('click', sendMessage);
+
+        // 监听回车键
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // 接收消息
+        socket.on('chat_message', (data) => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${data.player === myPlayer ? 'sent' : 'received'}`;
+            messageDiv.textContent = `${data.player === 1 ? '黑方' : '白方'} ${data.timestamp}: ${data.message}`;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         });
 
         // 启动游戏
