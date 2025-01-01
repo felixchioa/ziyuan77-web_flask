@@ -545,7 +545,11 @@ def join_game():
 
 @current_app.route('/create_game', methods=['POST'])
 def create_game():
-    room = request.json.get('room')
+    data = request.json
+    room = data.get('room')
+    allow_undo = data.get('allow_undo', False)  # 是否允许悔棋
+    allow_surrender = data.get('allow_surrender', True)  # 是否允许认输
+    
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
     if room in games:
@@ -553,18 +557,24 @@ def create_game():
     
     games[room] = {
         'board': [[0]*15 for _ in range(15)],
-        'turn': 1,  # 1代表黑棋，2代表白棋
+        'turn': 1,
         'players': [],
-        'scores': {1: 0, 2: 0}
+        'scores': {1: 0, 2: 0},
+        'history': [],  # 记录每步棋的历史
+        'allow_undo': allow_undo,
+        'allow_surrender': allow_surrender
     }
     
-    # 第一个玩家是黑棋
     games[room]['players'].append(1)
     
     return jsonify({
         'message': '游戏创建成功',
         'player': 1,
-        'room': room
+        'room': room,
+        'settings': {
+            'allow_undo': allow_undo,
+            'allow_surrender': allow_surrender
+        }
     }), 200
 
 
@@ -621,6 +631,12 @@ def make_move():
 
     if game['board'][x][y] != 0:
         return jsonify({'error': '该位置已有棋子'}), 400
+
+    # 在落子前保存当前状态
+    game['history'].append({
+        'board': [row[:] for row in game['board']],
+        'turn': game['turn']
+    })
 
     # 落子
     game['board'][x][y] = player
@@ -704,3 +720,63 @@ def delete_game():
     del games[room]
     
     return jsonify({'message': '房间删除成功'}), 200
+
+
+@current_app.route('/undo_move', methods=['POST'])
+def undo_move():
+    data = request.json
+    room = data.get('room')
+    player = data.get('player')
+
+    if not room or room not in games:
+        return jsonify({'error': '房间不存在'}), 404
+
+    game = games[room]
+    
+    if not game['allow_undo']:
+        return jsonify({'error': '该房间不允许悔棋'}), 400
+        
+    if not game['history']:
+        return jsonify({'error': '没有可以悔棋的步骤'}), 400
+
+    # 恢复到上一步
+    last_move = game['history'].pop()
+    game['board'] = last_move['board']
+    game['turn'] = last_move['turn']
+
+    # 广播更新
+    socketio.emit('update_board', {
+        'board': game['board'],
+        'turn': game['turn']
+    }, room=room)
+
+    return jsonify({'message': '悔棋成功'}), 200
+
+
+@current_app.route('/surrender', methods=['POST'])
+def surrender():
+    data = request.json
+    room = data.get('room')
+    player = data.get('player')
+
+    if not room or room not in games:
+        return jsonify({'error': '房间不存在'}), 404
+
+    game = games[room]
+    
+    if not game['allow_surrender']:
+        return jsonify({'error': '该房间不允许认输'}), 400
+
+    # 对手获胜
+    winner = 3 - player
+    game['scores'][winner] += 1
+
+    socketio.emit('game_over', {
+        'winner': winner,
+        'board': game['board'],
+        'scores': game['scores'],
+        'surrender': True
+    }, room=room)
+
+    reset_game(room)
+    return jsonify({'message': '认输成功'}), 200

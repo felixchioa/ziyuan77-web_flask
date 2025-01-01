@@ -387,7 +387,7 @@
                 input.focus();
             }).then(async (roomId) => {
                 if (!roomId) {
-                    window.location.href = '/'; // 改为返回首页
+                    window.location.href = '/tools'; // 返回工具页面
                     return;
                 }
 
@@ -416,7 +416,7 @@
                     const data = await response.json();
                     if (data.error) {
                         alert(data.error);
-                        window.location.href = '/'; // 改为返回首页
+                        window.location.href = '/tools';
                         return;
                     }
                     
@@ -427,7 +427,7 @@
                 } catch (error) {
                     console.error('Error:', error);
                     alert('连接失败，请重试');
-                    window.location.href = '/'; // 改为返回首页
+                    window.location.href = '/tools';
                 }
             });
         }
