@@ -640,6 +640,7 @@ def make_move():
 
     # 落子
     game['board'][x][y] = player
+    game['last_move'] = {'x': x, 'y': y, 'player': player}  # 添加 player 信息
 
     # 检查胜负
     if check_winner(game['board'], player):
@@ -647,28 +648,33 @@ def make_move():
         socketio.emit('game_over', {
             'winner': player,
             'board': game['board'],
-            'scores': game['scores']
+            'scores': game['scores'],
+            'last_move': game['last_move']
         }, room=room)
+        game['turn'] = 1
         reset_game(room)
         return jsonify({
             'message': f'玩家{player}获胜!',
             'board': game['board'],
-            'turn': game['turn']
+            'turn': game['turn'],
+            'last_move': game['last_move']
         }), 200
 
-    # 切换回合
+    # 如果没有胜负，才切换回合
     game['turn'] = 3 - player
 
     # 广播更新
     socketio.emit('update_board', {
         'board': game['board'],
-        'turn': game['turn']
+        'turn': game['turn'],
+        'last_move': game['last_move']
     }, room=room)
 
     return jsonify({
         'message': '移动成功',
         'board': game['board'],
-        'turn': game['turn']
+        'turn': game['turn'],
+        'last_move': game['last_move']
     }), 200
 
 

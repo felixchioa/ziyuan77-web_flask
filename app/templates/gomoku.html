@@ -7,14 +7,146 @@
         body {
             background-color: #f5f5f5;
             font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #game-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        #move-history {
+            width: 180px;
+            flex-shrink: 0;
+        }
+
+        #game-content {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        h1 {
+        #game-info {
+            display: flex;
+            flex-direction: column;
+            width: 180px;
+            flex-shrink: 0;
+        }
+
+        #move-history h3 {
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
             color: #333;
-            margin: 20px 0;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .move-item {
+            padding: 8px 12px;
+            margin: 4px 0;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .move-item:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: translateX(2px);
+        }
+
+        .move-item.black {
+            color: #000;
+            border-left: 3px solid #000;
+            font-weight: bold;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .move-item.white {
+            color: #666;
+            border-left: 3px solid #666;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        #current-turn {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        #scores {
+            font-size: 16px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        #timer {
+            margin: 10px 0;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .timer-item {
+            margin: 0;
+            padding: 3px;
+            border-radius: 4px;
+            background: #f8f9fa;
+        }
+
+        .timer-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .timer-display {
+            font-size: 16px;
+            padding: 4px;
+            text-align: center;
+            background: white;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            color: #333;
+        }
+
+        .black-timer {
+            border-left: 3px solid #000;
+        }
+
+        .white-timer {
+            border-left: 3px solid #666;
+        }
+
+        /* 当前回合的计时器高亮效果 */
+        .timer-active {
+            background: #e9ecef;
+            box-shadow: 0 0 8px rgba(0, 150, 255, 0.2);
+        }
+
+        /* 数字变化动画 */
+        .timer-display span.changing {
+            transform: scale(1.05);
+            color: #007bff;
         }
 
         #board {
@@ -23,10 +155,9 @@
             height: 560px;
             background: #DEB887;
             padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             border: 2px solid #8B4513;
-            border-radius: 2px;
-            margin: 20px auto;
+            border-radius: 4px;
         }
 
         .cell {
@@ -44,18 +175,18 @@
             position: absolute;
             background-color: #000;
             pointer-events: none;
-            z-index: 0;
+            z-index: 1;
         }
 
         .cell::before {
             left: 20px;
-            height: 40px;
+            height: 41px;
             width: 1px;
         }
 
         .cell::after {
             top: 20px;
-            width: 40px;
+            width: 41px;
             height: 1px;
         }
 
@@ -67,8 +198,8 @@
             border-radius: 50%;
             top: 2px;
             left: 2px;
-            transition: transform 0.2s;
-            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 2;
         }
 
         .black {
@@ -82,46 +213,70 @@
             box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        /* 坐标标注 */
         .coordinate {
             position: absolute;
             font-size: 14px;
-            color: #000;
+            color: #8B4513;
+            font-weight: bold;
         }
 
         .coordinate-x {
             bottom: -25px;
             text-align: center;
             width: 40px;
+            transform: translateX(-20px);
         }
 
         .coordinate-y {
             right: -25px;
             height: 40px;
             line-height: 40px;
+            transform: translateY(-20px);
         }
 
-        #game-info {
-            text-align: center;
-            margin: 20px;
+        #delete-room {
+            width: 100%;
             padding: 10px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        #current-turn {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        #scores {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
             font-size: 16px;
-            color: #666;
-            position: static;
-            margin: 10px 0;
+            transition: background-color 0.2s;
+        }
+
+        #delete-room:hover {
+            background-color: #c82333;
+        }
+
+        /* 添加响应式设计 */
+        @media (max-width: 1200px) {
+            #game-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            #move-history, #game-info {
+                width: 220px;
+            }
+
+            #game-content {
+                order: -1;
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            #game-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #move-history, #game-info {
+                width: 100%;
+                max-width: 600px;
+            }
         }
 
         /* 最后一手标记 */
@@ -135,9 +290,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            z-index: 3;
         }
 
-        /* 添加悬停效果 */
+        /* 悬停效果 */
         .cell:hover::before {
             content: '';
             position: absolute;
@@ -148,26 +304,121 @@
             top: 2px;
             left: 2px;
             pointer-events: none;
+            z-index: 4;
         }
 
-        /* 添加删除按钮样式 */
-        #delete-room {
-            background-color: #dc3545;
-            margin-top: 10px;
+        .current-timer {
+            border-left: 3px solid #007bff;
+            background: linear-gradient(to right, rgba(0, 123, 255, 0.1), transparent);
         }
 
-        #delete-room:hover {
-            background-color: #c82333;
+        .timer-active .current-timer {
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
         }
+
+        #game-duration {
+            margin: 0 0 10px 0;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-timer {
+            border-left: 3px solid #28a745;
+            background: linear-gradient(to right, rgba(40, 167, 69, 0.1), transparent);
+        }
+
+        .utc-timer {
+            border-left: 3px solid #9c27b0;
+            background: linear-gradient(to right, rgba(156, 39, 176, 0.1), transparent);
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        #utc-display {
+            font-size: 18px;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        <style id="countdown-style">
+            #countdown-alert {
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(255, 0, 0, 0.9);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 5px;
+                font-weight: bold;
+                z-index: 1000;
+                display: none;
+                animation: pulse 1s infinite;
+            }
+
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.7; }
+                100% { opacity: 1; }
+            }
+        </style>
     </style>
 </head>
 <body>
-    <div id="game-info">
-        <div id="current-turn">当前回合: 黑棋</div>
-        <div id="scores">黑棋: 0 胜 | 白棋: 0 胜</div>
-        <button id="delete-room" class="button">删除房间</button>
+    <div id="game-container">
+        <div id="move-history">
+            <h3>落子记录</h3>
+            <div id="moves-list"></div>
+        </div>
+        
+        <div id="board"></div>
+        
+        <div id="game-info">
+            <div id="current-turn">当前回合: 黑棋</div>
+            <div id="scores">黑棋: 0 胜 | 白棋: 0 胜</div>
+            <div id="utc-time" class="timer-item">
+                <div class="timer-label">协调世界时</div>
+                <div class="timer-display utc-timer">
+                    <span id="utc-display">00:00:00.00</span>
+                </div>
+            </div>
+            <div id="game-duration" class="timer-item">
+                <div class="timer-label">游戏时长</div>
+                <div class="timer-display game-timer">
+                    <span id="game-time">00:00</span>
+                </div>
+            </div>
+            <div id="timer">
+                <div class="timer-item">
+                    <div class="timer-label">总时间</div>
+                    <div class="timer-display">
+                        <span id="total-time">00:00</span>
+                    </div>
+                </div>
+                <div class="timer-item">
+                    <div class="timer-label">当前手</div>
+                    <div class="timer-display current-timer">
+                        <span id="current-time">00:00</span>
+                    </div>
+                </div>
+                <div class="timer-item">
+                    <div class="timer-label">黑方时间</div>
+                    <div class="timer-display black-timer">
+                        <span id="black-time">00:00</span>
+                    </div>
+                </div>
+                <div class="timer-item">
+                    <div class="timer-label">白方时间</div>
+                    <div class="timer-display white-timer">
+                        <span id="white-time">00:00</span>
+                    </div>
+                </div>
+            </div>
+            <button id="delete-room" class="button">删除房间</button>
+        </div>
     </div>
-    <div id="board"></div>
 
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script>
@@ -176,6 +427,26 @@
         let myPlayer = null;
         let room = null;
         let lastMove = null;
+        
+        // 添加计时器相关变量
+        let gameStartTime = null;
+        let blackTotalTime = 0;
+        let whiteTotalTime = 0;
+        let currentTurnStartTime = null;
+        let timerInterval = null;
+        let lastUpdateTime = null;
+        let currentMoveStartTime = null;
+        
+        // 添加超时和倒计时相关变量
+        let autoMoveTimeout = null;
+        let countdownInterval = null;
+        const TIMEOUT_DURATION = 30000; // 30秒
+        const COUNTDOWN_START = 10; // 开始倒计时的秒数
+
+        // 创建倒计时提示元素
+        const countdownAlert = document.createElement('div');
+        countdownAlert.id = 'countdown-alert';
+        document.body.appendChild(countdownAlert);
 
         // 初始化棋盘
         const board = document.getElementById('board');
@@ -211,9 +482,83 @@
             }
         }
 
+        // 添加随机落子函数
+        async function makeRandomMove() {
+            if (currentPlayer !== myPlayer) return;
+            
+            // 获取所有空位置
+            const emptyCells = [];
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach(cell => {
+                const x = parseInt(cell.dataset.x);
+                const y = parseInt(cell.dataset.y);
+                if (!cell.querySelector('.piece')) {
+                    emptyCells.push({ x, y });
+                }
+            });
+
+            // 如果还有空位置，随机选择一个
+            if (emptyCells.length > 0) {
+                const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                try {
+                    const response = await fetch('/make_move', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            room,
+                            x: randomCell.x,
+                            y: randomCell.y,
+                            player: myPlayer
+                        }),
+                    });
+                    
+                    const data = await response.json();
+                    if (data.error) {
+                        console.error('Random move error:', data.error);
+                        return;
+                    }
+                    
+                    lastMove = { x: randomCell.x, y: randomCell.y };
+                    
+                } catch (error) {
+                    console.error('Error making random move:', error);
+                }
+            }
+        }
+
+        // 修改落子函数
+        async function makeMove(x, y) {
+            try {
+                const response = await fetch('/make_move', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        room,
+                        x,
+                        y,
+                        player: myPlayer
+                    }),
+                });
+                
+                const data = await response.json();
+                if (data.error) {
+                    console.error(data.error);
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Error:', error);
+                return false;
+            }
+        }
+
+        // 修改点击事件处理
         board.addEventListener('click', async (e) => {
-            console.log('Current player:', currentPlayer); // 调试日志
-            console.log('My player:', myPlayer); // 调试日志
+            console.log('Board clicked');  // 调试日志
             
             if (currentPlayer !== myPlayer) {
                 alert('不是你的回合');
@@ -223,8 +568,25 @@
             const cell = e.target.closest('.cell');
             if (!cell) return;
             
+            // 检查是否已经有棋子
+            if (cell.querySelector('.piece')) {
+                console.log('Cell already has piece');  // 调试日志
+                return;
+            }
+            
             const x = parseInt(cell.dataset.x);
             const y = parseInt(cell.dataset.y);
+            
+            console.log('Attempting move at:', x, y);  // 调试日志
+            
+            // 清除当前的超时计时器和倒计时
+            if (autoMoveTimeout) {
+                clearTimeout(autoMoveTimeout);
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownAlert.style.display = 'none';
+            }
             
             try {
                 const response = await fetch('/make_move', {
@@ -245,32 +607,37 @@
                     alert(data.error);
                     return;
                 }
-
-                // 不在这里更新回合，等待服务器的广播
-                console.log('Move response:', data); // 调试日志
+                
+                console.log('Move successful');  // 调试日志
+                lastMove = { x, y };
+                
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error making move:', error);
+                alert('落子失败，请重试');
             }
         });
 
-        // 修改 updateBoard 函数，分离棋盘更新和回合更新
-        function updateBoard(boardData) {
+        // 修改 updateBoard 函数
+        function updateBoard(boardData, lastMoveData) {
             const cells = document.querySelectorAll('.cell');
             cells.forEach(cell => {
                 const x = parseInt(cell.dataset.x);
                 const y = parseInt(cell.dataset.y);
                 
-                // 清除现有棋子
-                const existingPiece = cell.querySelector('.piece');
-                if (existingPiece) {
-                    cell.removeChild(existingPiece);
-                }
+                // 清除现有棋子和最后落子标记
+                cell.innerHTML = '';
+                cell.classList.remove('last-move');
                 
                 // 添加新棋子
                 if (boardData[x][y] !== 0) {
                     const piece = document.createElement('div');
                     piece.className = `piece ${boardData[x][y] === 1 ? 'black' : 'white'}`;
                     cell.appendChild(piece);
+                    
+                    // 如果是最后落子位置，添加标记
+                    if (lastMove && x === lastMove.x && y === lastMove.y) {
+                        cell.classList.add('last-move');
+                    }
                 }
             });
         }
@@ -430,27 +797,192 @@
             });
         }
 
-        // 修改 WebSocket 事件处理
+        // 格式化时间函数
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // 添加游戏开始时间变量
+        let gameCreationTime = Date.now();
+
+        // 修改更新计时器显示函数
+        function updateTimerDisplay() {
+            if (!gameStartTime) return;
+
+            const currentTime = Date.now();
+            
+            requestAnimationFrame(() => {
+                // 更新游戏总时长
+                const gameDuration = Math.floor((currentTime - gameCreationTime) / 1000);
+                document.getElementById('game-time').textContent = formatTime(gameDuration);
+
+                // 更新总时间
+                const totalGameTime = Math.floor((currentTime - gameStartTime) / 1000);
+                document.getElementById('total-time').textContent = formatTime(totalGameTime);
+
+                // 更新当前手时间
+                if (currentMoveStartTime) {
+                    const currentMoveTime = Math.floor((currentTime - currentMoveStartTime) / 1000);
+                    document.getElementById('current-time').textContent = formatTime(currentMoveTime);
+                }
+
+                // 更新玩家总时间
+                if (currentTurnStartTime && lastUpdateTime) {
+                    const turnTime = Math.floor((currentTime - lastUpdateTime) / 1000);
+                    
+                    if (currentPlayer === 1) {
+                        blackTotalTime += turnTime;
+                        document.querySelector('.black-timer').classList.add('timer-active');
+                        document.querySelector('.white-timer').classList.remove('timer-active');
+                    } else {
+                        whiteTotalTime += turnTime;
+                        document.querySelector('.white-timer').classList.add('timer-active');
+                        document.querySelector('.black-timer').classList.remove('timer-active');
+                    }
+                    
+                    document.getElementById('black-time').textContent = formatTime(blackTotalTime);
+                    document.getElementById('white-time').textContent = formatTime(whiteTotalTime);
+                    
+                    lastUpdateTime = currentTime;
+                }
+            });
+        }
+
+        // 修改计时器初始化
+        function startTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            let lastFrameTime = performance.now();
+            const targetFrameRate = 1000; // 每秒更新一次
+
+            function timerLoop(currentTime) {
+                if (!gameStartTime) return;
+
+                const elapsed = currentTime - lastFrameTime;
+                if (elapsed >= targetFrameRate) {
+                    updateTimerDisplay();
+                    lastFrameTime = currentTime;
+                }
+
+                timerAnimationFrame = requestAnimationFrame(timerLoop);
+            }
+
+            timerAnimationFrame = requestAnimationFrame(timerLoop);
+        }
+
+        // 添加计时器清理函数
+        function stopTimer() {
+            if (timerAnimationFrame) {
+                cancelAnimationFrame(timerAnimationFrame);
+                timerAnimationFrame = null;
+            }
+        }
+
+        // 修改 socket.on('update_board') 处理
         socket.on('update_board', (data) => {
-            console.log('Received update_board:', data); // 调试日志
+            console.log('Received update_board:', data);
             
-            // 强制更新当前回合
+            if (!gameStartTime) {
+                gameStartTime = Date.now();
+                currentTurnStartTime = Date.now();
+                lastUpdateTime = Date.now();
+                currentMoveStartTime = Date.now();
+                startTimer();
+            } else {
+                currentTurnStartTime = Date.now();
+                lastUpdateTime = Date.now();
+                currentMoveStartTime = Date.now();
+            }
+            
+            // 更新当前玩家和棋盘
             currentPlayer = data.turn;
+            updateBoard(data.board, lastMove);
             
-            // 更新棋盘显示
-            updateBoard(data.board);
+            // 更新落子记录
+            if (data.last_move) {
+                const { x, y, player } = data.last_move;
+                addMoveToHistory(x, y, player);
+                lastMove = { x, y };
+            }
             
-            // 直接更新回合显示
             document.getElementById('current-turn').textContent = 
                 `当前回合: ${currentPlayer === 1 ? '黑棋' : '白棋'}`;
+            
+            // 清除之前的超时计时器和倒计时
+            if (autoMoveTimeout) {
+                clearTimeout(autoMoveTimeout);
+            }
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownAlert.style.display = 'none';
+            }
+            
+            // 如果是当前玩家的回合，设置新的超时计时器和倒计时
+            if (currentPlayer === myPlayer) {
+                autoMoveTimeout = setTimeout(() => {
+                    makeRandomMove();
+                }, TIMEOUT_DURATION);
+
+                // 在自动落子前 10 秒开始倒计时
+                setTimeout(() => {
+                    startCountdown();
+                }, TIMEOUT_DURATION - (COUNTDOWN_START * 1000));
+            }
         });
 
+        // 修改游戏结束处理
         socket.on('game_over', (data) => {
-            console.log('Received game_over:', data); // 添加调试日志
+            // 停止计时器
+            stopTimer();
+
             updateBoard(data.board);
             document.getElementById('scores').textContent = 
                 `黑棋: ${data.scores[1]} 胜 | 白棋: ${data.scores[2]} 胜`;
-            alert(`${data.winner === 1 ? '黑棋' : '白棋'}获胜！`);
+            
+            const message = data.surrender ? 
+                `${data.winner === 1 ? '白棋' : '黑棋'}认输，${data.winner === 1 ? '黑棋' : '白棋'}获胜！` :
+                `${data.winner === 1 ? '黑棋' : '白棋'}获胜！`;
+            
+            alert(message);
+
+            // 重置所有计时器
+            gameStartTime = null;
+            blackTotalTime = 0;
+            whiteTotalTime = 0;
+            currentTurnStartTime = null;
+            lastUpdateTime = null;
+            currentMoveStartTime = null;
+            gameCreationTime = Date.now();  // 重置游戏创建时间
+            
+            // 更新显示
+            document.getElementById('total-time').textContent = '00:00';
+            document.getElementById('black-time').textContent = '00:00';
+            document.getElementById('white-time').textContent = '00:00';
+            document.getElementById('current-time').textContent = '00:00';
+            document.getElementById('game-time').textContent = '00:00';
+
+            // 重置最后落子位置
+            lastMove = null;
+            updateBoard(data.board);
+
+            // 清空落子记录
+            document.getElementById('moves-list').innerHTML = '';
+
+            // 清除超时计时器
+            if (autoMoveTimeout) {
+                clearTimeout(autoMoveTimeout);
+                autoMoveTimeout = null;
+            }
+
+            // 清除倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownAlert.style.display = 'none';
+            }
         });
 
         // 添加删除房间的处理函数
@@ -491,12 +1023,37 @@
         socket.on('game_deleted', (data) => {
             alert(data.message);
             location.reload(); // 刷新页面
+            document.getElementById('moves-list').innerHTML = '';
+
+            // 清除超时计时器
+            if (autoMoveTimeout) {
+                clearTimeout(autoMoveTimeout);
+                autoMoveTimeout = null;
+            }
+
+            // 清除倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownAlert.style.display = 'none';
+            }
         });
 
         // 添加断开连接的处理
         socket.on('player_disconnected', (data) => {
             alert(data.message);
             location.reload(); // 刷新页面
+
+            // 清除超时计时器
+            if (autoMoveTimeout) {
+                clearTimeout(autoMoveTimeout);
+                autoMoveTimeout = null;
+            }
+
+            // 清除倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownAlert.style.display = 'none';
+            }
         });
 
         // 添加页面关闭事件处理
@@ -504,6 +1061,117 @@
             if (room) {
                 socket.emit('disconnect');
             }
+
+            // 清除超时计时器
+            if (autoMoveTimeout) {
+                clearTimeout(autoMoveTimeout);
+            }
+
+            // 清除倒计时
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+        });
+
+        // 在页面卸载时清理计时器
+        window.addEventListener('beforeunload', () => {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+        });
+
+        // 添加记录落子的函数
+        function addMoveToHistory(x, y, player) {
+            const movesList = document.getElementById('moves-list');
+            const moveNumber = movesList.children.length + 1;
+            const letter = letters[y];
+            const number = 15 - x;
+            
+            const moveItem = document.createElement('div');
+            moveItem.className = `move-item ${player === 1 ? 'black' : 'white'}`;
+            moveItem.textContent = `${moveNumber}. ${player === 1 ? '黑' : '白'} ${letter}${number}`;
+            
+            movesList.appendChild(moveItem);
+            movesList.scrollTop = movesList.scrollHeight;
+        }
+
+        // 添加倒计时函数
+        function startCountdown() {
+            let timeLeft = COUNTDOWN_START;
+            countdownAlert.style.display = 'block';
+            countdownAlert.textContent = `将在 ${timeLeft} 秒后自动随机落子`;
+
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    countdownAlert.textContent = `将在 ${timeLeft} 秒后自动随机落子`;
+                } else {
+                    clearInterval(countdownInterval);
+                    countdownAlert.style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        // 添加 UTC 时间更新函数
+        function updateUTCTime() {
+            const now = new Date();
+            const hours = now.getUTCHours().toString().padStart(2, '0');
+            const minutes = now.getUTCMinutes().toString().padStart(2, '0');
+            const seconds = now.getUTCSeconds().toString().padStart(2, '0');
+            const milliseconds = Math.floor(now.getUTCMilliseconds() / 10).toString().padStart(2, '0');
+            
+            document.getElementById('utc-display').textContent = 
+                `${hours}:${minutes}:${seconds}.${milliseconds}`;
+        }
+
+        // 修改计时器初始化函数
+        function startTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            let lastFrameTime = performance.now();
+            const targetFrameRate = 1000; // 每秒更新一次游戏计时器
+            
+            function timerLoop(currentTime) {
+                if (!gameStartTime) return;
+
+                const elapsed = currentTime - lastFrameTime;
+                if (elapsed >= targetFrameRate) {
+                    updateTimerDisplay();
+                    lastFrameTime = currentTime;
+                }
+                
+                // 更新 UTC 时间（每 100ms 更新一次）
+                updateUTCTime();
+                
+                timerAnimationFrame = requestAnimationFrame(timerLoop);
+            }
+
+            timerAnimationFrame = requestAnimationFrame(timerLoop);
+        }
+
+        // 在游戏结束时不需要停止 UTC 时间显示
+        function stopTimer() {
+            if (timerAnimationFrame) {
+                cancelAnimationFrame(timerAnimationFrame);
+                timerAnimationFrame = null;
+            }
+            // 继续更新 UTC 时间
+            requestAnimationFrame(function updateUTC() {
+                updateUTCTime();
+                requestAnimationFrame(updateUTC);
+            });
+        }
+
+        // 初始化时立即开始显示 UTC 时间
+        requestAnimationFrame(function updateUTC() {
+            updateUTCTime();
+            requestAnimationFrame(updateUTC);
         });
 
         // 启动游戏
