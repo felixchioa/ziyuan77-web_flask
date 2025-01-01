@@ -807,3 +807,28 @@ def handle_chat_message(data):
         'player': player,
         'timestamp': datetime.now().strftime('%H:%M:%S')
     }, room=room)
+
+
+@current_app.route('/join_gomoku_game', methods=['POST'])
+def join_gomoku_game():
+    room = request.json.get('room')
+    if not room:
+        return jsonify({'error': '房间号不能为空'}), 400
+        
+    if room not in games:
+        return jsonify({'error': '房间不存在'}), 404
+        
+    if games[room]['player2']:
+        return jsonify({'error': '房间已满'}), 400
+        
+    games[room]['player2'] = True
+    # 通知房间内的玩家有新玩家加入
+    socketio.emit('player_joined', {
+        'message': '对手已加入游戏',
+        'timestamp': datetime.now().strftime('%H:%M:%S')
+    }, room=room)
+    
+    return jsonify({
+        'message': '加入成功',
+        'player': 2
+    }), 200

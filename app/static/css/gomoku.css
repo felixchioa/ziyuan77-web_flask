@@ -477,3 +477,18 @@ body {
         font-size: 12px;
     }
 }
+
+.chat-message.system {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    margin: 5px auto;
+    text-align: center;
+    font-style: italic;
+    max-width: 100%;
+    padding: 4px 12px;
+}
+
+.chat-message.system::before {
+    content: '🔔';
+    margin-right: 5px;
+}

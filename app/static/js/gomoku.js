@@ -820,5 +820,22 @@ const socket = io();
             chatMessages.scrollTop = chatMessages.scrollHeight;
         });
 
+        // 添加玩家加入通知处理
+        socket.on('player_joined', (data) => {
+            // 创建系统消息
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message system';
+            messageDiv.textContent = `${data.timestamp} - ${data.message}`;
+            
+            // 添加到聊天区域
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // 可选：添加音效提示
+            const audio = new Audio('/static/audio/notification.mp3');
+            audio.play().catch(e => console.log('播放提示音失败:', e));
+        });
+
         // 启动游戏
         initGame();
