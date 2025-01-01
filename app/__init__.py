@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template, url_for
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -10,7 +10,7 @@ socketio = SocketIO()
 
 
 def create_app():
-    app = Flask("app")
+    app = Flask(__name__, static_folder='static')
 
     # 为整个应用启用CORS
     CORS(app)
