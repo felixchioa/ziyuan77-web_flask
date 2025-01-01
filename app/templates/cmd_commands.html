@@ -1306,6 +1306,1278 @@
             <p><strong>用途：</strong>Heroku命令行工具。</p>
             <p><strong>示例：</strong>heroku apps</p>
         </div>
+        <div class="command">
+            <h2>181. cf</h2>
+            <p><strong>用途：</strong>Cloud Foundry命令行工具。</p>
+            <p><strong>示例：</strong>cf apps</p>
+        </div>
+        <div class="command">
+            <h2>182. openstack</h2>
+            <p><strong>用途：</strong>OpenStack命令行工具。</p>
+            <p><strong>示例：</strong>openstack server list</p>
+        </div>
+        <div class="command">
+            <h2>183. vault</h2>
+            <p><strong>用途：</strong>HashiCorp Vault命令行工具。</p>
+            <p><strong>示例：</strong>vault status</p>
+        </div>
+        <div class="command">
+            <h2>184. consul</h2>
+            <p><strong>用途：</strong>HashiCorp Consul命令行工具。</p>
+            <p><strong>示例：</strong>consul members</p>
+        </div>
+        <div class="command">
+            <h2>185. nomad</h2>
+            <p><strong>用途：</strong>HashiCorp Nomad命令行工具。</p>
+            <p><strong>示例：</strong>nomad status</p>
+        </div>
+        <div class="command">
+            <h2>186. awk</h2>
+            <p><strong>用途：</strong>文本处理工具。</p>
+            <p><strong>示例：</strong>awk '{print $1}' file.txt</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-F</code>：指定字段分隔符。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>187. sed</h2>
+            <p><strong>用途：</strong>流编辑器，用于文本替换和编辑。</p>
+            <p><strong>示例：</strong>sed 's/old/new/g' file.txt</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-i</code>：直接编辑文件。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>188. tr</h2>
+            <p><strong>用途：</strong>字符替换和删除。</p>
+            <p><strong>示例：</strong>tr 'a-z' 'A-Z' < file.txt</p>
+        </div>
+        <div class="command">
+            <h2>189. sort</h2>
+            <p><strong>用途：</strong>对文本文件进行排序。</p>
+            <p><strong>示例：</strong>sort file.txt</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-r</code>：逆序排序。</li>
+                <li><code>-n</code>：按数值排序。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>190. uniq</h2>
+            <p><strong>用途：</strong>报告或忽略重复行。</p>
+            <p><strong>示例：</strong>uniq file.txt</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-c</code>：计数重复行。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>191. head</h2>
+            <p><strong>用途：</strong>输出文件的开头部分。</p>
+            <p><strong>示例：</strong>head -n 10 file.txt</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-n</code>：指定行数。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>192. tail</h2>
+            <p><strong>用途：</strong>输出文件的结尾部分。</p>
+            <p><strong>示例：</strong>tail -n 10 file.txt</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-f</code>：实时输出追加内容。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>193. diff</h2>
+            <p><strong>用途：</strong>比较文件的不同。</p>
+            <p><strong>示例：</strong>diff file1.txt file2.txt</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-u</code>：统一格式输出。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>194. patch</h2>
+            <p><strong>用途：</strong>应用补丁文件。</p>
+            <p><strong>示例：</strong>patch < patchfile</p>
+        </div>
+        <div class="command">
+            <h2>195. gzip</h2>
+            <p><strong>用途：</strong>压缩文件。</p>
+            <p><strong>示例：</strong>gzip file.txt</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-d</code>：解压缩。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>196. gunzip</h2>
+            <p><strong>用途：</strong>解压缩gzip文件。</p>
+            <p><strong>示例：</strong>gunzip file.txt.gz</p>
+        </div>
+        <div class="command">
+            <h2>197. bzip2</h2>
+            <p><strong>用途：</strong>压缩文件。</p>
+            <p><strong>示例：</strong>bzip2 file.txt</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-d</code>：解压缩。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>198. bunzip2</h2>
+            <p><strong>用途：</strong>解压缩bzip2文件。</p>
+            <p><strong>示例：</strong>bunzip2 file.txt.bz2</p>
+        </div>
+        <div class="command">
+            <h2>199. zip</h2>
+            <p><strong>用途：</strong>压缩文件。</p>
+            <p><strong>示例：</strong>zip archive.zip file1 file2</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-r</code>：递归压缩目录。</li>
+            </ul>
+        </div>
+        <div class="command">
+            <h2>200. unzip</h2>
+            <p><strong>用途：</strong>解压缩zip文件。</p>
+            <p><strong>示例：</strong>unzip archive.zip</p>
+            <p><strong>参数：</strong></p>
+            <ul>
+                <li><code>-l</code>：列出存档内容。</li>
+                <li><code>-d</code>：指定解压缩目录。</li>
+            </ul>
+        </div>
+        <!-- ... existing code ... -->
+<div class="command">
+    <h2>201. rsync</h2>
+    <p><strong>用途：</strong>快速同步文件和目录。</p>
+    <p><strong>示例：</strong>rsync -avz source/ destination/</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-a</code>：归档模式，保留权限等。</li>
+        <li><code>-v</code>：详细输出。</li>
+        <li><code>-z</code>：压缩传输。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>202. screen</h2>
+    <p><strong>用途：</strong>终端会话管理器。</p>
+    <p><strong>示例：</strong>screen</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-ls</code>：列出所有会话。</li>
+        <li><code>-r</code>：恢复会话。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>203. tmux</h2>
+    <p><strong>用途：</strong>终端多路复用器。</p>
+    <p><strong>示例：</strong>tmux new -s session_name</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>new</code>：创建新会话。</li>
+        <li><code>attach</code>：附加到会话。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>204. lsof</h2>
+    <p><strong>用途：</strong>列出打开的文件。</p>
+    <p><strong>示例：</strong>lsof -i :80</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-i</code>：显示网络文件。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>205. nc</h2>
+    <p><strong>用途：</strong>网络工具，常用于调试和测试。</p>
+    <p><strong>示例：</strong>nc -l 1234</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-l</code>：监听模式。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>206. telnet</h2>
+    <p><strong>用途：</strong>远程登录协议。</p>
+    <p><strong>示例：</strong>telnet hostname 23</p>
+</div>
+<div class="command">
+    <h2>207. ftp</h2>
+    <p><strong>用途：</strong>文件传输协议。</p>
+    <p><strong>示例：</strong>ftp hostname</p>
+</div>
+<div class="command">
+    <h2>208. mount</h2>
+    <p><strong>用途：</strong>挂载文件系统。</p>
+    <p><strong>示例：</strong>mount /dev/sda1 /mnt</p>
+</div>
+<div class="command">
+    <h2>209. umount</h2>
+    <p><strong>用途：</strong>卸载文件系统。</p>
+    <p><strong>示例：</strong>umount /mnt</p>
+</div>
+<div class="command">
+    <h2>210. fdisk</h2>
+    <p><strong>用途：</strong>磁盘分区工具。</p>
+    <p><strong>示例：</strong>fdisk /dev/sda</p>
+</div>
+<div class="command">
+    <h2>211. mkfs</h2>
+    <p><strong>用途：</strong>创建文件系统。</p>
+    <p><strong>示例：</strong>mkfs.ext4 /dev/sda1</p>
+</div>
+<div class="command">
+    <h2>212. fsck</h2>
+    <p><strong>用途：</strong>检查和修复文件系统。</p>
+    <p><strong>示例：</strong>fsck /dev/sda1</p>
+</div>
+<div class="command">
+    <h2>213. dd</h2>
+    <p><strong>用途：</strong>转换和复制文件。</p>
+    <p><strong>示例：</strong>dd if=/dev/sda of=/dev/sdb bs=4M</p>
+</div>
+<div class="command">
+    <h2>214. df</h2>
+    <p><strong>用途：</strong>显示文件系统磁盘空间使用情况。</p>
+    <p><strong>示例：</strong>df -h</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-h</code>：以人类可读的格式显示。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>215. du</h2>
+    <p><strong>用途：</strong>显示文件和目录的磁盘使用情况。</p>
+    <p><strong>示例：</strong>du -sh /home/user</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-s</code>：显示总计。</li>
+        <li><code>-h</code>：以人类可读的格式显示。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>216. tar</h2>
+    <p><strong>用途：</strong>存档文件。</p>
+    <p><strong>示例：</strong>tar -czvf archive.tar.gz /path/to/directory</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-c</code>：创建新存档。</li>
+        <li><code>-z</code>：通过gzip压缩。</li>
+        <li><code>-v</code>：详细模式。</li>
+        <li><code>-f</code>：指定文件名。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>217. gzip</h2>
+    <p><strong>用途：</strong>压缩文件。</p>
+    <p><strong>示例：</strong>gzip file.txt</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-d</code>：解压缩。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>218. gunzip</h2>
+    <p><strong>用途：</strong>解压缩gzip文件。</p>
+    <p><strong>示例：</strong>gunzip file.txt.gz</p>
+</div>
+<div class="command">
+    <h2>219. bzip2</h2>
+    <p><strong>用途：</strong>压缩文件。</p>
+    <p><strong>示例：</strong>bzip2 file.txt</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-d</code>：解压缩。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>220. bunzip2</h2>
+    <p><strong>用途：</strong>解压缩bzip2文件。</p>
+    <p><strong>示例：</strong>bunzip2 file.txt.bz2</p>
+</div>
+<div class="command">
+    <h2>221. zip</h2>
+    <p><strong>用途：</strong>压缩文件。</p>
+    <p><strong>示例：</strong>zip archive.zip file1 file2</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-r</code>：递归压缩目录。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>222. unzip</h2>
+    <p><strong>用途：</strong>解压缩zip文件。</p>
+    <p><strong>示例：</strong>unzip archive.zip</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-l</code>：列出存档内容。</li>
+        <li><code>-d</code>：指定解压缩目录。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>223. wget</h2>
+    <p><strong>用途：</strong>从网络下载文件。</p>
+    <p><strong>示例：</strong>wget http://example.com/file.zip</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-c</code>：断点续传。</li>
+        <li><code>-q</code>：安静模式。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>224. curl</h2>
+    <p><strong>用途：</strong>传输数据。</p>
+    <p><strong>示例：</strong>curl http://example.com</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-O</code>：下载文件。</li>
+        <li><code>-I</code>：获取HTTP头信息。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>225. ssh</h2>
+    <p><strong>用途：</strong>远程登录到另一台计算机。</p>
+    <p><strong>示例：</strong>ssh user@hostname</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-p [port]</code>：指定连接的端口号。</li>
+        <li><code>-i [identity_file]</code>：指定私钥文件。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>226. scp</h2>
+    <p><strong>用途：</strong>安全复制文件。</p>
+    <p><strong>示例：</strong>scp file.txt user@hostname:/path/to/destination</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-r</code>：递归复制目录。</li>
+        <li><code>-P [port]</code>：指定端口。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>227. sftp</h2>
+    <p><strong>用途：</strong>安全文件传输。</p>
+    <p><strong>示例：</strong>sftp user@hostname</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-P [port]</code>：指定端口。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>228. ping</h2>
+    <p><strong>用途：</strong>测试网络连接。</p>
+    <p><strong>示例：</strong>ping google.com</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-c [count]</code>：发送指定数量的包。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>229. netstat</h2>
+    <p><strong>用途：</strong>显示网络连接、路由表等。</p>
+    <p><strong>示例：</strong>netstat -an</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-a</code>：显示所有连接和监听端口。</li>
+        <li><code>-n</code>：以数字形式显示地址和端口。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>230. ifconfig</h2>
+    <p><strong>用途：</strong>配置网络接口。</p>
+    <p><strong>示例：</strong>ifconfig eth0</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>up</code>：启用接口。</li>
+        <li><code>down</code>：禁用接口。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>231. ip</h2>
+    <p><strong>用途：</strong>显示或操作路由、设备、策略路由等。</p>
+    <p><strong>示例：</strong>ip addr show</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>addr</code>：显示地址。</li>
+        <li><code>link</code>：显示链路层信息。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>232. traceroute</h2>
+    <p><strong>用途：</strong>显示数据包到达目标的路径。</p>
+    <p><strong>示例：</strong>traceroute google.com</p>
+</div>
+<div class="command">
+    <h2>233. dig</h2>
+    <p><strong>用途：</strong>DNS查询工具。</p>
+    <p><strong>示例：</strong>dig example.com</p>
+</div>
+<div class="command">
+    <h2>234. nslookup</h2>
+    <p><strong>用途：</strong>查询DNS记录。</p>
+    <p><strong>示例：</strong>nslookup example.com</p>
+</div>
+<div class="command">
+    <h2>235. whois</h2>
+    <p><strong>用途：</strong>查询域名注册信息。</p>
+    <p><strong>示例：</strong>whois example.com</p>
+</div>
+<div class="command">
+    <h2>236. uptime</h2>
+    <p><strong>用途：</strong>显示系统运行时间。</p>
+    <p><strong>示例：</strong>uptime</p>
+</div>
+<div class="command">
+    <h2>237. free</h2>
+    <p><strong>用途：</strong>显示内存使用情况。</p>
+    <p><strong>示例：</strong>free -h</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-h</code>：以人类可读的格式显示。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>238. df</h2>
+    <p><strong>用途：</strong>显示文件系统磁盘空间使用情况。</p>
+    <p><strong>示例：</strong>df -h</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-h</code>：以人类可读的格式显示。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>239. du</h2>
+    <p><strong>用途：</strong>显示文件和目录的磁盘使用情况。</p>
+    <p><strong>示例：</strong>du -sh /home/user</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-s</code>：显示总计。</li>
+        <li><code>-h</code>：以人类可读的格式显示。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>240. top</h2>
+    <p><strong>用途：</strong>实时显示系统任务。</p>
+    <p><strong>示例：</strong>top</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-u [user]</code>：显示特定用户的进程。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>241. htop</h2>
+    <p><strong>用途：</strong>交互式进程查看器。</p>
+    <p><strong>示例：</strong>htop</p>
+</div>
+<div class="command">
+    <h2>242. ps</h2>
+    <p><strong>用途：</strong>显示当前进程的快照。</p>
+    <p><strong>示例：</strong>ps aux</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-e</code>：显示所有进程。</li>
+        <li><code>-f</code>：全格式显示。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>243. kill</h2>
+    <p><strong>用途：</strong>终止进程。</p>
+    <p><strong>示例：</strong>kill 1234</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-9</code>：强制终止进程。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>244. killall</h2>
+    <p><strong>用途：</strong>终止所有指定名称的进程。</p>
+    <p><strong>示例：</strong>killall processname</p>
+</div>
+<div class="command">
+    <h2>245. pkill</h2>
+    <p><strong>用途：</strong>根据名称模式终止进程。</p>
+    <p><strong>示例：</strong>pkill processname</p>
+</div>
+<div class="command">
+    <h2>246. nice</h2>
+    <p><strong>用途：</strong>设置程序的优先级。</p>
+    <p><strong>示例：</strong>nice -n 10 command</p>
+</div>
+<div class="command">
+    <h2>247. renice</h2>
+    <p><strong>用途：</strong>更改运行中进程的优先级。</p>
+    <p><strong>示例：</strong>renice 10 -p 1234</p>
+</div>
+<div class="command">
+    <h2>248. crontab</h2>
+    <p><strong>用途：</strong>管理定时任务。</p>
+    <p><strong>示例：</strong>crontab -e</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-l</code>：列出当前用户的定时任务。</li>
+        <li><code>-r</code>：删除当前用户的定时任务。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>249. at</h2>
+    <p><strong>用途：</strong>计划一次性任务。</p>
+    <p><strong>示例：</strong>at 5pm</p>
+</div>
+<div class="command">
+    <h2>250. batch</h2>
+    <p><strong>用途：</strong>计划在系统负载较低时执行的任务。</p>
+    <p><strong>示例：</strong>batch</p>
+</div>
+<div class="command">
+    <h2>251. systemctl</h2>
+    <p><strong>用途：</strong>控制systemd系统和服务管理器。</p>
+    <p><strong>示例：</strong>systemctl status</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>start</code>：启动服务。</li>
+        <li><code>stop</code>：停止服务。</li>
+        <li><code>restart</code>：重启服务。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>252. service</h2>
+    <p><strong>用途：</strong>控制系统服务。</p>
+    <p><strong>示例：</strong>service apache2 start</p>
+</div>
+<div class="command">
+    <h2>253. journalctl</h2>
+    <p><strong>用途：</strong>查询systemd日志。</p>
+    <p><strong>示例：</strong>journalctl -xe</p>
+</div>
+<div class="command">
+    <h2>254. dmesg</h2>
+    <p><strong>用途：</strong>显示内核环缓冲区消息。</p>
+    <p><strong>示例：</strong>dmesg</p>
+</div>
+<div class="command">
+    <h2>255. uname</h2>
+    <p><strong>用途：</strong>显示系统信息。</p>
+    <p><strong>示例：</strong>uname -a</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-a</code>：显示所有信息。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>256. hostname</h2>
+    <p><strong>用途：</strong>显示或设置系统的主机名。</p>
+    <p><strong>示例：</strong>hostname</p>
+</div>
+<div class="command">
+    <h2>257. whoami</h2>
+    <p><strong>用途：</strong>显示当前用户的用户名。</p>
+    <p><strong>示例：</strong>whoami</p>
+</div>
+<div class="command">
+    <h2>258. id</h2>
+    <p><strong>用途：</strong>显示用户和组信息。</p>
+    <p><strong>示例：</strong>id</p>
+</div>
+<div class="command">
+    <h2>259. groups</h2>
+    <p><strong>用途：</strong>显示用户所属的组。</p>
+    <p><strong>示例：</strong>groups</p>
+</div>
+<div class="command">
+    <h2>260. passwd</h2>
+    <p><strong>用途：</strong>更改用户密码。</p>
+    <p><strong>示例：</strong>passwd</p>
+</div>
+<div class="command">
+    <h2>261. useradd</h2>
+    <p><strong>用途：</strong>添加新用户。</p>
+    <p><strong>示例：</strong>useradd newuser</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-m</code>：创建用户的主目录。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>262. userdel</h2>
+    <p><strong>用途：</strong>删除用户。</p>
+    <p><strong>示例：</strong>userdel user</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-r</code>：删除用户的主目录。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>263. groupadd</h2>
+    <p><strong>用途：</strong>添加新组。</p>
+    <p><strong>示例：</strong>groupadd newgroup</p>
+</div>
+<div class="command">
+    <h2>264. groupdel</h2>
+    <p><strong>用途：</strong>删除组。</p>
+    <p><strong>示例：</strong>groupdel group</p>
+</div>
+<div class="command">
+    <h2>265. su</h2>
+    <p><strong>用途：</strong>切换用户身份。</p>
+    <p><strong>示例：</strong>su - user</p>
+</div>
+<div class="command">
+    <h2>266. sudo</h2>
+    <p><strong>用途：</strong>以超级用户权限执行命令。</p>
+    <p><strong>示例：</strong>sudo apt update</p>
+</div>
+<div class="command">
+    <h2>267. apt</h2>
+    <p><strong>用途：</strong>包管理工具。</p>
+    <p><strong>示例：</strong>apt install package</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>update</code>：更新包列表。</li>
+        <li><code>upgrade</code>：升级所有包。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>268. yum</h2>
+    <p><strong>用途：</strong>包管理工具。</p>
+    <p><strong>示例：</strong>yum install package</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>update</code>：更新包。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>269. dnf</h2>
+    <p><strong>用途：</strong>包管理工具。</p>
+    <p><strong>示例：</strong>dnf install package</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>update</code>：更新包。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>270. pacman</h2>
+    <p><strong>用途：</strong>包管理工具。</p>
+    <p><strong>示例：</strong>pacman -S package</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-Syu</code>：同步并更新系统。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>271. rpm</h2>
+    <p><strong>用途：</strong>RPM包管理工具。</p>
+    <p><strong>示例：</strong>rpm -ivh package.rpm</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-i</code>：安装包。</li>
+        <li><code>-v</code>：详细模式。</li>
+        <li><code>-h</code>：显示进度条。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>272. dpkg</h2>
+    <p><strong>用途：</strong>Debian包管理工具。</p>
+    <p><strong>示例：</strong>dpkg -i package.deb</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-i</code>：安装包。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>273. make</h2>
+    <p><strong>用途：</strong>构建自动化工具。</p>
+    <p><strong>示例：</strong>make</p>
+</div>
+<div class="command">
+    <h2>274. gcc</h2>
+    <p><strong>用途：</strong>GNU编译器。</p>
+    <p><strong>示例：</strong>gcc program.c -o program</p>
+</div>
+<div class="command">
+    <h2>275. g++</h2>
+    <p><strong>用途：</strong>GNU C++编译器。</p>
+    <p><strong>示例：</strong>g++ program.cpp -o program</p>
+</div>
+<div class="command">
+    <h2>276. python</h2>
+    <p><strong>用途：</strong>Python解释器。</p>
+    <p><strong>示例：</strong>python script.py</p>
+</div>
+<div class="command">
+    <h2>277. perl</h2>
+    <p><strong>用途：</strong>Perl解释器。</p>
+    <p><strong>示例：</strong>perl script.pl</p>
+</div>
+<div class="command">
+    <h2>278. ruby</h2>
+    <p><strong>用途：</strong>Ruby解释器。</p>
+    <p><strong>示例：</strong>ruby script.rb</p>
+</div>
+<div class="command">
+    <h2>279. java</h2>
+    <p><strong>用途：</strong>Java运行时。</p>
+    <p><strong>示例：</strong>java Program</p>
+</div>
+<div class="command">
+    <h2>280. javac</h2>
+    <p><strong>用途：</strong>Java编译器。</p>
+    <p><strong>示例：</strong>javac Program.java</p>
+</div>
+<div class="command">
+    <h2>281. node</h2>
+    <p><strong>用途：</strong>Node.js运行时。</p>
+    <p><strong>示例：</strong>node script.js</p>
+</div>
+<div class="command">
+    <h2>282. npm</h2>
+    <p><strong>用途：</strong>Node包管理器。</p>
+    <p><strong>示例：</strong>npm install package</p>
+</div>
+<div class="command">
+    <h2>283. pip</h2>
+    <p><strong>用途：</strong>Python包管理器。</p>
+    <p><strong>示例：</strong>pip install package</p>
+</div>
+<div class="command">
+    <h2>284. gem</h2>
+    <p><strong>用途：</strong>Ruby包管理器。</p>
+    <p><strong>示例：</strong>gem install package</p>
+</div>
+<div class="command">
+    <h2>285. git</h2>
+    <p><strong>用途：</strong>版本控制系统。</p>
+    <p><strong>示例：</strong>git clone repository</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>commit</code>：提交更改。</li>
+        <li><code>push</code>：推送更改。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>286. svn</h2>
+    <p><strong>用途：</strong>Subversion版本控制系统。</p>
+    <p><strong>示例：</strong>svn checkout repository</p>
+</div>
+<div class="command">
+    <h2>287. hg</h2>
+    <p><strong>用途：</strong>Mercurial版本控制系统。</p>
+    <p><strong>示例：</strong>hg clone repository</p>
+</div>
+<div class="command">
+    <h2>288. docker</h2>
+    <p><strong>用途：</strong>容器化平台。</p>
+    <p><strong>示例：</strong>docker run image</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>build</code>：构建镜像。</li>
+        <li><code>ps</code>：列出容器。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>289. kubectl</h2>
+    <p><strong>用途：</strong>Kubernetes命令行工具。</p>
+    <p><strong>示例：</strong>kubectl get pods</p>
+</div>
+<div class="command">
+    <h2>290. vagrant</h2>
+    <p><strong>用途：</strong>虚拟机管理工具。</p>
+    <p><strong>示例：</strong>vagrant up</p>
+</div>
+<div class="command">
+    <h2>291. ansible</h2>
+    <p><strong>用途：</strong>自动化工具。</p>
+    <p><strong>示例：</strong>ansible-playbook playbook.yml</p>
+</div>
+<div class="command">
+    <h2>292. terraform</h2>
+    <p><strong>用途：</strong>基础设施即代码工具。</p>
+    <p><strong>示例：</strong>terraform apply</p>
+</div>
+<div class="command">
+    <h2>293. aws</h2>
+    <p><strong>用途：</strong>AWS命令行工具。</p>
+    <p><strong>示例：</strong>aws s3 ls</p>
+</div>
+<div class="command">
+    <h2>294. az</h2>
+    <p><strong>用途：</strong>Azure命令行工具。</p>
+    <p><strong>示例：</strong>az group list</p>
+</div>
+<div class="command">
+    <h2>295. gcloud</h2>
+    <p><strong>用途：</strong>Google Cloud命令行工具。</p>
+    <p><strong>示例：</strong>gcloud compute instances list</p>
+</div>
+<div class="command">
+    <h2>296. heroku</h2>
+    <p><strong>用途：</strong>Heroku命令行工具。</p>
+    <p><strong>示例：</strong>heroku apps</p>
+</div>
+<div class="command">
+    <h2>297. cf</h2>
+    <p><strong>用途：</strong>Cloud Foundry命令行工具。</p>
+    <p><strong>示例：</strong>cf apps</p>
+</div>
+<div class="command">
+    <h2>298. openstack</h2>
+    <p><strong>用途：</strong>OpenStack命令行工具。</p>
+    <p><strong>示例：</strong>openstack server list</p>
+</div>
+<div class="command">
+    <h2>299. vault</h2>
+    <p><strong>用途：</strong>HashiCorp Vault命令行工具。</p>
+    <p><strong>示例：</strong>vault status</p>
+</div>
+<div class="command">
+    <h2>300. consul</h2>
+    <p><strong>用途：</strong>HashiCorp Consul命令行工具。</p>
+    <p><strong>示例：</strong>consul members</p>
+</div>
+<div class="command">
+    <h2>301. nomad</h2>
+    <p><strong>用途：</strong>HashiCorp Nomad命令行工具。</p>
+    <p><strong>示例：</strong>nomad status</p>
+</div>
+<div class="command">
+    <h2>302. awk</h2>
+    <p><strong>用途：</strong>文本处理工具。</p>
+    <p><strong>示例：</strong>awk '{print $1}' file.txt</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-F</code>：指定字段分隔符。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>303. sed</h2>
+    <p><strong>用途：</strong>流编辑器，用于文本替换和编辑。</p>
+    <p><strong>示例：</strong>sed 's/old/new/g' file.txt</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-i</code>：直接编辑文件。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>304. tr</h2>
+    <p><strong>用途：</strong>字符替换和删除。</p>
+    <p><strong>示例：</strong>tr 'a-z' 'A-Z' < file.txt</p>
+</div>
+<div class="command">
+    <h2>305. sort</h2>
+    <p><strong>用途：</strong>对文本文件进行排序。</p>
+    <p><strong>示例：</strong>sort file.txt</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-r</code>：逆序排序。</li>
+        <li><code>-n</code>：按数值排序。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>306. uniq</h2>
+    <p><strong>用途：</strong>报告或忽略重复行。</p>
+    <p><strong>示例：</strong>uniq file.txt</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-c</code>：计数重复行。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>307. head</h2>
+    <p><strong>用途：</strong>输出文件的开头部分。</p>
+    <p><strong>示例：</strong>head -n 10 file.txt</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-n</code>：指定行数。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>308. tail</h2>
+    <p><strong>用途：</strong>输出文件的结尾部分。</p>
+    <p><strong>示例：</strong>tail -n 10 file.txt</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-f</code>：实时输出追加内容。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>309. diff</h2>
+    <p><strong>用途：</strong>比较文件的不同。</p>
+    <p><strong>示例：</strong>diff file1.txt file2.txt</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-u</code>：统一格式输出。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>310. patch</h2>
+    <p><strong>用途：</strong>应用补丁文件。</p>
+    <p><strong>示例：</strong>patch < patchfile</p>
+</div>
+<div class="command">
+    <h2>311. gzip</h2>
+    <p><strong>用途：</strong>压缩文件。</p>
+    <p><strong>示例：</strong>gzip file.txt</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-d</code>：解压缩。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>312. gunzip</h2>
+    <p><strong>用途：</strong>解压缩gzip文件。</p>
+    <p><strong>示例：</strong>gunzip file.txt.gz</p>
+</div>
+<div class="command">
+    <h2>313. bzip2</h2>
+    <p><strong>用途：</strong>压缩文件。</p>
+    <p><strong>示例：</strong>bzip2 file.txt</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-d</code>：解压缩。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>314. bunzip2</h2>
+    <p><strong>用途：</strong>解压缩bzip2文件。</p>
+    <p><strong>示例：</strong>bunzip2 file.txt.bz2</p>
+</div>
+<div class="command">
+    <h2>315. zip</h2>
+    <p><strong>用途：</strong>压缩文件。</p>
+    <p><strong>示例：</strong>zip archive.zip file1 file2</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-r</code>：递归压缩目录。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>316. unzip</h2>
+    <p><strong>用途：</strong>解压缩zip文件。</p>
+    <p><strong>示例：</strong>unzip archive.zip</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-l</code>：列出存档内容。</li>
+        <li><code>-d</code>：指定解压缩目录。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>317. wget</h2>
+    <p><strong>用途：</strong>从网络下载文件。</p>
+    <p><strong>示例：</strong>wget http://example.com/file.zip</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-c</code>：断点续传。</li>
+        <li><code>-q</code>：安静模式。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>318. curl</h2>
+    <p><strong>用途：</strong>传输数据。</p>
+    <p><strong>示例：</strong>curl http://example.com</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-O</code>：下载文件。</li>
+        <li><code>-I</code>：获取HTTP头信息。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>319. ssh</h2>
+    <p><strong>用途：</strong>远程登录到另一台计算机。</p>
+    <p><strong>示例：</strong>ssh user@hostname</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-p [port]</code>：指定连接的端口号。</li>
+        <li><code>-i [identity_file]</code>：指定私钥文件。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>320. scp</h2>
+    <p><strong>用途：</strong>安全复制文件。</p>
+    <p><strong>示例：</strong>scp file.txt user@hostname:/path/to/destination</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-r</code>：递归复制目录。</li>
+        <li><code>-P [port]</code>：指定端口。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>321. sftp</h2>
+    <p><strong>用途：</strong>安全文件传输。</p>
+    <p><strong>示例：</strong>sftp user@hostname</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-P [port]</code>：指定端口。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>322. ping</h2>
+    <p><strong>用途：</strong>测试网络连接。</p>
+    <p><strong>示例：</strong>ping google.com</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-c [count]</code>：发送指定数量的包。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>323. netstat</h2>
+    <p><strong>用途：</strong>显示网络连接、路由表等。</p>
+    <p><strong>示例：</strong>netstat -an</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-a</code>：显示所有连接和监听端口。</li>
+        <li><code>-n</code>：以数字形式显示地址和端口。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>324. ifconfig</h2>
+    <p><strong>用途：</strong>配置网络接口。</p>
+    <p><strong>示例：</strong>ifconfig eth0</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>up</code>：启用接口。</li>
+        <li><code>down</code>：禁用接口。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>325. ip</h2>
+    <p><strong>用途：</strong>显示或操作路由、设备、策略路由等。</p>
+    <p><strong>示例：</strong>ip addr show</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>addr</code>：显示地址。</li>
+        <li><code>link</code>：显示链路层信息。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>326. traceroute</h2>
+    <p><strong>用途：</strong>显示数据包到达目标的路径。</p>
+    <p><strong>示例：</strong>traceroute google.com</p>
+</div>
+<div class="command">
+    <h2>327. dig</h2>
+    <p><strong>用途：</strong>DNS查询工具。</p>
+    <p><strong>示例：</strong>dig example.com</p>
+</div>
+<div class="command">
+    <h2>328. nslookup</h2>
+    <p><strong>用途：</strong>查询DNS记录。</p>
+    <p><strong>示例：</strong>nslookup example.com</p>
+</div>
+<div class="command">
+    <h2>329. whois</h2>
+    <p><strong>用途：</strong>查询域名注册信息。</p>
+    <p><strong>示例：</strong>whois example.com</p>
+</div>
+<div class="command">
+    <h2>330. uptime</h2>
+    <p><strong>用途：</strong>显示系统运行时间。</p>
+    <p><strong>示例：</strong>uptime</p>
+</div>
+<div class="command">
+    <h2>331. free</h2>
+    <p><strong>用途：</strong>显示内存使用情况。</p>
+    <p><strong>示例：</strong>free -h</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-h</code>：以人类可读的格式显示。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>332. df</h2>
+    <p><strong>用途：</strong>显示文件系统磁盘空间使用情况。</p>
+    <p><strong>示例：</strong>df -h</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-h</code>：以人类可读的格式显示。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>333. du</h2>
+    <p><strong>用途：</strong>显示文件和目录的磁盘使用情况。</p>
+    <p><strong>示例：</strong>du -sh /home/user</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-s</code>：显示总计。</li>
+        <li><code>-h</code>：以人类可读的格式显示。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>334. top</h2>
+    <p><strong>用途：</strong>实时显示系统任务。</p>
+    <p><strong>示例：</strong>top</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-u [user]</code>：显示特定用户的进程。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>335. htop</h2>
+    <p><strong>用途：</strong>交互式进程查看器。</p>
+    <p><strong>示例：</strong>htop</p>
+</div>
+<div class="command">
+    <h2>336. ps</h2>
+    <p><strong>用途：</strong>显示当前进程的快照。</p>
+    <p><strong>示例：</strong>ps aux</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-e</code>：显示所有进程。</li>
+        <li><code>-f</code>：全格式显示。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>337. kill</h2>
+    <p><strong>用途：</strong>终止进程。</p>
+    <p><strong>示例：</strong>kill 1234</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-9</code>：强制终止进程。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>338. killall</h2>
+    <p><strong>用途：</strong>终止所有指定名称的进程。</p>
+    <p><strong>示例：</strong>killall processname</p>
+</div>
+<div class="command">
+    <h2>339. pkill</h2>
+    <p><strong>用途：</strong>根据名称模式终止进程。</p>
+    <p><strong>示例：</strong>pkill processname</p>
+</div>
+<div class="command">
+    <h2>340. nice</h2>
+    <p><strong>用途：</strong>设置程序的优先级。</p>
+    <p><strong>示例：</strong>nice -n 10 command</p>
+</div>
+<div class="command">
+    <h2>341. renice</h2>
+    <p><strong>用途：</strong>更改运行中进程的优先级。</p>
+    <p><strong>示例：</strong>renice 10 -p 1234</p>
+</div>
+<div class="command">
+    <h2>342. crontab</h2>
+    <p><strong>用途：</strong>管理定时任务。</p>
+    <p><strong>示例：</strong>crontab -e</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-l</code>：列出当前用户的定时任务。</li>
+        <li><code>-r</code>：删除当前用户的定时任务。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>343. at</h2>
+    <p><strong>用途：</strong>计划一次性任务。</p>
+    <p><strong>示例：</strong>at 5pm</p>
+</div>
+<div class="command">
+    <h2>344. batch</h2>
+    <p><strong>用途：</strong>计划在系统负载较低时执行的任务。</p>
+    <p><strong>示例：</strong>batch</p>
+</div>
+<div class="command">
+    <h2>345. systemctl</h2>
+    <p><strong>用途：</strong>控制systemd系统和服务管理器。</p>
+    <p><strong>示例：</strong>systemctl status</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>start</code>：启动服务。</li>
+        <li><code>stop</code>：停止服务。</li>
+        <li><code>restart</code>：重启服务。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>346. service</h2>
+    <p><strong>用途：</strong>控制系统服务。</p>
+    <p><strong>示例：</strong>service apache2 start</p>
+</div>
+<div class="command">
+    <h2>347. journalctl</h2>
+    <p><strong>用途：</strong>查询systemd日志。</p>
+    <p><strong>示例：</strong>journalctl -xe</p>
+</div>
+<div class="command">
+    <h2>348. dmesg</h2>
+    <p><strong>用途：</strong>显示内核环缓冲区消息。</p>
+    <p><strong>示例：</strong>dmesg</p>
+</div>
+<div class="command">
+    <h2>349. uname</h2>
+    <p><strong>用途：</strong>显示系统信息。</p>
+    <p><strong>示例：</strong>uname -a</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-a</code>：显示所有信息。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>350. hostname</h2>
+    <p><strong>用途：</strong>显示或设置系统的主机名。</p>
+    <p><strong>示例：</strong>hostname</p>
+</div>
+<div class="command">
+    <h2>351. whoami</h2>
+    <p><strong>用途：</strong>显示当前用户的用户名。</p>
+    <p><strong>示例：</strong>whoami</p>
+</div>
+<div class="command">
+    <h2>352. id</h2>
+    <p><strong>用途：</strong>显示用户和组信息。</p>
+    <p><strong>示例：</strong>id</p>
+</div>
+<div class="command">
+    <h2>353. groups</h2>
+    <p><strong>用途：</strong>显示用户所属的组。</p>
+    <p><strong>示例：</strong>groups</p>
+</div>
+<div class="command">
+    <h2>354. passwd</h2>
+    <p><strong>用途：</strong>更改用户密码。</p>
+    <p><strong>示例：</strong>passwd</p>
+</div>
+<div class="command">
+    <h2>355. useradd</h2>
+    <p><strong>用途：</strong>添加新用户。</p>
+    <p><strong>示例：</strong>useradd newuser</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-m</code>：创建用户的主目录。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>356. userdel</h2>
+    <p><strong>用途：</strong>删除用户。</p>
+    <p><strong>示例：</strong>userdel user</p>
+    <p><strong>参数：</strong></p>
+    <ul>
+        <li><code>-r</code>：删除用户的主目录。</li>
+    </ul>
+</div>
+<div class="command">
+    <h2>357. groupadd</h2>
+    <p><strong>用途：</strong>添加新组。</p>
+    <p><strong>示例：</strong>groupadd newgroup</p>
+</div>
+<div class="command">
+    <h2>358. groupdel</h2>
+    <p><strong>用途：</strong>删除组。</p>
+    <p><strong>示例：</strong>groupdel group</p>
+</div>
+<div class="command">
+    <h2>359. su</h2>
+    <p><strong>用途：</strong>切换用户身份。</p>
+    <p><strong>示例：</strong>su - user</p>
+</div>
+<div class="command">
+    <h2>360. sudo</h2>
+    <p><strong>用途：</strong>以超级用户权限执行命令。</p>
+    <p><strong>示例：</strong>sudo apt update</p>
+</div>
+<!-- ... end of new commands ... -->
     </div>
 </body>
 </html>
