@@ -15,8 +15,13 @@ from app.db_config import get_mongo_client
 from app import socketio
 from app.logger import Logger
 from flask_socketio import emit, join_room, leave_room
+from app.decorators import admin_required
+import glob
 
 logger = Logger('routes')
+
+# 存储游戏数据
+games = {}
 
 client = get_mongo_client()
 chat_db = client['chat']
@@ -322,6 +327,10 @@ def handle_connect():
         online_users[session['user_id']] = datetime.now()
         emit('update_online_count', {'count': len(online_users)}, broadcast=True)
 
+    if session.get('is_admin'):
+        print("Admin connected, starting background task")
+        socketio.start_background_task(background_task)
+
 
 @socketio.on('disconnect')
 def handle_disconnect():
@@ -503,9 +512,6 @@ def clean():
 @current_app.route('/favicon.ico')
 def favicon():
     return send_from_directory(current_app.static_folder, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-
-games = {}
 
 
 @current_app.route('/gomoku')
@@ -832,3 +838,282 @@ def join_gomoku_game():
         'message': '加入成功',
         'player': 2
     }), 200
+
+
+@current_app.route('/admin/gomoku')
+@admin_required  # 需要添加管理员验证装饰器
+def admin_gomoku():
+    return render_template('admin/gomoku.html')
+
+
+@current_app.route('/api/admin/gomoku/stats')
+@admin_required
+def get_gomoku_stats():
+    try:
+        active_rooms = len([room for room in games.values() if room['player1'] and room['player2']])
+        online_players = len(set(player for room in games.values() 
+                               for player in [room['player1'], room['player2']] if player))
+        spectators = sum(len(room.get('spectators', [])) for room in games.values())
+        
+        stats = {
+            'activeRooms': active_rooms,
+            'onlinePlayers': online_players,
+            'spectators': spectators
+        }
+        print("Fetched stats:", stats)  # 添加调试输出
+        return jsonify(stats)
+    except Exception as e:
+        print(f"Error getting stats: {str(e)}")
+        return jsonify({
+            'activeRooms': 0,
+            'onlinePlayers': 0,
+            'spectators': 0
+        })
+
+
+@current_app.route('/api/admin/gomoku/rooms')
+@admin_required
+def get_gomoku_rooms():
+    rooms = []
+    for room_id, room in games.items():
+        try:
+            room_data = {
+                'id': room_id,
+                'player1': '黑方' if room.get('player1') else '等待中',
+                'player2': '白方' if room.get('player2') else '等待中',
+                'spectators': room.get('spectators', []),
+                'status': '进行中' if room.get('player1') and room.get('player2') else '等待中',
+                'board': room.get('board', []),
+                'turn': room.get('turn', 1),
+                'scores': room.get('scores', {1: 0, 2: 0})
+            }
+            rooms.append(room_data)
+        except Exception as e:
+            print(f"Error processing room {room_id}: {str(e)}")
+            continue
+    
+    print("Fetched rooms:", rooms)  # 添加调试输出
+    return jsonify(rooms)
+
+
+@current_app.route('/api/admin/gomoku/rooms/<room_id>', methods=['DELETE'])
+@admin_required
+def delete_gomoku_room(room_id):
+    if room_id in games:
+        del games[room_id]
+        socketio.emit('game_deleted', {'message': '房间已被管理员删除'}, room=room_id)
+        return jsonify({'message': '删除成功'})
+    return jsonify({'error': '房间不存在'}), 404
+
+
+@current_app.route('/api/admin/gomoku/rooms/clear-inactive', methods=['POST'])
+@admin_required
+def clear_inactive_gomoku_rooms():
+    inactive_rooms = [room_id for room_id, room in games.items()
+                     if not room['player1'] or not room['player2']]
+    for room_id in inactive_rooms:
+        del games[room_id]
+        socketio.emit('game_deleted', {'message': '非活跃房间已被清理'}, room=room_id)
+    
+    return jsonify({'message': f'已清理 {len(inactive_rooms)} 个非活跃房间'})
+
+
+@current_app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if password == os.getenv('ADMIN_PASSWORD', 'admin123'):  # 从环境变量获取密码
+            session['is_admin'] = True
+            return redirect(url_for('admin_gomoku'))
+        return jsonify({'error': '密码错误'}), 401
+    return render_template('admin/login.html')
+
+
+@current_app.route('/create_gomoku_game', methods=['POST'])
+def create_gomoku_game():
+    room = request.json.get('room')
+    if not room:
+        return jsonify({'error': '房间号不能为空'}), 400
+        
+    if room in games:
+        return jsonify({'error': '房间已存在'}), 400
+        
+    games[room] = {
+        'board': [[0]*15 for _ in range(15)],
+        'turn': 1,
+        'player1': True,  # 黑方
+        'player2': False,  # 白方
+        'spectators': [],  # 观战者列表
+        'scores': {1: 0, 2: 0},
+        'history': [],
+        'last_move': None,
+        'allow_undo': True,
+        'allow_surrender': True
+    }
+    
+    return jsonify({
+        'message': '创建成功',
+        'player': 1
+    }), 200
+
+
+@current_app.route('/admin/system')
+@admin_required
+def admin_system():
+    return render_template('admin/system.html')
+
+
+@current_app.route('/api/admin/system/stats')
+@admin_required
+def get_system_stats():
+    from app.utils.system_monitor import (
+        get_system_info, get_cpu_info, 
+        get_memory_info, get_disk_info,
+        get_network_info
+    )
+    
+    try:
+        data = {
+            'system': get_system_info(),
+            'cpu': get_cpu_info(),
+            'memory': get_memory_info(),
+            'disk': get_disk_info(),
+            'network': get_network_info(),
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        print("System stats:", data)  # 添加调试输出
+        return jsonify(data)
+    except Exception as e:
+        print(f"Error getting system stats: {str(e)}")  # 添加错误输出
+        return jsonify({
+            'error': str(e),
+            'system': {},
+            'cpu': {'percent': [0], 'count': 0},
+            'memory': {'total': 0, 'available': 0},
+            'disk': [],
+            'network': {'bytes_sent': 0, 'bytes_recv': 0}
+        })
+
+
+@current_app.route('/admin')
+@admin_required
+def admin_index():
+    return render_template('admin/index.html')
+
+
+@current_app.route('/admin/logout')
+def admin_logout():
+    session.pop('is_admin', None)
+    return redirect(url_for('admin_login'))
+
+
+def background_task():
+    while True:
+        try:
+            from app.utils.system_monitor import (
+                get_system_info, get_cpu_info, 
+                get_memory_info, get_disk_info,
+                get_network_info
+            )
+            
+            data = {
+                'system': get_system_info(),
+                'cpu': get_cpu_info(),
+                'memory': get_memory_info(),
+                'disk': get_disk_info(),
+                'network': get_network_info(),
+                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+            socketio.emit('system_stats_update', data)
+            print("Broadcasting system stats:", data)
+        except Exception as e:
+            print(f"Error broadcasting stats: {str(e)}")
+        socketio.sleep(5)
+
+
+@socketio.on('connect')
+def handle_connect():
+    if session.get('is_admin'):
+        print("Admin connected, starting background task")
+        socketio.start_background_task(background_task)
+
+
+@socketio.on('update_interval')
+def handle_interval_update(data):
+    if session.get('is_admin'):
+        global update_interval
+        update_interval = data['interval']
+
+
+@current_app.route('/admin/logs')
+@admin_required
+def admin_logs():
+    return render_template('admin/logs.html')
+
+
+@current_app.route('/api/admin/logs', methods=['POST'])
+@admin_required
+def get_logs():
+    data = request.json
+    level = data.get('level', 'all')
+    search = data.get('search', '')
+    start_date = data.get('startDate')
+    end_date = data.get('endDate')
+    page = data.get('page', 1)
+    page_size = data.get('pageSize', 50)
+    
+    # 读取日志文件
+    log_dir = 'logs'  # 日志目录
+    log_files = glob.glob(os.path.join(log_dir, '*.log'))
+    logs = []
+    
+    for log_file in log_files:
+        try:
+            with open(log_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    try:
+                        # 解析日志行
+                        parts = line.strip().split(' | ')
+                        if len(parts) >= 4:
+                            timestamp = datetime.strptime(parts[0], '%Y-%m-%d %H:%M:%S')
+                            log_level = parts[1]
+                            module = parts[2]
+                            message = ' | '.join(parts[3:])
+                            
+                            # 应用过滤条件
+                            if level != 'all' and log_level.lower() != level.lower():
+                                continue
+                                
+                            if search and search.lower() not in message.lower():
+                                continue
+                                
+                            if start_date and timestamp < datetime.strptime(start_date, '%Y-%m-%d'):
+                                continue
+                                
+                            if end_date and timestamp > datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1):
+                                continue
+                                
+                            logs.append({
+                                'timestamp': timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                                'level': log_level,
+                                'module': module,
+                                'message': message
+                            })
+                    except Exception as e:
+                        print(f"Error parsing log line: {e}")
+                        continue
+        except Exception as e:
+            print(f"Error reading log file {log_file}: {e}")
+            continue
+    
+    # 排序和分页
+    logs.sort(key=lambda x: x['timestamp'], reverse=True)
+    total = len(logs)
+    start_idx = (page - 1) * page_size
+    end_idx = start_idx + page_size
+    page_logs = logs[start_idx:end_idx]
+    
+    return jsonify({
+        'logs': page_logs,
+        'total': total
+    })

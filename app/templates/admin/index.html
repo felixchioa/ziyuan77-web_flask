@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>管理平台</title>
+    <link rel="stylesheet" href="/static/css/admin/index.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>管理平台</h2>
+            </div>
+            <ul class="nav-links">
+                <li>
+                    <a href="/admin/system" target="admin-frame">
+                        <i class="fas fa-server"></i>
+                        <span>系统监控</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/gomoku" target="admin-frame">
+                        <i class="fas fa-gamepad"></i>
+                        <span>五子棋管理</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/users" target="admin-frame">
+                        <i class="fas fa-users"></i>
+                        <span>用户管理</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/logs" target="admin-frame">
+                        <i class="fas fa-list"></i>
+                        <span>日志查看</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="user-info">
+                <span>管理员</span>
+                <a href="/admin/logout" class="logout-btn">退出</a>
+            </div>
+        </nav>
+        <main class="content">
+            <iframe name="admin-frame" src="/admin/system"></iframe>
+        </main>
+    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html> 

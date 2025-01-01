@@ -143,3 +143,61 @@ code {
         padding: 10px;
     }
 }
+
+/* 搜索框样式 */
+.search-container {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+
+#search-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    transition: border-color 0.3s;
+}
+
+#search-input:focus {
+    border-color: #0056b3;
+    outline: none;
+}
+
+.search-options {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.search-options label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.search-options input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+/* 搜索结果高亮 */
+.highlight {
+    background-color: #fff3cd;
+    padding: 2px;
+    border-radius: 2px;
+}
+
+/* 隐藏不匹配的命令 */
+.command.hidden {
+    display: none;
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>五子棋管理</title>
+    <link rel="stylesheet" href="/static/css/admin/gomoku.css">
+</head>
+<body>
+    <div class="admin-container">
+        <h1>五子棋游戏管理</h1>
+        
+        <div class="stats-panel">
+            <div class="stat-card">
+                <h3>当前活跃房间</h3>
+                <div id="active-rooms">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>在线玩家</h3>
+                <div id="online-players">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>观战人数</h3>
+                <div id="spectators">0</div>
+            </div>
+        </div>
+
+        <div class="rooms-panel">
+            <h2>房间列表</h2>
+            <div class="room-filters">
+                <input type="text" id="room-search" placeholder="搜索房间...">
+                <select id="room-status">
+                    <option value="all">全部</option>
+                    <option value="active">进行中</option>
+                    <option value="waiting">等待中</option>
+                </select>
+            </div>
+            <div id="rooms-list"></div>
+        </div>
+
+        <div class="actions-panel">
+            <button id="refresh-btn">刷新数据</button>
+            <button id="clear-inactive-btn">清理非活跃房间</button>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="/static/js/admin/gomoku.js"></script>
+</body>
+</html> 
