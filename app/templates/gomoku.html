@@ -277,51 +277,159 @@
             });
         }
 
-        // 初始化游戏
+        // 修改 initGame 函数
         async function initGame() {
-            room = prompt('请输入房间号:');
-            if (!room) {
-                location.reload(); // 如果用户取消输入，刷新页面
-                return;
-            }
-            
-            try {
-                // 尝试创建新房间
-                let response = await fetch('/create_game', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ room }),
+            // 创建自定义的房间号输入对话框
+            const dialogHtml = `
+                <div id="room-dialog" style="
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                    z-index: 1000;
+                ">
+                    <h3 style="margin-top: 0;">请输入房间号</h3>
+                    <input type="text" id="room-input" style="
+                        padding: 8px;
+                        margin: 10px 0;
+                        width: 200px;
+                        border: 1px solid #ccc;
+                        border-radius: 4px;
+                    ">
+                    <div style="text-align: right;">
+                        <button id="cancel-btn" style="
+                            padding: 8px 16px;
+                            margin-right: 10px;
+                            background: #ccc;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                        ">取消</button>
+                        <button id="confirm-btn" style="
+                            padding: 8px 16px;
+                            background: #007bff;
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                        ">确定</button>
+                    </div>
+                </div>
+                <div id="dialog-overlay" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 999;
+                "></div>
+            `;
+
+            // 添加对话框到页面
+            const dialogContainer = document.createElement('div');
+            dialogContainer.innerHTML = dialogHtml;
+            document.body.appendChild(dialogContainer);
+
+            // 获取对话框元素
+            const dialog = document.getElementById('room-dialog');
+            const overlay = document.getElementById('dialog-overlay');
+            const input = document.getElementById('room-input');
+            const cancelBtn = document.getElementById('cancel-btn');
+            const confirmBtn = document.getElementById('confirm-btn');
+
+            // 返回一个 Promise，用于处理用户输入
+            return new Promise((resolve) => {
+                // 处理 ESC 键
+                const handleEscape = (e) => {
+                    if (e.key === 'Escape') {
+                        cleanup();
+                        resolve(null);
+                    }
+                };
+
+                // 处理取消按钮
+                const handleCancel = () => {
+                    cleanup();
+                    resolve(null);
+                };
+
+                // 处理确认按钮
+                const handleConfirm = () => {
+                    const value = input.value.trim();
+                    if (value) {
+                        cleanup();
+                        resolve(value);
+                    }
+                };
+
+                // 清理函数
+                const cleanup = () => {
+                    document.removeEventListener('keydown', handleEscape);
+                    document.body.removeChild(dialogContainer);
+                };
+
+                // 添加事件监听器
+                document.addEventListener('keydown', handleEscape);
+                cancelBtn.addEventListener('click', handleCancel);
+                confirmBtn.addEventListener('click', handleConfirm);
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        handleConfirm();
+                    }
                 });
-                
-                // 如果房间已存在，加入房间
-                if (!response.ok) {
-                    response = await fetch('/join_game', {
+
+                // 自动聚焦输入框
+                input.focus();
+            }).then(async (roomId) => {
+                if (!roomId) {
+                    window.location.href = '/'; // 改为返回首页
+                    return;
+                }
+
+                room = roomId;
+                try {
+                    // 尝试创建新房间
+                    let response = await fetch('/create_game', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({ room }),
                     });
+                    
+                    // 如果房间已存在，加入房间
+                    if (!response.ok) {
+                        response = await fetch('/join_game', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ room }),
+                        });
+                    }
+                    
+                    const data = await response.json();
+                    if (data.error) {
+                        alert(data.error);
+                        window.location.href = '/'; // 改为返回首页
+                        return;
+                    }
+                    
+                    myPlayer = data.player;
+                    alert(`你是${myPlayer === 1 ? '黑棋' : '白棋'}`);
+                    
+                    socket.emit('join', { room });
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('连接失败，请重试');
+                    window.location.href = '/'; // 改为返回首页
                 }
-                
-                const data = await response.json();
-                if (data.error) {
-                    alert(data.error);
-                    location.reload(); // 如果出错，刷新页面
-                    return;
-                }
-                
-                myPlayer = data.player;
-                alert(`你是${myPlayer === 1 ? '黑棋' : '白棋'}`);
-                
-                socket.emit('join', { room });
-            } catch (error) {
-                console.error('Error:', error);
-                alert('连接失败，请刷新页面重试');
-                location.reload();
-            }
+            });
         }
 
         // 修改 WebSocket 事件处理
