@@ -31,6 +31,23 @@ users_collection = chat_db['users']
 online_users = {}
 user_rooms = {}  # 用于跟踪用户与房间的关系
 
+# 添加象棋初始棋盘配置
+initialBoard = {
+    'red_ju1': {'x': 0, 'y': 0}, 'red_ma1': {'x': 0, 'y': 1}, 'red_xiang1': {'x': 0, 'y': 2},
+    'red_shi1': {'x': 0, 'y': 3}, 'red_shuai': {'x': 0, 'y': 4}, 'red_shi2': {'x': 0, 'y': 5},
+    'red_xiang2': {'x': 0, 'y': 6}, 'red_ma2': {'x': 0, 'y': 7}, 'red_ju2': {'x': 0, 'y': 8},
+    'red_pao1': {'x': 2, 'y': 1}, 'red_pao2': {'x': 2, 'y': 7},
+    'red_bing1': {'x': 3, 'y': 0}, 'red_bing2': {'x': 3, 'y': 2}, 'red_bing3': {'x': 3, 'y': 4},
+    'red_bing4': {'x': 3, 'y': 6}, 'red_bing5': {'x': 3, 'y': 8},
+
+    'black_ju1': {'x': 9, 'y': 0}, 'black_ma1': {'x': 9, 'y': 1}, 'black_xiang1': {'x': 9, 'y': 2},
+    'black_shi1': {'x': 9, 'y': 3}, 'black_jiang': {'x': 9, 'y': 4}, 'black_shi2': {'x': 9, 'y': 5},
+    'black_xiang2': {'x': 9, 'y': 6}, 'black_ma2': {'x': 9, 'y': 7}, 'black_ju2': {'x': 9, 'y': 8},
+    'black_pao1': {'x': 7, 'y': 1}, 'black_pao2': {'x': 7, 'y': 7},
+    'black_zu1': {'x': 6, 'y': 0}, 'black_zu2': {'x': 6, 'y': 2}, 'black_zu3': {'x': 6, 'y': 4},
+    'black_zu4': {'x': 6, 'y': 6}, 'black_zu5': {'x': 6, 'y': 8}
+}
+
 
 @current_app.before_request
 def before_request():
@@ -1124,3 +1141,99 @@ def get_logs():
         'logs': page_logs,
         'total': total
     })
+
+
+@current_app.route('/xiangqi')
+def xiangqi():
+    return render_template('xiangqi.html')
+
+
+@current_app.route('/create_xiangqi_game', methods=['POST'])
+def create_xiangqi_game():
+    room = request.json.get('room')
+    if not room:
+        return jsonify({'error': '房间号不能为空'}), 400
+        
+    if room in games:
+        return jsonify({'error': '房间已存在'}), 400
+        
+    games[room] = {
+        'board': initialBoard.copy(),
+        'turn': 'red',
+        'player_red': True,  # 红方
+        'player_black': False,  # 黑方
+        'spectators': [],
+        'history': [],
+        'last_move': None
+    }
+    
+    return jsonify({
+        'message': '创建成功',
+        'player': 'red'
+    }), 200
+
+
+@current_app.route('/join_xiangqi_game', methods=['POST'])
+def join_xiangqi_game():
+    room = request.json.get('room')
+    if not room:
+        return jsonify({'error': '房间号不能为空'}), 400
+        
+    if room not in games:
+        return jsonify({'error': '房间不存在'}), 404
+        
+    if games[room]['player_black']:
+        return jsonify({'error': '房间已满'}), 400
+        
+    games[room]['player_black'] = True
+    socketio.emit('player_joined', {
+        'message': '对手已加入游戏',
+        'timestamp': datetime.now().strftime('%H:%M:%S')
+    }, room=room)
+    
+    return jsonify({
+        'message': '加入成功',
+        'player': 'black'
+    }), 200
+
+
+@socketio.on('make_move')
+def handle_move(data):
+    room = data.get('room')
+    if not room or room not in games:
+        return
+    
+    game = games[room]
+    piece_id = data.get('piece')
+    from_x = data.get('fromX')
+    from_y = data.get('fromY')
+    to_x = data.get('toX')
+    to_y = data.get('toY')
+    captured_piece = data.get('capturedPiece')
+    
+    # 更新棋盘状态
+    game['board'][piece_id] = {'x': to_x, 'y': to_y}
+    
+    # 如果有吃子，从棋盘上移除被吃的棋子
+    if captured_piece:
+        if captured_piece in game['board']:
+            del game['board'][captured_piece]
+    
+    # 切换回合
+    game['turn'] = 'black' if game['turn'] == 'red' else 'red'
+    game['last_move'] = {
+        'piece': piece_id,
+        'from': (from_x, from_y),
+        'to': (to_x, to_y)
+    }
+    
+    # 广播更新
+    socketio.emit('update_board', {
+        'piece': piece_id,
+        'fromX': from_x,
+        'fromY': from_y,
+        'toX': to_x,
+        'toY': to_y,
+        'turn': game['turn'],
+        'capturedPiece': captured_piece
+    }, room=room)
