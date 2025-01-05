@@ -129,7 +129,7 @@ const socket = io();
                 });
                 
                 const data = await response.json();
-                if (data.error) {
+        if (data.error) {
                     console.error(data.error);
                     return false;
                 }
@@ -187,8 +187,8 @@ const socket = io();
                 });
                 
                 const data = await response.json();
-                if (data.error) {
-                    alert(data.error);
+            if (data.error) {
+                alert(data.error);
                     return;
                 }
                 
@@ -337,8 +337,8 @@ const socket = io();
             }).then(async (roomId) => {
                 if (!roomId) {
                     window.location.href = '/tools'; // 返回工具页面
-                    return;
-                }
+        return;
+    }
 
                 room = roomId;
                 try {
@@ -355,7 +355,7 @@ const socket = io();
                     if (!response.ok) {
                         response = await fetch('/join_game', {
                             method: 'POST',
-                            headers: {
+        headers: {
                                 'Content-Type': 'application/json',
                             },
                             body: JSON.stringify({ room }),
@@ -363,8 +363,8 @@ const socket = io();
                     }
                     
                     const data = await response.json();
-                    if (data.error) {
-                        alert(data.error);
+            if (data.error) {
+                alert(data.error);
                         window.location.href = '/tools';
                         return;
                     }
@@ -377,9 +377,9 @@ const socket = io();
                     console.error('Error:', error);
                     alert('连接失败，请重试');
                     window.location.href = '/tools';
-                }
-            });
-        }
+            }
+        });
+}
 
         // 格式化时间函数
         function formatTime(seconds) {
@@ -716,7 +716,7 @@ const socket = io();
                 timeLeft--;
                 if (timeLeft > 0) {
                     countdownAlert.textContent = `将在 ${timeLeft} 秒后自动随机落子`;
-                } else {
+    } else {
                     clearInterval(countdownInterval);
                     countdownAlert.style.display = 'none';
                 }

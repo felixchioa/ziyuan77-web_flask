@@ -46,72 +46,59 @@
         .grid-line {
             position: absolute;
             background-color: #000;
+            pointer-events: none;
         }
 
         .vertical {
             width: 1px;
-            height: 600px;
         }
 
         .horizontal {
-            width: 540px;
+            width: 480px;  /* 8 * 60 */
             height: 1px;
+            left: 30px;
         }
 
         /* 棋子样式 */
         .piece {
             position: absolute;
-            width: 58px;
-            height: 58px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             cursor: pointer;
             transition: transform 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 28px;
             font-weight: bold;
             user-select: none;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .piece::before {
-            content: '';
-            position: absolute;
-            width: 54px;
-            height: 54px;
-            border-radius: 50%;
+            margin-left: -25px;
+            margin-top: -25px;
             background: radial-gradient(circle at 30% 30%, #fff, #ddd);
-            z-index: -1;
             box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            border-width: 1px;
         }
 
         .piece.red {
             color: #c00;
+            border: 1px solid #c00;
         }
 
         .piece.black {
             color: #000;
+            border: 1px solid #000;
         }
 
         .piece:hover {
-            transform: translate(-50%, -50%) scale(1.05);
-        }
-
-        .piece.selected {
-            transform: translate(-50%, -50%) scale(1.1);
+            transform: scale(1.05);
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
 
-        /* 棋子装饰 */
-        .piece::after {
-            content: '';
-            position: absolute;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            border: 2px solid currentColor;
-            opacity: 0.5;
+        .piece.selected {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
 
         /* 移动提示点 */
@@ -273,6 +260,110 @@
             letter-spacing: 20px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
+
+        /* 添加新的样式 */
+        .border {
+            position: absolute;
+            border: 2px solid #000;
+            pointer-events: none;
+            box-sizing: border-box;
+        }
+
+        .diagonal {
+            position: absolute;
+            width: 1px;
+            background-color: #000;
+            transform-origin: top center;
+            pointer-events: none;
+        }
+
+        /* 添加被吃棋子区域的样式 */
+        #captured-pieces {
+            margin-top: 20px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .captured-section {
+            margin: 10px 0;
+        }
+
+        .captured-section h4 {
+            margin: 5px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .captured-pieces-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .captured-piece {
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fff, #ddd);
+            border: 1px solid;
+        }
+
+        .captured-piece.red {
+            color: #c00;
+            border-color: #c00;
+        }
+
+        .captured-piece.black {
+            color: #000;
+            border-color: #000;
+        }
+
+        /* 添加被吃棋子动画样式 */
+        @keyframes throwToCaptured {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(var(--throw-x), var(--throw-y)) rotate(180deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translate(var(--final-x), var(--final-y)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .piece.captured-animation {
+            animation: throwToCaptured 0.5s ease-out forwards;
+            pointer-events: none;
+        }
+
+        /* 添加被吃棋子出现动画 */
+        @keyframes appearInList {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            70% {
+                transform: scale(1.2) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .captured-piece {
+            animation: appearInList 0.5s ease-out;
+        }
     </style>
 </head>
 <body>
@@ -280,6 +371,16 @@
         <div id="move-history">
             <h3>移动记录</h3>
             <div id="moves-list"></div>
+            <div id="captured-pieces">
+                <div class="captured-section">
+                    <h4>红方被吃</h4>
+                    <div id="red-captured" class="captured-pieces-list"></div>
+                </div>
+                <div class="captured-section">
+                    <h4>黑方被吃</h4>
+                    <div id="black-captured" class="captured-pieces-list"></div>
+                </div>
+            </div>
         </div>
 
         <div id="board-container">
@@ -359,6 +460,15 @@
         function initBoard() {
             const board = document.getElementById('board');
             
+            // 添加边框
+            const border = document.createElement('div');
+            border.className = 'border';
+            border.style.left = '30px';
+            border.style.top = '30px';
+            border.style.width = '480px';  // 8 * 60
+            border.style.height = '540px'; // 9 * 60
+            board.appendChild(border);
+
             // 绘制网格线
             for (let i = 0; i < 10; i++) {
                 const horizontal = document.createElement('div');
@@ -371,16 +481,56 @@
                 const vertical = document.createElement('div');
                 vertical.className = 'grid-line vertical';
                 vertical.style.left = `${i * 60 + 30}px`;
-                // 中间不画竖线
-                if (i < 8) {
-                    vertical.style.height = '240px';  /* 4 * 60 */
-                    board.appendChild(vertical);
-                    
-                    const bottomVertical = vertical.cloneNode();
-                    bottomVertical.style.top = '330px';  /* (4 * 60 + 90) */
-                    board.appendChild(bottomVertical);
-                }
+                
+                // 红方区域（下半部分）
+                const redVertical = vertical.cloneNode();
+                redVertical.style.height = '240px';  // 4 * 60
+                redVertical.style.top = '30px';
+                board.appendChild(redVertical);
+                
+                // 黑方区域（上半部分）
+                const blackVertical = vertical.cloneNode();
+                blackVertical.style.height = '240px';  // 4 * 60
+                blackVertical.style.top = '330px';  // 5 * 60 + 30
+                board.appendChild(blackVertical);
             }
+
+            // 添加九宫格斜线
+            // 红方九宫格 - 左侧斜线（保持不变）
+            const redDiagonal1 = document.createElement('div');
+            redDiagonal1.className = 'diagonal';
+            redDiagonal1.style.left = '330px';  // 5 * 60 + 30
+            redDiagonal1.style.top = '30px';
+            redDiagonal1.style.height = '169.7px';
+            redDiagonal1.style.transform = 'rotate(45deg)';
+            board.appendChild(redDiagonal1);
+
+            // 红方九宫格 - 右侧斜线（向左移动2格）
+            const redDiagonal2 = document.createElement('div');
+            redDiagonal2.className = 'diagonal';
+            redDiagonal2.style.left = '210px';  // (5-2) * 60 + 30
+            redDiagonal2.style.top = '30px';
+            redDiagonal2.style.height = '169.7px';
+            redDiagonal2.style.transform = 'rotate(-45deg)';
+            board.appendChild(redDiagonal2);
+
+            // 黑方九宫格 - 左侧斜线（保持不变）
+            const blackDiagonal1 = document.createElement('div');
+            blackDiagonal1.className = 'diagonal';
+            blackDiagonal1.style.left = '330px';
+            blackDiagonal1.style.top = '450px';
+            blackDiagonal1.style.height = '169.7px';
+            blackDiagonal1.style.transform = 'rotate(45deg)';
+            board.appendChild(blackDiagonal1);
+
+            // 黑方九宫格 - 右侧斜线（向左移动2格）
+            const blackDiagonal2 = document.createElement('div');
+            blackDiagonal2.className = 'diagonal';
+            blackDiagonal2.style.left = '210px';  // (5-2) * 60 + 30
+            blackDiagonal2.style.top = '450px';
+            blackDiagonal2.style.height = '169.7px';
+            blackDiagonal2.style.transform = 'rotate(-45deg)';
+            board.appendChild(blackDiagonal2);
 
             // 添加楚河汉界
             const river = document.createElement('div');
@@ -418,6 +568,30 @@
             // 获取所有对方棋子
             const pieces = Array.from(document.getElementsByClassName('piece'))
                 .filter(p => p.id.split('_')[0] === oppositeSide);
+
+            // 特别检查双炮将军的情况
+            const paos = pieces.filter(p => p.id.includes('pao'));
+            if (paos.length >= 2) {
+                // 检查是否有两个炮在同一行或同一列
+                for (let i = 0; i < paos.length - 1; i++) {
+                    for (let j = i + 1; j < paos.length; j++) {
+                        const pao1X = parseInt(paos[i].dataset.x);
+                        const pao1Y = parseInt(paos[i].dataset.y);
+                        const pao2X = parseInt(paos[j].dataset.x);
+                        const pao2Y = parseInt(paos[j].dataset.y);
+                        
+                        // 检查是否在同一行或同一列
+                        if ((pao1X === pao2X && pao1X === kingX) || 
+                            (pao1Y === pao2Y && pao1Y === kingY)) {
+                            // 检查是否都能攻击到将/帅
+                            if (isValidMove(paos[i], kingX, kingY) && 
+                                isValidMove(paos[j], kingX, kingY)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
 
             // 检查每个对方棋子是否可以吃到将/帅
             return pieces.some(piece => isValidMove(piece, kingX, kingY));
@@ -575,8 +749,8 @@
             if (dx !== 2 || dy !== 2) return false;
 
             // 不能过河
-            if (side === 'red' && targetX > 4) return false;
-            if (side === 'black' && targetX < 5) return false;
+            if (side === 'red' && targetX >= 5) return false;
+            if (side === 'black' && targetX <= 4) return false;
 
             // 检查象眼
             const midX = startX + (targetX - startX) / 2;
@@ -592,8 +766,8 @@
 
             // 必须在九宫格内
             if (targetY < 3 || targetY > 5) return false;
-            if (side === 'red' && (targetX < 0 || targetX > 2)) return false;
-            if (side === 'black' && (targetX < 7 || targetX > 9)) return false;
+            if (side === 'red' && targetX > 2) return false;
+            if (side === 'black' && targetX < 7) return false;
 
             return true;
         }
@@ -605,14 +779,14 @@
             if ((dx === 1 && dy === 0) || (dx === 0 && dy === 1)) {
                 // 必须在九宫格内
                 if (targetY < 3 || targetY > 5) return false;
-                if (side === 'red' && (targetX < 0 || targetX > 2)) return false;
-                if (side === 'black' && (targetX < 7 || targetX > 9)) return false;
+                if (side === 'red' && targetX > 2) return false;
+                if (side === 'black' && targetX < 7) return false;
                 return true;
             }
             return false;
         }
 
-        // 炮的移动规则
+        // 修改炮的移动规则
         function checkPaoMove(startX, startY, targetX, targetY) {
             if (startX !== targetX && startY !== targetY) return false;
 
@@ -633,7 +807,14 @@
                 }
             }
 
-            return targetPiece ? obstacleCount === 1 : obstacleCount === 0;
+            // 修改炮的规则判断
+            if (targetPiece) {
+                // 吃子时必须有且仅有一个炮架
+                return obstacleCount === 1;
+            } else {
+                // 移动时不能有任何障碍物
+                return obstacleCount === 0;
+            }
         }
 
         // 兵/卒的移动规则
@@ -687,7 +868,7 @@
                 const x = Math.round((e.clientY - rect.top - 30) / 60);
                 const y = Math.round((e.clientX - rect.left - 30) / 60);
                 
-                if (x >= 0 && x < 10 && y >= 0 && y < 9 && isValidMove(selectedPiece, x, y)) {
+                if (x >= 0 && x <= 9 && y >= 0 && y <= 8 && isValidMove(selectedPiece, x, y)) {
                     movePiece(selectedPiece, x, y);
                     selectedPiece.classList.remove('selected');
                     selectedPiece = null;
@@ -696,7 +877,7 @@
             }
         });
 
-        // 移动棋子
+        // 修改移动棋子函数
         function movePiece(piece, targetX, targetY, capturedPieceId = null) {
             const oldX = parseInt(piece.dataset.x);
             const oldY = parseInt(piece.dataset.y);
@@ -705,14 +886,60 @@
             showMoveTrail(oldX, oldY, targetX, targetY);
             showLightningEffect(oldX, oldY, targetX, targetY);
             
-            // 如果是吃子，显示吃子特效
+            // 如果是吃子，显示吃子特效并添加到被吃棋子列表
             if (capturedPieceId) {
-                showCaptureEffect(targetX, targetY);
+                const capturedPiece = document.getElementById(capturedPieceId);
+                if (capturedPiece) {
+                    showCaptureEffect(targetX, targetY);
+                    // 获取被吃棋子列表的位置
+                    const [side, type] = capturedPieceId.split('_');
+                    const capturedList = document.getElementById(`${side}-captured`);
+                    const listRect = capturedList.getBoundingClientRect();
+                    const pieceRect = capturedPiece.getBoundingClientRect();
+                    
+                    // 计算移动距离
+                    const throwX = (listRect.left - pieceRect.left) / 2;
+                    const throwY = (listRect.top - pieceRect.top) / 2;
+                    const finalX = listRect.left - pieceRect.left;
+                    const finalY = listRect.top - pieceRect.top;
+                    
+                    // 克隆棋子用于动画
+                    const clone = capturedPiece.cloneNode(true);
+                    clone.style.position = 'fixed';
+                    clone.style.left = `${pieceRect.left}px`;
+                    clone.style.top = `${pieceRect.top}px`;
+                    clone.style.zIndex = '1000';
+                    clone.style.setProperty('--throw-x', `${throwX}px`);
+                    clone.style.setProperty('--throw-y', `${throwY}px`);
+                    clone.style.setProperty('--final-x', `${finalX}px`);
+                    clone.style.setProperty('--final-y', `${finalY}px`);
+                    document.body.appendChild(clone);
+                    
+                    // 添加动画类
+                    clone.classList.add('captured-animation');
+                    
+                    // 立即添加到被吃棋子列表（不等待动画结束）
+                    const baseName = type.replace(/[0-9]/g, '');
+                    const capturedDiv = document.createElement('div');
+                    capturedDiv.className = `captured-piece ${side}`;
+                    capturedDiv.textContent = pieceNames[baseName];
+                    capturedList.appendChild(capturedDiv);
+                    
+                    // 动画结束后移除克隆的棋子
+                    clone.addEventListener('animationend', () => {
+                        clone.remove();
+                    });
+                    
+                    // 移除原棋子
+                    capturedPiece.remove();
+                }
             }
             
             // 更新棋子位置
-            piece.style.left = `${targetY * 60 + 30}px`;
-            piece.style.top = `${targetX * 60 + 30}px`;
+            const newLeft = targetY * 60 + 30;
+            const newTop = targetX * 60 + 30;
+            piece.style.left = `${newLeft}px`;
+            piece.style.top = `${newTop}px`;
             piece.dataset.x = targetX;
             piece.dataset.y = targetY;
             
@@ -732,6 +959,13 @@
             if (isCheck(oppositeSide)) {
                 const king = document.getElementById(oppositeSide === 'red' ? 'red_shuai' : 'black_jiang');
                 showCheckEffect(king);
+                // 检查是否将死
+                if (isCheckmate(oppositeSide)) {
+                    setTimeout(() => {
+                        alert(`${piece.id.split('_')[0] === 'red' ? '红方' : '黑方'}胜利！`);
+                        resetGame();
+                    }, 500);
+                }
             }
         }
 
@@ -795,10 +1029,10 @@
             const shuai = document.getElementById('red_shuai');
             const jiang = document.getElementById('black_jiang');
             
-            if (!shuai) {
+            if (!shuai || isCheckmate('red')) {
                 alert('黑方胜利！');
                 resetGame();
-            } else if (!jiang) {
+            } else if (!jiang || isCheckmate('black')) {
                 alert('红方胜利！');
                 resetGame();
             }
@@ -820,6 +1054,10 @@
             document.getElementById('current-time').textContent = '0:00';
             document.getElementById('red-time').textContent = '0:00';
             document.getElementById('black-time').textContent = '0:00';
+            
+            // 清空被吃棋子列表
+            document.getElementById('red-captured').innerHTML = '';
+            document.getElementById('black-captured').innerHTML = '';
             
             currentPlayer = 'red';
             document.getElementById('current-turn').textContent = '当前回合: 红方';
@@ -992,13 +1230,15 @@
             });
         }
 
-        // 添加 socket 事件监听
+        // 修改 socket 监听函数
         socket.on('update_board', (data) => {
             const piece = document.getElementById(data.piece);
             if (!piece) return;
             
-            piece.style.left = `${data.toY * 64}px`;
-            piece.style.top = `${data.toX * 64}px`;
+            const newLeft = data.toY * 60 + 30;
+            const newTop = data.toX * 60 + 30;
+            piece.style.left = `${newLeft}px`;
+            piece.style.top = `${newTop}px`;
             piece.dataset.x = data.toX;
             piece.dataset.y = data.toY;
             
@@ -1019,15 +1259,13 @@
         initGame();
 
         function showMoveHints(piece) {
-            // 清除现有提示
             clearMoveHints();
-            
             const startX = parseInt(piece.dataset.x);
             const startY = parseInt(piece.dataset.y);
             
             // 遍历棋盘所有位置
-            for (let x = 0; x < 10; x++) {
-                for (let y = 0; y < 9; y++) {
+            for (let x = 0; x <= 9; x++) {
+                for (let y = 0; y <= 8; y++) {
                     if (isValidMove(piece, x, y)) {
                         addMoveHint(x, y);
                     }
@@ -1230,6 +1468,69 @@
             
             document.getElementById('board').appendChild(lightning);
             setTimeout(() => lightning.remove(), 200);
+        }
+
+        // 修改将死检查函数
+        function isCheckmate(side) {
+            // 先检查是否被将军
+            if (!isCheck(side)) {
+                return false;
+            }
+
+            // 获取所有己方棋子
+            const pieces = Array.from(document.getElementsByClassName('piece'))
+                .filter(p => p.id.split('_')[0] === side);
+            
+            // 检查是否有任何合法移动可以解除将军
+            for (const piece of pieces) {
+                const startX = parseInt(piece.dataset.x);
+                const startY = parseInt(piece.dataset.y);
+                
+                // 检查所有可能的目标位置
+                for (let x = 0; x <= 9; x++) {
+                    for (let y = 0; y <= 8; y++) {
+                        if (isValidMove(piece, x, y)) {
+                            // 模拟移动
+                            const originalX = parseInt(piece.dataset.x);
+                            const originalY = parseInt(piece.dataset.y);
+                            const targetPiece = getPieceAt(x, y);
+                            const originalStyle = piece.style.cssText;
+                            
+                            // 临时移除目标位置的棋子（如果有）
+                            if (targetPiece) {
+                                targetPiece.style.display = 'none';
+                            }
+                            
+                            // 临时移动棋子
+                            piece.dataset.x = x;
+                            piece.dataset.y = y;
+                            piece.style.left = `${y * 60 + 30}px`;
+                            piece.style.top = `${x * 60 + 30}px`;
+                            
+                            // 检查移动后是否仍被将军
+                            const stillInCheck = isCheck(side);
+                            
+                            // 恢复位置
+                            piece.dataset.x = originalX;
+                            piece.dataset.y = originalY;
+                            piece.style.cssText = originalStyle;
+                            
+                            // 恢复被吃的棋子
+                            if (targetPiece) {
+                                targetPiece.style.display = '';
+                            }
+                            
+                            // 如果找到一个可以解除将军的移动，则不是将死
+                            if (!stillInCheck) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // 如果没有找到任何可以解除将军的移动，则是将死
+            return true;
         }
     </script>
 </body>
