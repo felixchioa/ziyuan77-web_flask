@@ -1083,14 +1083,27 @@
             }
         });
 
-        // 在页面卸载时清理计时器
+        // 在页面卸载时清理计时器和关闭房间
         window.addEventListener('beforeunload', () => {
             if (timerInterval) {
                 clearInterval(timerInterval);
             }
+            // 通知服务器关闭房间
+            if (room) {
+                // 使用 navigator.sendBeacon 确保数据能发送出去
+                navigator.sendBeacon('/close_xiangqi_game', JSON.stringify({ room }));
+                // 通知其他玩家
+                socket.emit('player_left', { room });
+            }
         });
 
-        // 在 script 标签内添加
+        // 添加对方离开的监听
+        socket.on('opponent_left', () => {
+            alert('对方已离开游戏！');
+            window.location.href = '/tools';
+        });
+
+        // 修改初始化游戏函数
         async function initGame() {
             // 创建自定义的房间号输入对话框
             const dialogHtml = `

@@ -22,6 +22,7 @@ logger = Logger('routes')
 
 # 存储游戏数据
 games = {}
+xiangqi_games = {}  # 存储象棋游戏数据
 
 client = get_mongo_client()
 chat_db = client['chat']
@@ -1237,3 +1238,27 @@ def handle_move(data):
         'turn': game['turn'],
         'capturedPiece': captured_piece
     }, room=room)
+
+
+@current_app.route('/close_xiangqi_game', methods=['POST'])
+def close_xiangqi_game():
+    data = request.get_json()
+    room = data.get('room')
+    if room:
+        # 从游戏字典中删除房间
+        if room in games:
+            del games[room]
+    return jsonify({'status': 'success'})
+
+
+@socketio.on('player_left')
+def handle_player_left(data):
+    room = data.get('room')
+    if room:
+        # 通知对手
+        emit('opponent_left', room=room, skip_sid=request.sid)
+        # 清理房间资源
+        if room in games:
+            del games[room]
+        # 让玩家离开房间
+        leave_room(room)
