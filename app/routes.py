@@ -1262,3 +1262,8 @@ def handle_player_left(data):
             del games[room]
         # 让玩家离开房间
         leave_room(room)
+
+
+@current_app.route('/binary_converter')
+def binary_converter():
+    return render_template('binary_converter.html')
