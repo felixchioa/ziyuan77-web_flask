@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>文本处理工具</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/text_processor.css') }}">
+</head>
+<body>
+    <div class="processor-container">
+        <h2>文本处理工具</h2>
+        
+        <div class="input-section">
+            <div class="text-input">
+                <div class="input-header">
+                    <div class="tools">
+                        <button onclick="clearText()">清空</button>
+                        <button onclick="pasteText()">粘贴</button>
+                        <button onclick="uploadFile()">导入文件</button>
+                    </div>
+                    <span class="char-count">0 字符</span>
+                </div>
+                <textarea id="source-text" placeholder="请输入或粘贴要处理的文本"></textarea>
+            </div>
+        </div>
+
+        <div class="tools-section">
+            <div class="tool-group">
+                <h3>基本处理</h3>
+                <button onclick="processText('uppercase')">转大写</button>
+                <button onclick="processText('lowercase')">转小写</button>
+                <button onclick="processText('capitalize')">首字母大写</button>
+                <button onclick="processText('reverse')">反转文本</button>
+                <button onclick="processText('trim')">去除空格</button>
+            </div>
+
+            <div class="tool-group">
+                <h3>格式转换</h3>
+                <button onclick="processText('camelCase')">驼峰命名</button>
+                <button onclick="processText('snakeCase')">下划线命名</button>
+                <button onclick="processText('kebabCase')">连字符命名</button>
+                <button onclick="processText('pascalCase')">帕斯卡命名</button>
+            </div>
+
+            <div class="tool-group">
+                <h3>内容处理</h3>
+                <button onclick="processText('removeDuplicates')">去除重复行</button>
+                <button onclick="processText('sortLines')">行排序</button>
+                <button onclick="processText('reverseLines')">行反序</button>
+                <button onclick="processText('joinLines')">合并行</button>
+                <button onclick="processText('splitLines')">分割行</button>
+            </div>
+
+            <div class="tool-group">
+                <h3>特殊处理</h3>
+                <button onclick="processText('base64Encode')">Base64编码</button>
+                <button onclick="processText('base64Decode')">Base64解码</button>
+                <button onclick="processText('urlEncode')">URL编码</button>
+                <button onclick="processText('urlDecode')">URL解码</button>
+                <button onclick="processText('htmlEncode')">HTML编码</button>
+                <button onclick="processText('htmlDecode')">HTML解码</button>
+            </div>
+
+            <div class="tool-group">
+                <h3>统计分析</h3>
+                <button onclick="analyzeText('wordCount')">字数统计</button>
+                <button onclick="analyzeText('charCount')">字符统计</button>
+                <button onclick="analyzeText('lineCount')">行数统计</button>
+                <button onclick="analyzeText('wordFrequency')">词频统计</button>
+            </div>
+        </div>
+
+        <div class="output-section">
+            <div class="output-header">
+                <h3>处理结果</h3>
+                <div class="output-tools">
+                    <button onclick="copyOutput()">复制</button>
+                    <button onclick="downloadOutput()">下载</button>
+                </div>
+            </div>
+            <div id="output-text" class="output-area"></div>
+        </div>
+
+        <div class="analysis-section">
+            <h3>文本分析</h3>
+            <div class="analysis-results">
+                <div class="stat-item">
+                    <span class="stat-label">总字符数：</span>
+                    <span id="total-chars">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">总词数：</span>
+                    <span id="total-words">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">总行数：</span>
+                    <span id="total-lines">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">中文字符：</span>
+                    <span id="chinese-chars">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">英文字符：</span>
+                    <span id="english-chars">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">数字：</span>
+                    <span id="number-chars">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">空格：</span>
+                    <span id="space-chars">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">标点符号：</span>
+                    <span id="punctuation-chars">0</span>
+                </div>
+            </div>
+            <div id="word-frequency" class="word-frequency"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/text_processor.js') }}"></script>
+</body>
+</html> 

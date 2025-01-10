@@ -1,0 +1,183 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.processor-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+.input-section {
+    margin-bottom: 20px;
+}
+
+.text-input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.input-header {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+}
+
+.tools {
+    display: flex;
+    gap: 10px;
+}
+
+.tools button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.char-count {
+    color: #666;
+    font-size: 14px;
+}
+
+textarea {
+    width: 100%;
+    height: 200px;
+    padding: 15px;
+    border: none;
+    resize: vertical;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+textarea:focus {
+    outline: none;
+}
+
+.tools-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.tool-group {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.tool-group h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.tool-group button {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 5px;
+    border: none;
+    border-radius: 4px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tool-group button:hover {
+    background: #0056b3;
+}
+
+.output-section {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.output-header {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+}
+
+.output-header h3 {
+    margin: 0;
+}
+
+.output-tools {
+    display: flex;
+    gap: 10px;
+}
+
+.output-area {
+    min-height: 200px;
+    padding: 15px;
+    white-space: pre-wrap;
+    font-family: monospace;
+}
+
+.analysis-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.analysis-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.stat-item {
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stat-label {
+    color: #666;
+}
+
+.word-frequency {
+    background: white;
+    padding: 15px;
+    border-radius: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.frequency-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.frequency-item:last-child {
+    border-bottom: none;
+}
+
+.word {
+    font-weight: bold;
+}
+
+.frequency {
+    color: #666;
+} 

@@ -17,7 +17,14 @@ from app.logger import Logger
 from flask_socketio import emit, join_room, leave_room
 from app.decorators import admin_required
 import glob
-
+import socket
+import dns.resolver
+import subprocess
+import platform
+from urllib.parse import urlparse
+import ssl
+from OpenSSL import crypto as OpenSSL_crypto
+import concurrent.futures
 logger = Logger('routes')
 
 # 存储游戏数据
@@ -1267,3 +1274,238 @@ def handle_player_left(data):
 @current_app.route('/binary_converter')
 def binary_converter():
     return render_template('binary_converter.html')
+
+
+@current_app.route('/encoding')
+def encoding_converter():
+    return render_template('encoding_converter.html')
+
+
+@current_app.route('/hash')
+def hash_calculator():
+    return render_template('hash_calculator.html')
+
+
+@current_app.route('/qrcode')
+def qrcode_generator():
+    return render_template('qrcode_generator.html')
+
+
+@current_app.route('/json')
+def json_formatter():
+    return render_template('json_formatter.html')
+
+
+@current_app.route('/regex')
+def regex_tester():
+    return render_template('regex_tester.html')
+
+
+@current_app.route('/crontab')
+def crontab_generator():
+    return render_template('crontab_generator.html')
+
+
+@current_app.route('/diff')
+def text_diff():
+    return render_template('text_diff.html')
+
+
+@current_app.route('/image')
+def image_processor():
+    return render_template('image_processor.html')
+
+
+@current_app.route('/palette')
+def color_palette():
+    return render_template('color_palette.html')
+
+
+@current_app.route('/svg')
+def svg_editor():
+    return render_template('svg_editor.html')
+
+@current_app.route('/date')
+def date_calculator():
+    return render_template('date_calculator.html')
+
+
+@current_app.route('/translate')
+def translator():
+    return render_template('translator.html')
+
+
+@current_app.route('/text')
+def text_processor():
+    return render_template('text_processor.html')
+
+
+@current_app.route('/ascii')
+def ascii_art():
+    return render_template('ascii_art.html')
+
+
+@current_app.route('/ip')
+def ip_lookup():
+    return render_template('ip_lookup.html')
+
+
+@current_app.route('/ping')
+def network_test():
+    return render_template('network_test.html')
+
+
+@current_app.route('/unit')
+def unit_converter():
+    return render_template('unit_converter.html')
+
+
+@current_app.route('/api/ping')
+def api_ping():
+    target = request.args.get('target')
+    if not target:
+        return jsonify({'success': False, 'error': '缺少目标地址'})
+    
+    try:
+        # Windows系统
+        if platform.system().lower() == 'windows':
+            output = subprocess.check_output(['ping', '-n', '1', target], 
+                                          stderr=subprocess.STDOUT, 
+                                          universal_newlines=True)
+        # Linux/Unix系统
+        else:
+            output = subprocess.check_output(['ping', '-c', '1', target],
+                                          stderr=subprocess.STDOUT,
+                                          universal_newlines=True)
+        
+        # 解析输出获取延迟时间
+        if 'time=' in output.lower():
+            latency = float(output.lower().split('time=')[1].split('ms')[0])
+            return jsonify({'success': True, 'latency': latency})
+        return jsonify({'success': False, 'error': '无法获取延迟时间'})
+    except:
+        return jsonify({'success': False, 'error': '目标不可达'})
+
+
+@current_app.route('/api/tcping')
+def api_tcping():
+    target = request.args.get('target')
+    port = int(request.args.get('port', 80))
+    
+    try:
+        start_time = datetime.now()
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(5)
+        result = sock.connect_ex((target, port))
+        end_time = datetime.now()
+        sock.close()
+        
+        latency = (end_time - start_time).total_seconds() * 1000
+        return jsonify({
+            'success': result == 0,
+            'latency': latency if result == 0 else None
+        })
+    except:
+        return jsonify({'success': False, 'error': '连接失败'})
+
+
+@current_app.route('/api/dns')
+def api_dns():
+    target = request.args.get('target')
+    if not target:
+        return jsonify({'success': False, 'error': '缺少目标地址'})
+    
+    try:
+        records = []
+        start_time = datetime.now()
+        
+        # 查询不同类型的DNS记录
+        for record_type in ['A', 'AAAA', 'MX', 'NS', 'TXT']:
+            try:
+                answers = dns.resolver.resolve(target, record_type)
+                for answer in answers:
+                    records.append({
+                        'type': record_type,
+                        'value': str(answer)
+                    })
+            except:
+                continue
+        
+        resolve_time = (datetime.now() - start_time).total_seconds() * 1000
+        return jsonify({
+            'success': True,
+            'records': records,
+            'resolveTime': resolve_time
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@current_app.route('/api/website')
+def api_website():
+    target = request.args.get('target')
+    if not target:
+        return jsonify({'success': False, 'error': '缺少目标地址'})
+    
+    if not target.startswith(('http://', 'https://')):
+        target = 'https://' + target
+    
+    try:
+        start_time = datetime.now()
+        response = requests.get(target, allow_redirects=True)
+        response_time = (datetime.now() - start_time).total_seconds() * 1000
+        
+        # 检查SSL证书
+        parsed_url = urlparse(target)
+        ssl_valid = False
+        try:
+            cert = ssl.get_server_certificate((parsed_url.netloc, 443))
+            x509 = OpenSSL_crypto.load_certificate(OpenSSL_crypto.FILETYPE_PEM, cert)
+            ssl_valid = datetime.now() < datetime.strptime(x509.get_notAfter().decode(), '%Y%m%d%H%M%SZ')
+        except:
+            pass
+        
+        return jsonify({
+            'success': True,
+            'status': response.status_code,
+            'responseTime': response_time,
+            'ssl': ssl_valid,
+            'redirects': [str(r.url) for r in response.history]
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@current_app.route('/api/ports')
+def api_ports():
+    target = request.args.get('target')
+    ports = request.args.get('ports', '80,443')
+    if not target:
+        return jsonify({'success': False, 'error': '缺少目标地址'})
+    
+    try:
+        results = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            port_list = []
+            for p in ports.split(','):
+                if '-' in p:
+                    start, end = map(int, p.split('-'))
+                    port_list.extend(range(start, end + 1))
+                else:
+                    port_list.append(int(p))
+            
+            def check_port(port):
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.settimeout(1)
+                try:
+                    result = sock.connect_ex((target, port))
+                    return {'port': port, 'status': result == 0}
+                finally:
+                    sock.close()
+            
+            futures = [executor.submit(check_port, port) for port in port_list]
+            results = [f.result() for f in concurrent.futures.as_completed(futures)]
+        
+        return jsonify({'success': True, 'results': results})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})

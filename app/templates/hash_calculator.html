@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>哈希计算器</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/hash_calculator.css') }}">
+</head>
+<body>
+    <div class="calculator-container">
+        <h2>哈希计算器</h2>
+        
+        <div class="hash-options">
+            <div class="hash-option" data-hash="md5">MD5</div>
+            <div class="hash-option" data-hash="sha1">SHA-1</div>
+            <div class="hash-option" data-hash="sha256">SHA-256</div>
+            <div class="hash-option" data-hash="sha512">SHA-512</div>
+            <div class="hash-option" data-hash="sha3">SHA-3</div>
+            <div class="hash-option" data-hash="ripemd160">RIPEMD160</div>
+        </div>
+
+        <div class="file-input-container" id="drop-zone">
+            <input type="file" id="file-input" style="display: none;">
+            <div>拖放文件到此处或点击选择文件</div>
+            <div class="progress-bar">
+                <div class="progress-bar-inner"></div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="input-text">输入文本：</label>
+            <textarea id="input-text" placeholder="请输入要计算哈希的文本"></textarea>
+            <div id="text-error" class="error"></div>
+        </div>
+
+        <div class="result-container" id="result-container"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/hash_calculator.js') }}"></script>
+</body>
+</html> 

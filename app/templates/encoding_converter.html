@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>编码转换器</title>
+    <link rel="stylesheet" href="/static/css/encoding_converter.css">
+</head>
+<body>
+    <div class="converter-container">
+        <h2>编码转换器</h2>
+        
+        <div class="input-group">
+            <label for="input-text">输入文本：</label>
+            <textarea id="input-text" placeholder="请输入要转换的文本"></textarea>
+        </div>
+
+        <div class="encoding-options">
+            <div class="encoding-option" data-encoding="base64">Base64</div>
+            <div class="encoding-option" data-encoding="url">URL编码</div>
+            <div class="encoding-option" data-encoding="unicode">Unicode</div>
+            <div class="encoding-option" data-encoding="html">HTML实体</div>
+            <div class="encoding-option" data-encoding="hex">十六进制</div>
+            <div class="encoding-option" data-encoding="binary">二进制</div>
+            <div class="encoding-option" data-encoding="morse">摩尔斯电码</div>
+            <div class="encoding-option" data-encoding="ascii">ASCII码</div>
+        </div>
+
+        <div class="animation-container">
+            <div class="converter-animation"></div>
+        </div>
+
+        <div class="result-container" id="result-container"></div>
+    </div>
+
+    <script src="/static/js/encoding_converter.js"></script>
+</body>
+</html> 

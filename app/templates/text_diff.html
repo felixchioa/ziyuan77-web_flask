@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>文本差异对比</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/text_diff.css') }}">
+</head>
+<body>
+    <div class="diff-container">
+        <h2>文本差异对比</h2>
+        
+        <div class="input-section">
+            <div class="text-input">
+                <div class="input-header">
+                    <h3>原始文本</h3>
+                    <div class="file-input">
+                        <input type="file" id="original-file" accept=".txt">
+                        <label for="original-file">导入文件</label>
+                    </div>
+                </div>
+                <textarea id="original-text" placeholder="请输入或粘贴原始文本"></textarea>
+            </div>
+
+            <div class="text-input">
+                <div class="input-header">
+                    <h3>修改后文本</h3>
+                    <div class="file-input">
+                        <input type="file" id="modified-file" accept=".txt">
+                        <label for="modified-file">导入文件</label>
+                    </div>
+                </div>
+                <textarea id="modified-text" placeholder="请输入或粘贴修改后的文本"></textarea>
+            </div>
+        </div>
+
+        <div class="options-section">
+            <div class="diff-options">
+                <label>
+                    <input type="checkbox" id="ignore-case" checked>
+                    忽略大小写
+                </label>
+                <label>
+                    <input type="checkbox" id="ignore-whitespace" checked>
+                    忽略空白字符
+                </label>
+                <label>
+                    <input type="checkbox" id="ignore-linebreaks">
+                    忽略换行符
+                </label>
+            </div>
+            <div class="view-options">
+                <button class="view-btn active" data-view="side">并排视图</button>
+                <button class="view-btn" data-view="unified">统一视图</button>
+                <button class="view-btn" data-view="char">字符视图</button>
+            </div>
+            <button id="compare-btn" onclick="compareDiff()">对比差异</button>
+        </div>
+
+        <div class="result-section">
+            <div class="result-stats">
+                <span>添加：<span id="additions-count">0</span> 行</span>
+                <span>删除：<span id="deletions-count">0</span> 行</span>
+                <span>修改：<span id="modifications-count">0</span> 行</span>
+            </div>
+            <div id="diff-result"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/diff/5.1.0/diff.min.js"></script>
+    <script src="{{ url_for('static', filename='js/text_diff.js') }}"></script>
+</body>
+</html> 
