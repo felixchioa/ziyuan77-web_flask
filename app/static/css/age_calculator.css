@@ -1,0 +1,201 @@
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.calculator-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 30px;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.date-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.date-group h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.date-options {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+.date-options label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #666;
+}
+
+input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+input[type="date"]:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+#calculate-btn {
+    margin-top: 10px;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#calculate-btn:hover {
+    background-color: #0056b3;
+}
+
+.result-section {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.age-display {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.main-age {
+    margin-bottom: 20px;
+}
+
+.main-age span:first-child {
+    display: block;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+#years {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.detailed-age {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.age-item {
+    color: #666;
+}
+
+.age-item span {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.time-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    color: #666;
+}
+
+.detail-item span:last-child {
+    font-family: monospace;
+    color: #007bff;
+}
+
+.next-birthday {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.next-birthday h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+.birthday-info .date {
+    font-size: 1.2rem;
+    color: #007bff;
+    margin-bottom: 5px;
+}
+
+.birthday-info .countdown {
+    color: #666;
+}
+
+.zodiac-section {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.zodiac-item {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.zodiac-item h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.zodiac-item div {
+    font-size: 1.2rem;
+    color: #007bff;
+}
+
+@media (max-width: 768px) {
+    .calculator-container {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 25px;
+    }
+    
+    .zodiac-section {
+        grid-column: span 1;
+    }
+} 

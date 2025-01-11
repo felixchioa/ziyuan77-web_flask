@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>单词计数器 - 英文单词统计工具</title>
+    <link rel="stylesheet" href="/static/css/word_counter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>单词计数器</h1>
+        
+        <div class="counter-container">
+            <div class="input-area">
+                <textarea id="text-input" placeholder="在此输入或粘贴英文文本..."></textarea>
+                <button id="clear-btn">清空</button>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-group">
+                    <h3>基本统计</h3>
+                    <div class="stat-item">
+                        <span>单词总数：</span>
+                        <span id="total-words">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>不同单词数：</span>
+                        <span id="unique-words">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>段落数：</span>
+                        <span id="paragraph-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>句子数：</span>
+                        <span id="sentence-count">0</span>
+                    </div>
+                </div>
+                
+                <div class="stat-group">
+                    <h3>单词长度分布</h3>
+                    <div id="length-distribution"></div>
+                </div>
+                
+                <div class="stat-group">
+                    <h3>常用单词统计</h3>
+                    <div class="word-list" id="common-words"></div>
+                </div>
+            </div>
+            
+            <div class="options">
+                <label>
+                    <input type="checkbox" id="ignore-case" checked>
+                    忽略大小写
+                </label>
+                <label>
+                    <input type="checkbox" id="ignore-numbers">
+                    忽略数字
+                </label>
+                <label>
+                    <input type="checkbox" id="exclude-common" checked>
+                    排除常用词（如：the, a, an等）
+                </label>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/word_counter.js"></script>
+</body>
+</html> 

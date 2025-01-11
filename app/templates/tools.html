@@ -7,66 +7,197 @@
         <link rel="stylesheet" href="/static/css/tools.css" />
     </head>
     <body>
-        <div class="sidebar">
-            <a href="/password">安全密码生成器</a>
-            <a href="https://xyz.ziyuan77.com" target="_blank">元科技的脉搏</a>
-            <a href="/worldtime">世界时间</a>
-            <a href="/excel">Excel公式生成器</a>
-            <a href="/calculator">多功能计算器</a>
-            <a href="/math">数学计算生成器</a>
-            <a href="/translate">在线翻译</a>
-            <a href="/ascii">ASCII艺术生成器</a>
-            <a href="/download/index">下载器</a>
-            <a href="/regex">正则表达式测试</a>
-            <a href="/crontab">Cron表达式生成器</a>
-            <a href="/diff">文本差异对比</a>
-            <a href="/chat">实时聊天</a>
-            <a href="/binary_converter">二进制转换器</a>
-            <a href="/encoding">编码转换器</a>
-            <a href="/hash">哈希计算器</a>
-            <a href="/qrcode">二维码生成器</a>
-            <a href="/json">JSON格式化工具</a>
-            <a href="https://file.ziyuan77.com" target="_blank">资源站</a>
-            <a href="https://xhdndmm.cn" target="_blank">我朋友的网站</a>
-            <a href="/image">图片处理工具</a>
-            <a href="/palette">调色板工具</a>
-            <a href="/svg">SVG编辑器</a>
-            <a href="/ip">IP地址查询</a>
-            <a href="/ping">网络连通性测试</a>
-            <a href="/unit">单位换算器</a>
-            <a href="/date">日期计算器</a>
+        <header class="header">
+            <h1>在线工具合集</h1>
+            <a href="/" class="back-link">
+                <img src="/static/images/back.png" alt="返回" />
+            </a>
+        </header>
+        <div class="tools-grid">
+            <a href="/password" class="tool-card">
+                <h3>安全密码生成器</h3>
+                <p>生成安全、随机的密码</p>
+            </a>
+            <a href="https://xyz.ziyuan77.com" class="tool-card" target="_blank">
+                <h3>元科技的脉搏</h3>
+                <p>探索科技前沿资讯</p>
+            </a>
+            <a href="/worldtime" class="tool-card">
+                <h3>世界时间</h3>
+                <p>查看全球各地时间</p>
+            </a>
+            <a href="/excel" class="tool-card">
+                <h3>Excel公式生成器</h3>
+                <p>快速生成Excel公式</p>
+            </a>
+            <a href="/calculator" class="tool-card">
+                <h3>多功能计算器</h3>
+                <p>各种数学计算功能</p>
+            </a>
+            <a href="/math" class="tool-card">
+                <h3>数学计算生成器</h3>
+                <p>数学公式和计算工具</p>
+            </a>
+            <a href="/translate" class="tool-card">
+                <h3>在线翻译</h3>
+                <p>多语言在线翻译工具</p>
+            </a>
+            <a href="/ascii" class="tool-card">
+                <h3>ASCII艺术生成器</h3>
+                <p>创建ASCII艺术字符</p>
+            </a>
+            <a href="/download/index" class="tool-card">
+                <h3>下载器</h3>
+                <p>文件下载工具</p>
+            </a>
+            <a href="/regex" class="tool-card">
+                <h3>正则表达式测试</h3>
+                <p>正则表达式验证工具</p>
+            </a>
+            <a href="/crontab" class="tool-card">
+                <h3>Cron表达式生成器</h3>
+                <p>生成定时任务表达式</p>
+            </a>
+            <a href="/diff" class="tool-card">
+                <h3>文本差异对比</h3>
+                <p>比较文本差异</p>
+            </a>
+            <a href="/chat" class="tool-card">
+                <h3>实时聊天</h3>
+                <p>在线即时通讯工具</p>
+            </a>
+            <a href="/binary_converter" class="tool-card">
+                <h3>二进制转换器</h3>
+                <p>进制转换工具</p>
+            </a>
+            <a href="/encoding" class="tool-card">
+                <h3>编码转换器</h3>
+                <p>各种编码格式转换</p>
+            </a>
+            <a href="/hash" class="tool-card">
+                <h3>哈希计算器</h3>
+                <p>计算文本哈希值</p>
+            </a>
+            <a href="/qrcode" class="tool-card">
+                <h3>二维码生成器</h3>
+                <p>生成自定义二维码</p>
+            </a>
+            <a href="/json" class="tool-card">
+                <h3>JSON格式化工具</h3>
+                <p>JSON美化与验证</p>
+            </a>
+            <a href="https://file.ziyuan77.com" class="tool-card" target="_blank">
+                <h3>资源站</h3>
+                <p>各类资源下载</p>
+            </a>
+            <a href="/image" class="tool-card">
+                <h3>图片处理工具</h3>
+                <p>图片编辑与处理</p>
+            </a>
+            <a href="/palette" class="tool-card">
+                <h3>调色板工具</h3>
+                <p>颜色选择与搭配</p>
+            </a>
+            <a href="/svg" class="tool-card">
+                <h3>SVG编辑器</h3>
+                <p>SVG图形编辑工具</p>
+            </a>
+            <a href="/ip" class="tool-card">
+                <h3>IP地址查询</h3>
+                <p>查询IP地址信息</p>
+            </a>
+            <a href="/ping" class="tool-card">
+                <h3>网络连通性测试</h3>
+                <p>测试网络连接状态</p>
+            </a>
+            <a href="/unit" class="tool-card">
+                <h3>单位换算器</h3>
+                <p>各种单位转换计算</p>
+            </a>
+            <a href="/text_analyzer" class="tool-card">
+                <h3>文本分析器</h3>
+                <p>分析文本特征</p>
+            </a>
+            <a href="/date" class="tool-card">
+                <h3>日期计算器</h3>
+                <p>日期时间计算工具</p>
+            </a>
+            <a href="/color_picker" class="tool-card">
+                <h3>颜色选择器</h3>
+                <p>颜色拾取与转换</p>
+            </a>
+            <a href="/markdown_editor" class="tool-card">
+                <h3>Markdown编辑器</h3>
+                <p>在线Markdown编辑</p>
+            </a>
+            <a href="/base64_encoder" class="tool-card">
+                <h3>Base64编码器</h3>
+                <p>Base64编码转换</p>
+            </a>
+            <a href="/base64_decoder" class="tool-card">
+                <h3>Base64解码器</h3>
+                <p>Base64解码转换</p>
+            </a>
+            <a href="/html_formatter" class="tool-card">
+                <h3>HTML格式化工具</h3>
+                <p>HTML代码格式化</p>
+            </a>
+            <a href="/css_minifier" class="tool-card">
+                <h3>CSS压缩工具</h3>
+                <p>CSS代码压缩优化</p>
+            </a>
+            <a href="/js_minifier" class="tool-card">
+                <h3>JavaScript压缩工具</h3>
+                <p>JS代码压缩优化</p>
+            </a>
+            <a href="/uuid_generator" class="tool-card">
+                <h3>UUID生成器</h3>
+                <p>生成唯一标识符</p>
+            </a>
+            <a href="/text_replacer" class="tool-card">
+                <h3>文本替换工具</h3>
+                <p>批量文本替换</p>
+            </a>
+            <a href="/stopwatch" class="tool-card">
+                <h3>秒表</h3>
+                <p>精确计时工具</p>
+            </a>
+            <a href="/timer" class="tool-card">
+                <h3>计时器</h3>
+                <p>倒计时工具</p>
+            </a>
+            <a href="/notepad" class="tool-card">
+                <h3>记事本</h3>
+                <p>在线文本编辑器</p>
+            </a>
+            <a href="/character_counter" class="tool-card">
+                <h3>字符计数器</h3>
+                <p>文本字符统计工具</p>
+            </a>
+            <a href="/word_counter" class="tool-card">
+                <h3>单词计数器</h3>
+                <p>英文单词统计工具</p>
+            </a>
+            <a href="/random_number" class="tool-card">
+                <h3>随机数生成器</h3>
+                <p>生成随机数字序列</p>
+            </a>
+            <a href="/tip_calculator" class="tool-card">
+                <h3>小费计算器</h3>
+                <p>餐饮小费计算工具</p>
+            </a>
+            <a href="/bmi_calculator" class="tool-card">
+                <h3>BMI计算器</h3>
+                <p>身体质量指数计算</p>
+            </a>
+            <a href="/age_calculator" class="tool-card">
+                <h3>年龄计算器</h3>
+                <p>精确计算年龄和日期</p>
+            </a>
+            <a href="/simple_todo" class="tool-card">
+                <h3>简单待办事项</h3>
+                <p>任务清单管理工具</p>
+            </a>
         </div>
-        <div class="main-content">
-            <h1>    工具</h1>
-            <a href="/"><img src="/static/images/back.png" alt="logo" /></a>
-            <div class="clock-container">
-                <div class="clock">
-                    <h2>美国东部时间 (EST)</h2>
-                    <canvas id="clockCanvasEST" width="200" height="200"></canvas>
-                    <div id="currentTimeEST"></div>
-                </div>
-                <div class="clock">
-                    <h2>协调世界时 (UTC)</h2>
-                    <canvas id="clockCanvasUTC" width="200" height="200"></canvas>
-                    <div id="currentTimeUTC"></div>
-                </div>
-                <div class="clock">
-                    <h2>新西兰标准时间 (NZST)</h2>
-                    <canvas id="clockCanvasNZST" width="200" height="200"></canvas>
-                    <div id="currentTimeNZST"></div>
-                </div>
-                <div class="clock">
-                    <h2>中部标准时间 (CST)</h2>
-                    <canvas id="clockCanvasCST" width="200" height="200"></canvas>
-                    <div id="currentTimeCST"></div>
-                </div>
-                <div class="clock">
-                    <h2>中国标准时间 (CST)</h2>
-                    <canvas id="clockCanvasChina" width="200" height="200"></canvas>
-                    <div id="currentTimeChina"></div>
-                </div>
-            </div>
-        </div>
-        <script src="/static/js/index.js"></script>
     </body>
 </html>

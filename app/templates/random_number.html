@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>随机数生成器 - 生成随机数字序列</title>
+    <link rel="stylesheet" href="/static/css/random_number.css">
+</head>
+<body>
+    <div class="container">
+        <h1>随机数生成器</h1>
+        
+        <div class="generator-container">
+            <div class="settings">
+                <div class="setting-group">
+                    <h3>基本设置</h3>
+                    <div class="setting-item">
+                        <label>最小值：</label>
+                        <input type="number" id="min-value" value="1">
+                    </div>
+                    <div class="setting-item">
+                        <label>最大值：</label>
+                        <input type="number" id="max-value" value="100">
+                    </div>
+                    <div class="setting-item">
+                        <label>生成数量：</label>
+                        <input type="number" id="count" value="1" min="1" max="10000">
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <h3>高级选项</h3>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="unique-numbers">
+                            不重复数字
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="sort-numbers">
+                            排序结果
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>小数位数：</label>
+                        <select id="decimal-places">
+                            <option value="0">整数</option>
+                            <option value="1">1位小数</option>
+                            <option value="2">2位小数</option>
+                            <option value="3">3位小数</option>
+                            <option value="4">4位小数</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="generate-btn" class="primary">生成随机数</button>
+                <button id="copy-btn">复制结果</button>
+                <button id="clear-btn">清空结果</button>
+            </div>
+            
+            <div class="output">
+                <h3>生成结果</h3>
+                <div class="format-options">
+                    <label>
+                        <input type="radio" name="format" value="line" checked>
+                        每行一个
+                    </label>
+                    <label>
+                        <input type="radio" name="format" value="comma">
+                        逗号分隔
+                    </label>
+                    <label>
+                        <input type="radio" name="format" value="space">
+                        空格分隔
+                    </label>
+                </div>
+                <textarea id="result" readonly></textarea>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <span>平均值：</span>
+                    <span id="average">-</span>
+                </div>
+                <div class="stat-item">
+                    <span>最小值：</span>
+                    <span id="min">-</span>
+                </div>
+                <div class="stat-item">
+                    <span>最大值：</span>
+                    <span id="max">-</span>
+                </div>
+                <div class="stat-item">
+                    <span>总和：</span>
+                    <span id="sum">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/random_number.js"></script>
+</body>
+</html> 

@@ -1,100 +1,291 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f0f0f0;
     margin: 0;
-    padding: 0;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
 }
 
-h1 {
-    margin-top: 20px;
+.calculator-container {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.mode-selector {
+    display: flex;
+    gap: 10px;
     margin-bottom: 20px;
-    color: #4a90e2;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    background-color: #e0e0e0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.mode-btn.active {
+    background-color: #4a90e2;
+    color: white;
 }
 
 .calculator {
-    background-color: #fff;
-    padding: 20px;
+    background-color: white;
+    padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 400px;
+}
+
+.memory-display {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    margin-bottom: 10px;
+}
+
+.memory-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.memory-btn {
+    flex: 1;
+    padding: 5px;
+    font-size: 12px;
+    border: none;
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+.memory-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .display {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 18px;
-    text-align: right;
-    box-sizing: border-box;
-}
-
-.button {
-    background-color: #4a90e2;
-    color: #fff;
-    border: none;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    width: 60px;
+    width: 100%;
     height: 60px;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 24px;
+    text-align: right;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.history-display {
+    height: 40px;
+    margin-bottom: 10px;
+    padding: 5px;
+    font-size: 14px;
+    color: #666;
+    text-align: right;
+}
+
+.keypad {
+    display: grid;
+    gap: 5px;
+}
+
+.standard-keypad {
+    grid-template-rows: auto 1fr;
+}
+
+.function-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+}
+
+.main-keys {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+}
+
+.btn {
+    padding: 15px;
     font-size: 18px;
-    display: inline-block;
-    text-align: center;
-    line-height: 40px;
-}
-
-.button:hover {
-    background-color: #357ab8;
-}
-
-.toggle-buttons {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
-}
-
-.toggle-button {
-    background-color: #e0e0e0;
-    color: #333;
     border: none;
-    padding: 10px 15px;
-    margin: 5px;
-    border-radius: 5px;
+    border-radius: 4px;
+    background-color: #f5f5f5;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: #e0e0e0;
+}
+
+.btn.operator {
+    background-color: #e8f0fe;
+}
+
+.btn.function {
+    background-color: #f0f0f0;
+}
+
+.btn.equals {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.btn.equals:hover {
+    background-color: #357abd;
+}
+
+.scientific-keypad,
+.programmer-keypad,
+.date-keypad {
+    display: none;
+}
+
+.scientific-keypad.active,
+.programmer-keypad.active,
+.date-keypad.active {
+    display: grid;
+}
+
+.scientific-functions {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.number-system {
+    margin-bottom: 10px;
+}
+
+.radio-group {
+    display: flex;
+    gap: 10px;
+}
+
+.bit-operations {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+.date-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.date-inputs input[type="date"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.date-result {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+    .calculator-container {
+        padding: 10px;
+    }
+    
+    .btn {
+        padding: 10px;
+        font-size: 16px;
+    }
+    
+    .display {
+        height: 50px;
+        font-size: 20px;
+    }
+}
+
+/* 转换器样式 */
+.converter-container {
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.converter-header,
+.converter-footer {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.converter-equals {
+    text-align: center;
+    font-size: 24px;
+    margin: 10px 0;
+    color: #666;
+}
+
+.unit-from,
+.unit-to {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     font-size: 16px;
 }
 
-.toggle-button:hover {
-    background-color: #bdbdbd;
+.value-from,
+.value-to {
+    flex: 2;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    text-align: right;
 }
 
-a {
-    color: #4a90e2;
-    text-decoration: none;
-    font-size: 18px;
-    margin: 10px;
-    padding: 10px 20px;
-    border: 2px solid #4a90e2;
-    border-radius: 5px;
-    transition: background-color 0.3s, color 0.3s;
+.value-to {
+    background-color: #f5f5f5;
 }
 
-a:hover {
-    background-color: #4a90e2;
-    color: #fff;
+.conversion-formula {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #666;
+}
+
+/* 转换器选择器样式 */
+.mode-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.mode-selector::-webkit-scrollbar {
+    width: 6px;
+}
+
+.mode-selector::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.mode-selector::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
 }

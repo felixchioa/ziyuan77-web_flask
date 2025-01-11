@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>CSS压缩工具</title>
+    <link rel="stylesheet" href="/static/css/css_minifier.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>CSS压缩工具</h1>
+        
+        <div class="minifier-container">
+            <div class="input-section">
+                <div class="section-header">
+                    <h3>输入CSS</h3>
+                    <div class="controls">
+                        <button id="clear-input">清空</button>
+                        <button id="paste-input">粘贴</button>
+                        <input type="file" id="file-input" accept=".css" hidden>
+                        <button id="upload-file">上传文件</button>
+                    </div>
+                </div>
+                <textarea id="input-css" placeholder="在此输入CSS代码或上传CSS文件..."></textarea>
+            </div>
+            
+            <div class="options">
+                <div class="minify-options">
+                    <label>
+                        <input type="checkbox" id="remove-comments" checked>
+                        移除注释
+                    </label>
+                    <label>
+                        <input type="checkbox" id="remove-whitespace" checked>
+                        移除空白
+                    </label>
+                    <label>
+                        <input type="checkbox" id="combine-selectors">
+                        合并选择器
+                    </label>
+                    <label>
+                        <input type="checkbox" id="shorten-colors">
+                        简化颜色值
+                    </label>
+                    <label>
+                        <input type="checkbox" id="shorten-zero">
+                        简化零值
+                    </label>
+                </div>
+                <button id="minify" class="primary">压缩</button>
+                <button id="beautify" class="secondary">美化</button>
+            </div>
+            
+            <div class="output-section">
+                <div class="section-header">
+                    <h3>压缩结果</h3>
+                    <div class="controls">
+                        <button id="copy-output">复制</button>
+                        <button id="download">下载</button>
+                        <select id="output-type">
+                            <option value="minified">压缩CSS</option>
+                            <option value="beautified">美化CSS</option>
+                        </select>
+                    </div>
+                </div>
+                <pre><code id="output-css" class="css"></code></pre>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="stats">
+                <div class="stat-item">
+                    <span>原始大小：</span>
+                    <span id="original-size">0 B</span>
+                </div>
+                <div class="stat-item">
+                    <span>压缩后大小：</span>
+                    <span id="minified-size">0 B</span>
+                </div>
+                <div class="stat-item">
+                    <span>压缩率：</span>
+                    <span id="compression-ratio">0%</span>
+                </div>
+            </div>
+            <div id="error-message" class="error-message"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/languages/css.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/clean-css@5.3.2/dist/clean-css.min.js"></script>
+    <script src="/static/js/css_minifier.js"></script>
+</body>
+</html> 

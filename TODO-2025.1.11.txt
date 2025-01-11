@@ -1,0 +1,22 @@
+<a href="/text_analyzer">文本分析器</a>
+<a href="/color_picker">颜色选择器</a>
+<a href="/markdown_editor">Markdown编辑器</a>
+<a href="/base64_encoder">Base64编码器</a>
+<a href="/base64_decoder">Base64解码器</a>
+<a href="/html_formatter">HTML格式化工具</a>
+<a href="/css_minifier">CSS压缩工具</a>
+<a href="/js_minifier">JavaScript压缩工具</a>
+<a href="/uuid_generator">UUID生成器</a>
+<a href="/text_replacer">文本替换工具</a>
+————————————以上全部完成————————————————————————————————————————————————————————
+    <a href="/stopwatch">秒表</a>
+    <a href="/timer">计时器</a>
+    <a href="/notepad">记事本</a>
+    <a href="/character_counter">字符计数器</a>
+    <a href="/word_counter">单词计数器</a>
+————————————以上全部完成————————————————————————————————————————————————————————
+    <a href="/random_number">随机数生成器</a>
+    <a href="/tip_calculator">小费计算器</a>
+    <a href="/bmi_calculator">BMI计算器</a>
+    <a href="/age_calculator">年龄计算器</a>
+    <a href="/simple_todo">简单待办事项</a>

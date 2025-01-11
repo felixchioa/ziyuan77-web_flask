@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>秒表 - 精确计时工具</title>
+    <link rel="stylesheet" href="/static/css/stopwatch.css">
+</head>
+<body>
+    <div class="container">
+        <h1>秒表</h1>
+        
+        <div class="stopwatch">
+            <div class="display">
+                <span id="hours">00</span>:
+                <span id="minutes">00</span>:
+                <span id="seconds">00</span>.
+                <span id="milliseconds">000</span>
+            </div>
+            
+            <div class="controls">
+                <button id="start-stop" class="primary">开始</button>
+                <button id="lap">计次</button>
+                <button id="reset">重置</button>
+            </div>
+            
+            <div class="laps">
+                <h3>计次记录</h3>
+                <div class="laps-list" id="laps-list"></div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="stats">
+                <div class="stat-item">
+                    <span>最快计次：</span>
+                    <span id="fastest-lap">-</span>
+                </div>
+                <div class="stat-item">
+                    <span>最慢计次：</span>
+                    <span id="slowest-lap">-</span>
+                </div>
+                <div class="stat-item">
+                    <span>平均计次：</span>
+                    <span id="average-lap">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/stopwatch.js"></script>
+</body>
+</html> 

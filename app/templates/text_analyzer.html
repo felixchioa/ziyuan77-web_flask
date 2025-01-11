@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>文本分析器</title>
+    <link rel="stylesheet" href="/static/css/text_analyzer.css">
+</head>
+<body>
+    <div class="container">
+        <h1>文本分析器</h1>
+        
+        <div class="analyzer-container">
+            <div class="input-section">
+                <textarea id="input-text" placeholder="在此输入或粘贴文本..."></textarea>
+                <div class="button-group">
+                    <button id="analyze-btn">分析</button>
+                    <button id="clear-btn">清空</button>
+                    <button id="copy-btn">复制结果</button>
+                    <input type="file" id="file-input" accept=".txt,.doc,.docx,.pdf" hidden>
+                    <button id="upload-btn">上传文件</button>
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <div class="basic-stats">
+                    <h3>基本统计</h3>
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">字符数：</span>
+                            <span class="stat-value" id="char-count">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">单词数：</span>
+                            <span class="stat-value" id="word-count">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">行数：</span>
+                            <span class="stat-value" id="line-count">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">段落数：</span>
+                            <span class="stat-value" id="paragraph-count">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">句子数：</span>
+                            <span class="stat-value" id="sentence-count">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均词长：</span>
+                            <span class="stat-value" id="avg-word-length">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detailed-analysis">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="frequency">词频统计</button>
+                        <button class="tab-btn" data-tab="readability">可读性分析</button>
+                        <button class="tab-btn" data-tab="sentiment">情感分析</button>
+                        <button class="tab-btn" data-tab="syntax">语法分析</button>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="frequency">
+                            <div class="word-cloud" id="word-cloud"></div>
+                            <div class="frequency-list" id="frequency-list"></div>
+                        </div>
+                        
+                        <div class="tab-pane" id="readability">
+                            <div class="readability-scores">
+                                <div class="score-item">
+                                    <span class="score-label">Flesch 可读性指数：</span>
+                                    <span class="score-value" id="flesch-score">0</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">平均句子长度：</span>
+                                    <span class="score-value" id="avg-sentence-length">0</span>
+                                </div>
+                                <div class="score-item">
+                                    <span class="score-label">复杂词比例：</span>
+                                    <span class="score-value" id="complex-word-ratio">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane" id="sentiment">
+                            <div class="sentiment-chart">
+                                <canvas id="sentiment-chart"></canvas>
+                            </div>
+                            <div class="sentiment-summary" id="sentiment-summary"></div>
+                        </div>
+                        
+                        <div class="tab-pane" id="syntax">
+                            <div class="syntax-tree" id="syntax-tree"></div>
+                            <div class="pos-tags" id="pos-tags"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="/static/js/text_analyzer.js"></script>
+</body>
+</html> 

@@ -1851,3 +1851,92 @@ def has_liberty(board, group):
             if 0 <= nx < 19 and 0 <= ny < 19 and board[nx][ny] == 0:
                 return True
     return False
+
+@current_app.route('/text_analyzer')
+def text_analyzer():
+    return render_template('text_analyzer.html')
+
+@current_app.route('/text_analyzer/sentiment', methods=['POST'])
+def analyze_sentiment():
+    text = request.json.get('text', '')
+    
+    # 这里可以使用任何情感分析库，如 TextBlob, NLTK, 等
+    # 这里使用简单的示例返回
+    return jsonify({
+        'positive': 0.6,
+        'negative': 0.2,
+        'neutral': 0.2,
+        'intensity': 0.8
+    })
+
+@current_app.route('/color_picker')
+def color_picker():
+    return render_template('color_picker.html')
+
+@current_app.route('/markdown_editor')
+def markdown_editor():
+    return render_template('markdown_editor.html')
+
+@current_app.route('/base64_encoder')
+def base64_encoder():
+    return render_template('base64_encoder.html')
+
+@current_app.route('/html_formatter')
+def html_formatter():
+    return render_template('html_formatter.html')
+
+@current_app.route('/css_minifier')
+def css_minifier():
+    return render_template('css_minifier.html')
+
+@current_app.route('/js_minifier')
+def js_minifier():
+    return render_template('js_minifier.html')
+
+@current_app.route('/uuid_generator')
+def uuid_generator():
+    return render_template('uuid_generator.html')
+
+@current_app.route('/text_replacer')
+def text_replacer():
+    return render_template('text_replacer.html')
+
+@current_app.route('/stopwatch')
+def stopwatch():
+    return render_template('stopwatch.html')
+
+@current_app.route('/timer')
+def timer():
+    return render_template('timer.html')
+
+@current_app.route('/notepad')
+def notepad():
+    return render_template('notepad.html')
+
+@current_app.route('/character_counter')
+def character_counter():
+    return render_template('character_counter.html')
+
+@current_app.route('/word_counter')
+def word_counter():
+    return render_template('word_counter.html')
+
+@current_app.route('/random_number')
+def random_number():
+    return render_template('random_number.html')
+
+@current_app.route('/tip_calculator')
+def tip_calculator():
+    return render_template('tip_calculator.html')
+
+@current_app.route('/bmi_calculator')
+def bmi_calculator():
+    return render_template('bmi_calculator.html')
+
+@current_app.route('/age_calculator')
+def age_calculator():
+    return render_template('age_calculator.html')
+
+@current_app.route('/simple_todo')
+def simple_todo():
+    return render_template('simple_todo.html')

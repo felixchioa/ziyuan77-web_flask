@@ -1,0 +1,198 @@
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.calculator-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 30px;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.input-with-unit {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-unit input {
+    width: 100%;
+    padding: 12px;
+    padding-right: 50px;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    text-align: right;
+}
+
+.input-with-unit input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.input-with-unit .unit {
+    position: absolute;
+    right: 15px;
+    color: #666;
+}
+
+#calculate-btn {
+    margin-top: 10px;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#calculate-btn:hover {
+    background-color: #0056b3;
+}
+
+.result-section {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.bmi-display {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.bmi-value {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.bmi-value span:first-child {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+#bmi-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+#bmi-category {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.bmi-scale {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.scale-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 5px;
+}
+
+.marker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.marker.underweight { background-color: #ffc107; }
+.marker.normal { background-color: #28a745; }
+.marker.overweight { background-color: #fd7e14; }
+.marker.obese { background-color: #dc3545; }
+
+.scale-item span {
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.scale-item small {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.info-section {
+    grid-column: span 2;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+}
+
+.info-section h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+.info-section p {
+    color: #666;
+    line-height: 1.5;
+    margin: 0 0 15px 0;
+}
+
+.info-section ul {
+    margin: 0 0 15px 20px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.info-section .note {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .calculator-container {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 25px;
+    }
+    
+    .info-section {
+        grid-column: span 1;
+    }
+    
+    .bmi-scale {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+} 

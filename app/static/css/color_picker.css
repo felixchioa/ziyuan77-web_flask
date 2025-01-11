@@ -1,0 +1,196 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.color-picker-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.color-display {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#color-preview {
+    width: 100%;
+    height: 200px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+}
+
+.color-values {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.value-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.value-group label {
+    font-size: 14px;
+    color: #666;
+}
+
+.value-group input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.color-controls {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.control-group input[type="range"] {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.control-group input[type="number"] {
+    width: 60px;
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.color-palettes {
+    grid-column: 1 / -1;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.palette-color {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.harmony-options {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.harmony-options button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.harmony-options button.active {
+    background-color: #2196F3;
+    color: white;
+}
+
+.harmony-colors {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.harmony-color {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.color-tools {
+    grid-column: 1 / -1;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.tool-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.tool-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.gradient-controls {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+    align-items: center;
+}
+
+.gradient-preview {
+    height: 100px;
+    border-radius: 4px;
+    margin: 15px 0;
+    border: 1px solid #ddd;
+}
+
+#gradient-code {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .color-picker-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .color-values {
+        grid-template-columns: 1fr;
+    }
+    
+    .harmony-options {
+        flex-direction: column;
+    }
+} 
