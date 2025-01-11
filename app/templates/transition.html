@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>加载中...</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/transition.css') }}">
+</head>
+<body>
+    <div class="transition-container">
+        <div class="loading-circle"></div>
+        <div class="loading-text">
+            <span>加</span>
+            <span>载</span>
+            <span>中</span>
+            <span>.</span>
+            <span>.</span>
+            <span>.</span>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/transition.js') }}"></script>
+</body>
+</html> 

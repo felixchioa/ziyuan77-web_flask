@@ -1,0 +1,10 @@
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    {% block styles %}{% endblock %}
+</head>
+
+<script src="{{ url_for('static', filename='js/common.js') }}"></script>
+</body>
+</html> 

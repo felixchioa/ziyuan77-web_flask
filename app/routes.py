@@ -104,18 +104,12 @@ def serve_robots():
 
 
 @current_app.route('/')
+def loading():
+    return render_template('loading.html')
+
+
+@current_app.route('/index')
 def index():
-    logger.debug("Rendering index.html")
-    # 生成会话ID
-    if 'user_id' not in session:
-        session['user_id'] = str(ObjectId())
-
-    # 更新用户最后在线时间
-    online_users[session['user_id']] = datetime.now()
-
-    # 清理过期用户
-    cleanup_online_users()
-
     return render_template('index.html')
 
 
@@ -1996,3 +1990,7 @@ def power_converter():
 @current_app.route('/paint')
 def paint():
     return render_template('paint.html')
+
+@current_app.route('/transition')
+def transition():
+    return render_template('transition.html')
