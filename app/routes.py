@@ -30,6 +30,8 @@ logger = Logger('routes')
 # 存储游戏数据
 games = {}
 xiangqi_games = {}  # 存储象棋游戏数据
+checkers_games = {}  # 存储跳棋游戏数据
+go_games = {}  # 存储围棋游戏数据
 
 client = get_mongo_client()
 chat_db = client['chat']
@@ -55,6 +57,22 @@ initialBoard = {
     'black_zu1': {'x': 6, 'y': 0}, 'black_zu2': {'x': 6, 'y': 2}, 'black_zu3': {'x': 6, 'y': 4},
     'black_zu4': {'x': 6, 'y': 6}, 'black_zu5': {'x': 6, 'y': 8}
 }
+
+# 添加初始棋盘配置
+initial_checkers_board = {
+    'red_1': {'x': 0, 'y': 1}, 'red_2': {'x': 0, 'y': 3}, 'red_3': {'x': 0, 'y': 5}, 'red_4': {'x': 0, 'y': 7},
+    'red_5': {'x': 1, 'y': 0}, 'red_6': {'x': 1, 'y': 2}, 'red_7': {'x': 1, 'y': 4}, 'red_8': {'x': 1, 'y': 6},
+    'red_9': {'x': 2, 'y': 1}, 'red_10': {'x': 2, 'y': 3}, 'red_11': {'x': 2, 'y': 5}, 'red_12': {'x': 2, 'y': 7},
+    
+    'black_1': {'x': 5, 'y': 0}, 'black_2': {'x': 5, 'y': 2}, 'black_3': {'x': 5, 'y': 4}, 'black_4': {'x': 5, 'y': 6},
+    'black_5': {'x': 6, 'y': 1}, 'black_6': {'x': 6, 'y': 3}, 'black_7': {'x': 6, 'y': 5}, 'black_8': {'x': 6, 'y': 7},
+    'black_9': {'x': 7, 'y': 0}, 'black_10': {'x': 7, 'y': 2}, 'black_11': {'x': 7, 'y': 4}, 'black_12': {'x': 7, 'y': 6}
+}
+
+# 添加初始棋盘配置 (19x19空棋盘)
+initial_go_board = [[0 for _ in range(19)] for _ in range(19)]
+
+AI_LEVEL = 10  # AI难度等级(1-10)
 
 
 @current_app.before_request
@@ -1509,3 +1527,327 @@ def api_ports():
         return jsonify({'success': True, 'results': results})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
+
+@current_app.route('/checkers')
+def checkers():
+    return render_template('checkers.html')
+
+
+@current_app.route('/create_checkers_game', methods=['POST'])
+def create_checkers_game():
+    room = request.json.get('room')
+    if not room:
+        return jsonify({'error': '房间号不能为空'}), 400
+        
+    if room in checkers_games:
+        return jsonify({'error': '房间已存在'}), 400
+        
+    checkers_games[room] = {
+        'board': initial_checkers_board.copy(),
+        'turn': 'red',
+        'player_red': True,  # 红方
+        'player_black': False,  # 黑方
+        'spectators': [],
+        'history': [],
+        'last_move': None,
+        'kings': set()  # 存储升王的棋子
+    }
+    
+    return jsonify({
+        'message': '创建成功',
+        'player': 'red'
+    }), 200
+
+
+@current_app.route('/join_checkers_game', methods=['POST'])
+def join_checkers_game():
+    room = request.json.get('room')
+    if not room:
+        return jsonify({'error': '房间号不能为空'}), 400
+        
+    if room not in checkers_games:
+        return jsonify({'error': '房间不存在'}), 404
+        
+    if checkers_games[room]['player_black']:
+        return jsonify({'error': '房间已满'}), 400
+        
+    checkers_games[room]['player_black'] = True
+    socketio.emit('player_joined', {
+        'message': '对手已加入游戏',
+        'timestamp': datetime.now().strftime('%H:%M:%S')
+    }, room=room)
+    
+    return jsonify({
+        'message': '加入成功',
+        'player': 'black'
+    }), 200
+
+
+@socketio.on('make_checkers_move')
+def handle_checkers_move(data):
+    room = data.get('room')
+    if not room or room not in checkers_games:
+        return
+    
+    game = checkers_games[room]
+    piece_id = data.get('piece')
+    from_x = data.get('fromX')
+    from_y = data.get('fromY')
+    to_x = data.get('toX')
+    to_y = data.get('toY')
+    captured_pieces = data.get('capturedPieces', [])
+    
+    # 更新棋盘状态
+    game['board'][piece_id] = {'x': to_x, 'y': to_y}
+    
+    # 处理吃子
+    for captured in captured_pieces:
+        if captured in game['board']:
+            del game['board'][captured]
+    
+    # 处理升王
+    if piece_id.startswith('red_') and to_x == 7:  # 红棋到达底线
+        game['kings'].add(piece_id)
+    elif piece_id.startswith('black_') and to_x == 0:  # 黑棋到达底线
+        game['kings'].add(piece_id)
+    
+    # 切换回合
+    game['turn'] = 'black' if game['turn'] == 'red' else 'red'
+    game['last_move'] = {
+        'piece': piece_id,
+        'from': (from_x, from_y),
+        'to': (to_x, to_y),
+        'captured': captured_pieces
+    }
+    
+    # 检查游戏是否结束
+    red_pieces = sum(1 for piece in game['board'] if piece.startswith('red_'))
+    black_pieces = sum(1 for piece in game['board'] if piece.startswith('black_'))
+    
+    if red_pieces == 0 or black_pieces == 0:
+        winner = 'black' if red_pieces == 0 else 'red'
+        socketio.emit('game_over', {
+            'winner': winner,
+            'board': game['board'],
+            'kings': list(game['kings'])
+        }, room=room)
+    else:
+        # 广播更新
+        socketio.emit('update_checkers_board', {
+            'board': game['board'],
+            'turn': game['turn'],
+            'lastMove': game['last_move'],
+            'kings': list(game['kings'])
+        }, room=room)
+
+
+@current_app.route('/go')
+def go():
+    return render_template('go.html')
+
+
+@current_app.route('/create_go_game', methods=['POST'])
+def create_go_game():
+    room = request.json.get('room')
+    vs_ai = request.json.get('vs_ai', False)  # 添加是否对战AI的参数
+    
+    if not room:
+        return jsonify({'error': '房间号不能为空'}), 400
+        
+    if room in go_games:
+        return jsonify({'error': '房间已存在'}), 400
+        
+    go_games[room] = {
+        'board': [row[:] for row in initial_go_board],
+        'turn': 'black',
+        'player_black': True,
+        'player_white': False,
+        'history': [],
+        'last_move': None,
+        'captures': {'black': 0, 'white': 0},
+        'ko': None,
+        'territory': {'black': 0, 'white': 0},
+        'vs_ai': vs_ai,  # 添加AI标记
+        'ai_color': 'white' if vs_ai else None  # AI默认执白
+    }
+    
+    return jsonify({
+        'message': '创建成功',
+        'player': 'black',
+        'vs_ai': vs_ai
+    }), 200
+
+
+def make_ai_move(game):
+    """让AI进行落子"""
+    try:
+        # 创建临时SGF文件
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.sgf', delete=False) as f:
+            sgf_content = create_sgf_from_game(game)
+            f.write(sgf_content)
+            temp_file = f.name
+
+        # 调用GnuGo获取下一步
+        cmd = [
+            'gnugo',
+            '--mode', 'gtp',
+            '--level', str(AI_LEVEL),
+            '--infile', temp_file
+        ]
+        
+        process = subprocess.Popen(
+            cmd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        
+        # 获取AI的落子位置
+        output, _ = process.communicate('genmove white\n')
+        move = parse_gnugo_move(output)
+        
+        # 清理临时文件
+        os.unlink(temp_file)
+        
+        return move
+        
+    except Exception as e:
+        logger.error(f"AI move error: {str(e)}")
+        return None
+
+def create_sgf_from_game(game):
+    """将当前游戏状态转换为SGF格式"""
+    sgf = "(;FF[4]GM[1]SZ[19]"
+    
+    # 添加已下的棋子
+    for move in game['history']:
+        x, y = move['x'], move['y']
+        color = move['color'].upper()
+        sgf += f";{color}[{chr(97+y)}{chr(97+x)}]"
+    
+    sgf += ")"
+    return sgf
+
+def parse_gnugo_move(output):
+    """解析GnuGo的输出获取落子位置"""
+    try:
+        # 输出格式类似于 "= D4" 或 "= PASS"
+        move = output.strip().split(' ')[1]
+        if move == 'PASS':
+            return None
+            
+        col = ord(move[0].lower()) - 97
+        row = int(move[1:]) - 1
+        return {'x': row, 'y': col}
+    except:
+        return None
+
+@socketio.on('make_go_move')
+def handle_go_move(data):
+    room = data.get('room')
+    if not room or room not in go_games:
+        return
+    
+    game = go_games[room]
+    x = data.get('x')
+    y = data.get('y')
+    color = data.get('color')
+    
+    # 检查是否轮到该玩家
+    if color != game['turn']:
+        return {'error': '不是你的回合'}
+    
+    # 检查位置是否有效
+    if not (0 <= x < 19 and 0 <= y < 19):
+        return {'error': '无效的位置'}
+    
+    # 检查位置是否已被占用
+    if game['board'][x][y] != 0:
+        return {'error': '该位置已有棋子'}
+    
+    # 检查劫争
+    if game['ko'] == (x, y):
+        return {'error': '劫争禁手'}
+    
+    # 模拟落子
+    game['board'][x][y] = 1 if color == 'black' else 2
+    
+    # 计算提子
+    captured = []
+    for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+        nx, ny = x + dx, y + dy
+        if 0 <= nx < 19 and 0 <= ny < 19:
+            group = get_connected_group(game['board'], nx, ny)
+            if group and not has_liberty(game['board'], group):
+                captured.extend(group)
+    
+    # 移除提子
+    for cx, cy in captured:
+        game['board'][cx][cy] = 0
+    
+    # 更新提子数
+    game['captures'][color] += len(captured)
+    
+    # 检查落子后是否有气
+    current_group = get_connected_group(game['board'], x, y)
+    if not has_liberty(game['board'], current_group):
+        # 还原棋盘
+        game['board'][x][y] = 0
+        for cx, cy in captured:
+            game['board'][cx][cy] = 1 if color == 'white' else 2
+        return {'error': '自杀禁手'}
+    
+    # 更新劫争状态
+    game['ko'] = (captured[0] if len(captured) == 1 else None)
+    
+    # 记录最后一手
+    game['last_move'] = {'x': x, 'y': y, 'color': color}
+    game['history'].append(game['last_move'])
+    
+    # 切换回合
+    game['turn'] = 'white' if color == 'black' else 'black'
+    
+    # 广播更新
+    socketio.emit('update_go_board', {
+        'board': game['board'],
+        'turn': game['turn'],
+        'lastMove': game['last_move'],
+        'captures': game['captures']
+    }, room=room)
+    
+    return {'success': True}
+
+def get_connected_group(board, x, y):
+    """获取与指定位置相连的同色棋子群"""
+    if not (0 <= x < 19 and 0 <= y < 19) or board[x][y] == 0:
+        return []
+    
+    color = board[x][y]
+    group = set()
+    stack = [(x, y)]
+    
+    while stack:
+        cx, cy = stack.pop()
+        if (cx, cy) in group:
+            continue
+        
+        group.add((cx, cy))
+        for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            nx, ny = cx + dx, cy + dy
+            if (0 <= nx < 19 and 0 <= ny < 19 and 
+                board[nx][ny] == color and 
+                (nx, ny) not in group):
+                stack.append((nx, ny))
+    
+    return list(group)
+
+def has_liberty(board, group):
+    """检查棋子群是否有气"""
+    for x, y in group:
+        for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < 19 and 0 <= ny < 19 and board[nx][ny] == 0:
+                return True
+    return False

@@ -1,5 +1,7 @@
 FROM tiangolo/uwsgi-nginx-flask:python3.11
 
+RUN apt-get update && apt-get install -y gnugo
+
 RUN mkdir -p /usr/src/app/logs
 WORKDIR /usr/src/app
 

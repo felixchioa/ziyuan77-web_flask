@@ -1,0 +1,588 @@
+/* 基本样式与五子棋类似，但需要调整棋盘和棋子的样式 */
+body {
+    background-color: #f5f5f5;
+    font-family: 'Microsoft YaHei', sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+#game-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+#board {
+    position: relative;
+    width: 640px;
+    height: 640px;
+    background: #DEB887;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 2px solid #8B4513;
+    border-radius: 4px;
+}
+
+.cell {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+/* 棋盘格子颜色 */
+.cell.dark {
+    background-color: #8B4513;
+}
+
+.cell.light {
+    background-color: #DEB887;
+}
+
+/* 棋子样式 */
+.piece {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    top: 5px;
+    left: 5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.piece.red {
+    background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.piece.black {
+    background: radial-gradient(circle at 30% 30%, #444, #000);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* 王棋样式 */
+.piece.king::after {
+    content: '王';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: gold;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* 可移动位置提示 */
+.valid-move {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(0, 255, 0, 0.3);
+    top: 25px;
+    left: 25px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+body {
+    background-color: #f5f5f5;
+    font-family: 'Microsoft YaHei', sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+#game-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+#move-history {
+    width: 180px;
+    flex-shrink: 0;
+}
+
+#game-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#game-info {
+    display: flex;
+    flex-direction: column;
+    width: 180px;
+    flex-shrink: 0;
+}
+
+#move-history h3 {
+    margin: 0 0 15px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+    color: #333;
+    font-size: 18px;
+    text-align: center;
+}
+
+.move-item {
+    padding: 8px 12px;
+    margin: 4px 0;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.move-item:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: translateX(2px);
+}
+
+.move-item.black {
+    color: #000;
+    border-left: 3px solid #000;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.move-item.white {
+    color: #666;
+    border-left: 3px solid #666;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+#current-turn {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+#scores {
+    font-size: 16px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+#timer {
+    margin: 10px 0;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.timer-item {
+    margin: 0;
+    padding: 3px;
+    border-radius: 4px;
+    background: #f8f9fa;
+}
+
+.timer-label {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+}
+
+.timer-display {
+    font-size: 16px;
+    padding: 4px;
+    text-align: center;
+    background: white;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    color: #333;
+}
+
+.black-timer {
+    border-left: 3px solid #000;
+}
+
+.white-timer {
+    border-left: 3px solid #666;
+}
+
+/* 当前回合的计时器高亮效果 */
+.timer-active {
+    background: #e9ecef;
+    box-shadow: 0 0 8px rgba(0, 150, 255, 0.2);
+}
+
+/* 数字变化动画 */
+.timer-display span.changing {
+    transform: scale(1.05);
+    color: #007bff;
+}
+
+#board {
+    position: relative;
+    width: 560px;
+    height: 560px;
+    background: #DEB887;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 2px solid #8B4513;
+    border-radius: 4px;
+}
+
+.cell {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+    cursor: pointer;
+    z-index: 1;
+}
+
+/* 棋盘网格线 */
+.cell::before, .cell::after {
+    content: '';
+    position: absolute;
+    background-color: #000;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.cell::before {
+    left: 20px;
+    height: 41px;
+    width: 1px;
+}
+
+.cell::after {
+    top: 20px;
+    width: 41px;
+    height: 1px;
+}
+
+/* 棋子样式 */
+.piece {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.black {
+    background: radial-gradient(circle at 30% 30%, #444, #000);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.white {
+    background: radial-gradient(circle at 30% 30%, #fff, #ddd);
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.coordinate {
+    position: absolute;
+    font-size: 14px;
+    color: #8B4513;
+    font-weight: bold;
+}
+
+.coordinate-x {
+    bottom: -25px;
+    text-align: center;
+    width: 40px;
+    transform: translateX(-20px);
+}
+
+.coordinate-y {
+    right: -25px;
+    height: 40px;
+    line-height: 40px;
+    transform: translateY(-20px);
+}
+
+#delete-room {
+    width: 100%;
+    padding: 10px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+#delete-room:hover {
+    background-color: #c82333;
+}
+
+/* 添加响应式设计 */
+@media (max-width: 1200px) {
+    #game-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    #move-history, #game-info {
+        width: 220px;
+    }
+
+    #game-content {
+        order: -1;
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 700px) {
+    #game-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #move-history, #game-info {
+        width: 100%;
+        max-width: 600px;
+    }
+}
+
+/* 最后一手标记 */
+.last-move::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: #ff0000;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+}
+
+/* 悬停效果 */
+.cell:hover::before {
+    content: '';
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.1);
+    top: 2px;
+    left: 2px;
+    pointer-events: none;
+    z-index: 4;
+}
+
+.current-timer {
+    border-left: 3px solid #007bff;
+    background: linear-gradient(to right, rgba(0, 123, 255, 0.1), transparent);
+}
+
+.timer-active .current-timer {
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+#game-duration {
+    margin: 0 0 10px 0;
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.game-timer {
+    border-left: 3px solid #28a745;
+    background: linear-gradient(to right, rgba(40, 167, 69, 0.1), transparent);
+}
+
+.utc-timer {
+    border-left: 3px solid #9c27b0;
+    background: linear-gradient(to right, rgba(156, 39, 176, 0.1), transparent);
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+}
+
+#utc-display {
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* 聊天区域样式 */
+#chat-box {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 300px;
+}
+
+#chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.chat-message {
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 6px;
+    max-width: 80%;
+}
+
+.chat-message.sent {
+    background-color: #007bff;
+    color: white;
+    margin-left: auto;
+}
+
+.chat-message.received {
+    background-color: #e9ecef;
+    color: #333;
+    margin-right: auto;
+}
+
+.chat-input-area {
+    display: flex;
+    gap: 8px;
+}
+
+#chat-input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+#send-message {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#send-message:hover {
+    background-color: #0056b3;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    #chat-box {
+        height: 200px;
+    }
+    
+    .chat-message {
+        font-size: 14px;
+    }
+    
+    #chat-input {
+        font-size: 12px;
+    }
+    
+    #send-message {
+        padding: 6px 12px;
+    }
+}
+
+/* 修改落子记录样式 */
+#moves-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+.moves-block {
+    background: white;
+    border-radius: 6px;
+    padding: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.block-header {
+    font-size: 12px;
+    color: #666;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+
+.move-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.move-item {
+    padding: 4px 8px;
+    margin: 2px 0;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    .moves-block {
+        padding: 6px;
+    }
+    
+    .block-header {
+        font-size: 11px;
+    }
+    
+    .move-item {
+        padding: 3px 6px;
+        font-size: 12px;
+    }
+}
+
+.chat-message.system {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    margin: 5px auto;
+    text-align: center;
+    font-style: italic;
+    max-width: 100%;
+    padding: 4px 12px;
+}
+
+.chat-message.system::before {
+    content: '🔔';
+    margin-right: 5px;
+}
