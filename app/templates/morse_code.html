@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>摩尔斯电码转换器</title>
+    <link rel="stylesheet" href="/static/css/morse_code.css">
+</head>
+<body>
+    <div class="container">
+        <h1>摩尔斯电码转换器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <textarea id="input-text" placeholder="输入文本或摩尔斯电码..."></textarea>
+                <div class="controls">
+                    <button id="text-to-morse">文本 → 摩尔斯</button>
+                    <button id="morse-to-text">摩尔斯 → 文本</button>
+                    <button id="clear">清空</button>
+                    <button id="copy">复制</button>
+                    <button id="play">播放</button>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <textarea id="output-text" readonly></textarea>
+            </div>
+            
+            <div class="morse-table">
+                <h3>摩尔斯电码对照表</h3>
+                <div class="table-content">
+                    <!-- 对照表内容将由JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/morse_code.js"></script>
+</body>
+</html> 

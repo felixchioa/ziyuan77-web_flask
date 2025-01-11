@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>时间单位转换器</title>
+    <link rel="stylesheet" href="/static/css/time_converter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>时间单位转换器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <div class="unit-input">
+                    <label>秒 (s)</label>
+                    <input type="number" id="seconds" step="any" placeholder="输入时间...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>分钟 (min)</label>
+                    <input type="number" id="minutes" step="any" placeholder="输入时间...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>小时 (h)</label>
+                    <input type="number" id="hours" step="any" placeholder="输入时间...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>天 (d)</label>
+                    <input type="number" id="days" step="any" placeholder="输入时间...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>周 (w)</label>
+                    <input type="number" id="weeks" step="any" placeholder="输入时间...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>月 (mo)</label>
+                    <input type="number" id="months" step="any" placeholder="输入时间...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>年 (y)</label>
+                    <input type="number" id="years" step="any" placeholder="输入时间...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>毫秒 (ms)</label>
+                    <input type="number" id="milliseconds" step="any" placeholder="输入时间...">
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>常用换算关系</h3>
+                <ul>
+                    <li>1 分钟 = 60 秒</li>
+                    <li>1 小时 = 60 分钟</li>
+                    <li>1 天 = 24 小时</li>
+                    <li>1 周 = 7 天</li>
+                    <li>1 月 ≈ 30.44 天</li>
+                    <li>1 年 = 365.25 天 (平均)</li>
+                    <li>1 秒 = 1000 毫秒</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/time_converter.js"></script>
+</body>
+</html> 

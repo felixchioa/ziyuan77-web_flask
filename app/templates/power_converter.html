@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>功率单位转换器</title>
+    <link rel="stylesheet" href="/static/css/power_converter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>功率单位转换器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <div class="unit-input">
+                    <label>瓦特 (W)</label>
+                    <input type="number" id="watt" step="any" placeholder="输入功率...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>千瓦 (kW)</label>
+                    <input type="number" id="kilowatt" step="any" placeholder="输入功率...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>兆瓦 (MW)</label>
+                    <input type="number" id="megawatt" step="any" placeholder="输入功率...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>马力 (hp)</label>
+                    <input type="number" id="horsepower" step="any" placeholder="输入功率...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>焦耳/秒 (J/s)</label>
+                    <input type="number" id="joule-per-second" step="any" placeholder="输入功率...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>英热单位/小时 (BTU/h)</label>
+                    <input type="number" id="btu-per-hour" step="any" placeholder="输入功率...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>卡路里/秒 (cal/s)</label>
+                    <input type="number" id="calorie-per-second" step="any" placeholder="输入功率...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>千卡/小时 (kcal/h)</label>
+                    <input type="number" id="kilocalorie-per-hour" step="any" placeholder="输入功率...">
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>常用换算关系</h3>
+                <ul>
+                    <li>1 千瓦 = 1000 瓦特</li>
+                    <li>1 兆瓦 = 1000000 瓦特</li>
+                    <li>1 马力 ≈ 745.7 瓦特</li>
+                    <li>1 瓦特 = 1 焦耳/秒</li>
+                    <li>1 瓦特 ≈ 3.412142 英热单位/小时</li>
+                    <li>1 瓦特 = 0.239 卡路里/秒</li>
+                    <li>1 瓦特 = 0.860421 千卡/小时</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/power_converter.js"></script>
+</body>
+</html> 

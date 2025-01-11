@@ -1940,3 +1940,59 @@ def age_calculator():
 @current_app.route('/simple_todo')
 def simple_todo():
     return render_template('simple_todo.html')
+
+@current_app.route('/morse_code')
+def morse_code():
+    return render_template('morse_code.html')
+
+@current_app.route('/roman_numerals')
+def roman_numerals():
+    return render_template('roman_numerals.html')
+
+@current_app.route('/temperature_converter')
+def temperature_converter():
+    return render_template('temperature_converter.html')
+
+@current_app.route('/length_converter')
+def length_converter():
+    return render_template('length_converter.html')
+
+@current_app.route('/weight_converter')
+def weight_converter():
+    return render_template('weight_converter.html')
+
+@current_app.route('/volume_converter')
+def volume_converter():
+    return render_template('volume_converter.html')
+
+@current_app.route('/area_converter')
+def area_converter():
+    return render_template('area_converter.html')
+
+@current_app.route('/speed_converter')
+def speed_converter():
+    return render_template('speed_converter.html')
+
+@current_app.route('/time_converter')
+def time_converter():
+    return render_template('time_converter.html')
+
+@current_app.route('/angle_converter')
+def angle_converter():
+    return render_template('angle_converter.html')
+
+@current_app.route('/pressure_converter')
+def pressure_converter():
+    return render_template('pressure_converter.html')
+
+@current_app.route('/energy_converter')
+def energy_converter():
+    return render_template('energy_converter.html')
+
+@current_app.route('/power_converter')
+def power_converter():
+    return render_template('power_converter.html')
+
+@current_app.route('/paint')
+def paint():
+    return render_template('paint.html')

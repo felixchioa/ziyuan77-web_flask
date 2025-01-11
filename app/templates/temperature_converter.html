@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>温度转换器</title>
+    <link rel="stylesheet" href="/static/css/temperature_converter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>温度转换器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <div class="temp-input">
+                    <label>摄氏度 (°C)</label>
+                    <input type="number" id="celsius" step="0.1" placeholder="输入温度...">
+                </div>
+                
+                <div class="temp-input">
+                    <label>华氏度 (°F)</label>
+                    <input type="number" id="fahrenheit" step="0.1" placeholder="输入温度...">
+                </div>
+                
+                <div class="temp-input">
+                    <label>开尔文 (K)</label>
+                    <input type="number" id="kelvin" step="0.1" placeholder="输入温度...">
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>温度换算公式</h3>
+                <div class="formulas">
+                    <div class="formula">
+                        <span>°F = °C × 9/5 + 32</span>
+                        <span>°C = (°F - 32) × 5/9</span>
+                    </div>
+                    <div class="formula">
+                        <span>K = °C + 273.15</span>
+                        <span>°C = K - 273.15</span>
+                    </div>
+                </div>
+                
+                <div class="reference-points">
+                    <h3>常见参考温度</h3>
+                    <ul>
+                        <li>水的沸点: 100°C = 212°F = 373.15K</li>
+                        <li>水的凝固点: 0°C = 32°F = 273.15K</li>
+                        <li>绝对零度: -273.15°C = -459.67°F = 0K</li>
+                        <li>室温: 20°C = 68°F = 293.15K</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/temperature_converter.js"></script>
+</body>
+</html> 
