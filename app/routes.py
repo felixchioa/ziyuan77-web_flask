@@ -2116,3 +2116,11 @@ def update():
 @current_app.route('/github')
 def github():
     return render_template('github.html')
+
+@current_app.route('/github_chat')
+def github_chat():
+    return render_template('github_chat.html')
+
+@current_app.route('/github_miaobox')
+def github_miaobox():
+    return render_template('github_miaobox.html')
