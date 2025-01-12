@@ -1,19 +1,3 @@
-import random
-from collections import Counter
-import tempfile
-import os
-from datetime import datetime, timedelta
-from bson import json_util
-from bson.objectid import ObjectId
-import requests
-from flask import (
-    request, jsonify, render_template, current_app, send_file,
-    send_from_directory, session, redirect, url_for
-)
-from werkzeug.security import generate_password_hash, check_password_hash
-from app.db_config import get_mongo_client
-from app import socketio
-from app.logger import Logger
 from flask_socketio import emit, join_room, leave_room
 from app.decorators import admin_required
 import glob
@@ -25,6 +9,22 @@ from urllib.parse import urlparse
 import ssl
 from OpenSSL import crypto as OpenSSL_crypto
 import concurrent.futures
+import random
+from collections import Counter
+import tempfile
+import os
+from datetime import datetime, timedelta
+from bson import json_util
+from bson.objectid import ObjectId
+import requests
+from flask import (
+    request, jsonify, render_template, current_app, send_file,
+    send_from_directory, session, redirect, url_for)
+from werkzeug.security import generate_password_hash, check_password_hash
+from app.db_config import get_mongo_client
+from app import socketio
+from app.logger import Logger
+
 logger = Logger('routes')
 
 # 存储游戏数据
@@ -1994,3 +1994,125 @@ def paint():
 @current_app.route('/transition')
 def transition():
     return render_template('transition.html')
+
+# 获取所有日志
+@current_app.route('/api/admin/daily/entries')
+@admin_required
+def get_daily_entries():
+    client = get_mongo_client()
+    db = client.get_database()  # 获取数据库实例
+    # 从daily.html文件中读取内容
+    with open('app/templates/daily.html', 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # 使用正则表达式提取所有的日志条目
+    import re
+    pattern = r'<li>(.*?)：(.*?)</li>'
+    entries = []
+    for match in re.finditer(pattern, content):
+        date = match.group(1)
+        content = match.group(2)
+        entries.append({
+            'date': date,
+            'content': content,
+            'created_at': datetime.now()
+        })
+    
+    # 将提取的条目存入数据库
+    if not db.daily.count_documents({}):  # 如果数据库为空，则导入数据
+        db.daily.insert_many(entries)
+    
+    # 返回所有条目
+    all_entries = list(db.daily.find().sort('date', -1))
+    return json_util.dumps(all_entries)
+
+# 添加新日志
+@current_app.route('/api/admin/daily/entries', methods=['POST'])
+@admin_required
+def add_daily_entry():
+    data = request.json
+    client = get_mongo_client()
+    db = client.get_database()  # 获取数据库实例
+    
+    # 添加到数据库
+    result = db.daily.insert_one({
+        'date': data['date'],
+        'content': data['content'],
+        'created_at': datetime.now()
+    })
+    
+    # 更新daily.html文件
+    update_daily_html()
+    
+    return jsonify({'status': 'success'})
+
+# 编辑日志
+@current_app.route('/api/admin/daily/entries/<id>', methods=['PUT'])
+@admin_required
+def edit_daily_entry(id):
+    data = request.json
+    client = get_mongo_client()
+    db = client.get_database()  # 获取数据库实例
+    
+    # 更新数据库
+    result = db.daily.update_one(
+        {'_id': ObjectId(id)},
+        {'$set': {'content': data['content']}}
+    )
+    
+    # 更新daily.html文件
+    update_daily_html()
+    
+    return jsonify({'status': 'success'})
+
+# 删除日志
+@current_app.route('/api/admin/daily/entries/<id>', methods=['DELETE'])
+@admin_required
+def delete_daily_entry(id):
+    client = get_mongo_client()
+    db = client.get_database()  # 获取数据库实例
+    
+    # 从数据库删除
+    result = db.daily.delete_one({'_id': ObjectId(id)})
+    
+    # 更新daily.html文件
+    update_daily_html()
+    
+    return jsonify({'status': 'success'})
+
+def update_daily_html():
+    """更新daily.html文件的内容"""
+    client = get_mongo_client()
+    db = client.get_database()  # 获取数据库实例
+    entries = list(db.daily.find().sort('date', -1))
+    
+    # 读取原始模板
+    with open('app/templates/daily.html', 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    # 构建新的日志列表HTML
+    entries_html = ''
+    for entry in entries:
+        entries_html += f'    <li>{entry["date"]}：{entry["content"]}</li>\n'
+    
+    # 使用正则表达式替换原有的日志列表
+    import re
+    pattern = r'(<ul>[\s\S]*?</ul>)'
+    new_content = re.sub(pattern, f'<ul>\n{entries_html}</ul>', content)
+    
+    # 写入文件
+    with open('app/templates/daily.html', 'w', encoding='utf-8') as f:
+        f.write(new_content)
+
+@current_app.route('/admin/daily')
+@admin_required
+def admin_daily():
+    return render_template('admin/daily.html')
+
+@current_app.route('/update')
+def update():
+    return render_template('update.html')
+
+@current_app.route('/github')
+def github():
+    return render_template('github.html')

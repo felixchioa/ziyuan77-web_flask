@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>日志管理</title>
+    <link rel="stylesheet" href="/static/css/admin/daily.css">
+</head>
+<body>
+    <div class="daily-container">
+        <h2>日志管理</h2>
+        
+        <div class="add-entry">
+            <h3>添加新日志</h3>
+            <div class="input-group">
+                <label>日期:</label>
+                <input type="date" id="entry-date">
+            </div>
+            <div class="input-group">
+                <label>内容:</label>
+                <textarea id="entry-content" placeholder="请输入日志内容"></textarea>
+            </div>
+            <button onclick="addEntry()">添加</button>
+        </div>
+
+        <div class="entries-list">
+            <h3>日志列表</h3>
+            <div class="filters">
+                <input type="text" id="search" placeholder="搜索内容...">
+                <div class="date-range">
+                    <input type="date" id="start-date">
+                    <span>至</span>
+                    <input type="date" id="end-date">
+                </div>
+            </div>
+            <div id="entries"></div>
+        </div>
+    </div>
+    <script src="/static/js/admin/daily.js"></script>
+</body>
+</html> 
