@@ -1,4 +1,3 @@
 User-agent: *
-Disallow:
 
 Sitemap: http://ziyuan77.com/sitemap_location.xml
