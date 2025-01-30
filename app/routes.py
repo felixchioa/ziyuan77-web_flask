@@ -103,12 +103,12 @@ def serve_robots():
     return send_from_directory('static', 'robots.txt')
 
 
-@current_app.route('/')
+@current_app.route('/index')
 def loading():
     return render_template('loading.html')
 
 
-@current_app.route('/index')
+@current_app.route('/')
 def index():
     return render_template('index.html')
 
