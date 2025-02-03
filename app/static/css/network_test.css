@@ -244,4 +244,196 @@ body {
     color: #666;
     font-size: 12px;
     margin-right: 10px;
-} 
+}
+
+.port-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+#port-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#port-table th,
+#port-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#port-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.scan-progress {
+    margin: 15px 0;
+}
+
+#scan-status {
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#progress-inner {
+    height: 100%;
+    width: 0;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+}
+
+.open-ports-summary {
+    margin: 15px 0;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.open-ports-summary h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+#open-ports-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#open-ports-list .port-badge {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#open-ports-list .port-badge .port-number {
+    font-weight: bold;
+}
+
+#open-ports-list .port-badge .port-service {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+/* 添加数据分析相关样式 */
+.analysis-section {
+    margin: 20px 0;
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.analysis-item {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.analysis-item .label {
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.analysis-item .value {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.analysis-distribution {
+    margin-top: 20px;
+}
+
+.distribution-bars {
+    display: flex;
+    align-items: flex-end;
+    height: 150px;
+    gap: 2px;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.distribution-bar {
+    flex: 1;
+    background: #007bff;
+    min-height: 1px;
+    transition: height 0.3s ease;
+}
+
+.score-card {
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    color: white;
+}
+
+.score-card.excellent { background: #28a745; }
+.score-card.good { background: #17a2b8; }
+.score-card.fair { background: #ffc107; }
+.score-card.poor { background: #dc3545; }
+
+.score-label {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+
+.score-value {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.overall-analysis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.recommendations {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.recommendations ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.recommendations li {
+    margin: 5px 0;
+    color: #666;
+}
+
+/* 状态颜色类 */
+.excellent { color: #28a745; }
+.good { color: #17a2b8; }
+.fair { color: #ffc107; }
+.poor { color: #dc3545; } 

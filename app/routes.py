@@ -24,6 +24,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.db_config import get_mongo_client
 from app import socketio
 from app.logger import Logger
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 logger = Logger('routes')
 
@@ -74,6 +77,64 @@ initial_go_board = [[0 for _ in range(19)] for _ in range(19)]
 
 AI_LEVEL = 10  # AI难度等级(1-10)
 
+# 常见浏览器UA列表
+USER_AGENTS = [
+    # Windows Chrome
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    # Windows Firefox 
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
+    # Windows Edge
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0',
+    # Mac Chrome
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    # Mac Safari
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+    # iOS Safari
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 17_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+    # Android Chrome
+    'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36'
+]
+
+# 添加新的常量
+MAX_THREADS = 100  # 最大线程数
+TIMEOUT = 1  # 端口连接超时时间(秒)
+COMMON_PORTS = {  # 常见端口及其服务
+    21: 'FTP',
+    22: 'SSH',
+    23: 'Telnet',
+    25: 'SMTP',
+    53: 'DNS',
+    80: 'HTTP',
+    110: 'POP3',
+    143: 'IMAP',
+    443: 'HTTPS',
+    445: 'SMB',
+    3306: 'MySQL',
+    3389: 'RDP',
+    5432: 'PostgreSQL',
+    6379: 'Redis',
+    8080: 'HTTP Proxy'
+}
+
+# 添加端口扫描函数
+def scan_port(host, port):
+    """扫描单个端口"""
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(TIMEOUT)
+        result = sock.connect_ex((host, port))
+        sock.close()
+        
+        if result == 0:
+            service = COMMON_PORTS.get(port, 'Unknown')
+            return {
+                'port': port,
+                'state': 'open',
+                'service': service
+            }
+        return None
+    except:
+        return None
 
 @current_app.before_request
 def before_request():
@@ -2124,3 +2185,125 @@ def github_chat():
 @current_app.route('/github_miaobox')
 def github_miaobox():
     return render_template('github_miaobox.html')
+
+@current_app.route('/test_network', methods=['POST'])
+def test_network():
+    url = request.json.get('url')
+    if not url:
+        return jsonify({'success': False, 'error': '请提供URL'})
+        
+    try:
+        # 随机选择一个UA
+        headers = {'User-Agent': random.choice(USER_AGENTS)}
+        
+        parsed_url = urlparse(url)
+        if not parsed_url.scheme:
+            url = 'http://' + url
+            
+        start_time = time.time()
+        response = requests.get(url, headers=headers, timeout=10, allow_redirects=True)
+        response_time = (time.time() - start_time) * 1000
+        
+        # 获取DNS解析时间
+        dns_start = time.time()
+        socket.gethostbyname(parsed_url.netloc)
+        dns_time = (time.time() - dns_start) * 1000
+        
+        # 获取SSL证书信息
+        cert_info = None
+        if parsed_url.scheme == 'https':
+            cert = ssl.get_server_certificate((parsed_url.netloc, 443))
+            x509 = OpenSSL_crypto.load_certificate(OpenSSL_crypto.FILETYPE_PEM, cert)
+            cert_info = {
+                'issuer': dict(x509.get_issuer().get_components()),
+                'subject': dict(x509.get_subject().get_components()),
+                'expires': x509.get_notAfter().decode('ascii')
+            }
+        
+        result = {
+            'success': True,
+            'status_code': response.status_code,
+            'response_time': round(response_time, 2),
+            'dns_time': round(dns_time, 2),
+            'content_length': len(response.content),
+            'headers': dict(response.headers),
+            'cert_info': cert_info,
+            'redirects': [r.url for r in response.history]
+        }
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        logger.error(f"Network test error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@current_app.route('/scan_ports', methods=['POST'])
+def scan_ports():
+    """端口扫描API"""
+    host = request.json.get('host')
+    if not host:
+        return jsonify({'success': False, 'error': '请提供主机地址'})
+        
+    try:
+        # 解析主机名为IP
+        ip = socket.gethostbyname(host)
+        
+        # 创建线程池
+        open_ports = []
+        total_ports = 65535
+        scanned_ports = 0
+        last_update_time = time.time()
+        
+        def scan_callback(future):
+            nonlocal scanned_ports, last_update_time
+            scanned_ports += 1
+            
+            # 每秒更新一次进度
+            current_time = time.time()
+            if current_time - last_update_time >= 1.0:
+                last_update_time = current_time
+                socketio.emit('scan_progress', {
+                    'current': scanned_ports,
+                    'total': total_ports,
+                    'percentage': round((scanned_ports / total_ports) * 100, 1),
+                    'current_port': future_to_port[future]  # 当前扫描的端口
+                })
+        
+        with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
+            # 提交所有扫描任务
+            future_to_port = {
+                executor.submit(scan_port, ip, port): port 
+                for port in range(1, total_ports + 1)
+            }
+            
+            # 添加回调
+            for future in future_to_port:
+                future.add_done_callback(scan_callback)
+            
+            # 收集结果
+            for future in as_completed(future_to_port):
+                result = future.result()
+                if result:
+                    open_ports.append(result)
+        
+        # 按端口号排序
+        open_ports.sort(key=lambda x: x['port'])
+        
+        # 发送最终进度
+        socketio.emit('scan_progress', {
+            'current': total_ports,
+            'total': total_ports,
+            'percentage': 100,
+            'current_port': total_ports
+        })
+        
+        return jsonify({
+            'success': True,
+            'ip': ip,
+            'total_open': len(open_ports),
+            'open_ports': open_ports
+        })
+        
+    except Exception as e:
+        logger.error(f"Port scan error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
