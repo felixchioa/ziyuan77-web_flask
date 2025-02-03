@@ -22,13 +22,8 @@ jobs:
               env:
                   ECS_HOST: ${{ secrets.ECS_HOST }}
                   ECS_USER: ${{ secrets.ECS_USER }}
-                  DOCKER_COMPOSE_FILE_PATH: ${{ secrets.DOCKER_COMPOSE_FILE_PATH }}
               run: |
                   echo "Deploying application to ECS..."
                   ssh -o StrictHostKeyChecking=no $ECS_USER@$ECS_HOST "
-                    cd $(dirname $DOCKER_COMPOSE_FILE_PATH) &&
-                    docker compose -f $DOCKER_COMPOSE_FILE_PATH down &&
-                    git pull &&
-                    docker compose -f $DOCKER_COMPOSE_FILE_PATH build &&
-                    docker compose -f $DOCKER_COMPOSE_FILE_PATH up -d
+                    ssh -p 2222 root@127.0.0.1 "cd /mnt/docker_hub/cicd && ./ziyuan77-web.sh"
                   "
