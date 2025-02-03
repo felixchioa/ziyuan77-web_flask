@@ -498,4 +498,107 @@ async function testWebsite() {
     } catch (error) {
         logResult(`网站测试失败: ${error.message}`, 'error');
     }
+}
+
+// 端口扫描功能
+document.getElementById('scan-btn').addEventListener('click', async () => {
+    const target = document.getElementById('target-input').value.trim();
+    if (!target) {
+        alert('请输入目标主机');
+        return;
+    }
+
+    const scanSection = document.getElementById('port-scan-section');
+    const scanStatus = document.getElementById('scan-status');
+    const progressBar = document.getElementById('progress-inner');
+    const portResults = document.getElementById('port-results');
+
+    scanSection.style.display = 'block';
+    scanStatus.textContent = '正在扫描端口...';
+    progressBar.style.width = '0%';
+    portResults.innerHTML = '';
+
+    // 监听扫描进度
+    socket.on('scan_progress', (data) => {
+        progressBar.style.width = `${data.percentage}%`;
+        scanStatus.textContent = `正在扫描端口 ${data.current_port}... ${data.current}/${data.total} (${data.percentage}%)`;
+        
+        // 如果发现开放端口，立即添加到结果表格
+        if (data.open_port) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${data.open_port.port}</td>
+                <td>${data.open_port.state}</td>
+                <td>${data.open_port.service}</td>
+            `;
+            portResults.appendChild(row);
+        }
+    });
+
+    try {
+        const response = await fetch('/scan_ports', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ host: target })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            scanStatus.textContent = `扫描完成，发现 ${data.total_open} 个开放端口`;
+            progressBar.style.width = '100%';
+
+            // 显示最终结果
+            portResults.innerHTML = ''; // 清空之前的实时结果
+            data.open_ports.forEach(port => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${port.port}</td>
+                    <td>${port.state}</td>
+                    <td>${port.service}</td>
+                `;
+                portResults.appendChild(row);
+            });
+        } else {
+            scanStatus.textContent = `扫描失败: ${data.error}`;
+        }
+    } catch (error) {
+        scanStatus.textContent = `扫描出错: ${error.message}`;
+    } finally {
+        // 移除进度监听器
+        socket.off('scan_progress');
+    }
+});
+
+function updatePortScanResults(data) {
+    const portResults = document.getElementById('port-results');
+    const openPortsList = document.getElementById('open-ports-list');
+    
+    // 清空现有结果
+    portResults.innerHTML = '';
+    openPortsList.innerHTML = '';
+    
+    // 更新开放端口摘要
+    data.open_ports.forEach(port => {
+        const portBadge = document.createElement('div');
+        portBadge.className = 'port-badge';
+        portBadge.innerHTML = `
+            <span class="port-number">${port.port}</span>
+            <span class="port-service">${port.service}</span>
+        `;
+        openPortsList.appendChild(portBadge);
+    });
+    
+    // 更新详细端口表格
+    data.open_ports.forEach(port => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${port.port}</td>
+            <td>${port.state}</td>
+            <td>${port.service}</td>
+        `;
+        portResults.appendChild(row);
+    });
 } 

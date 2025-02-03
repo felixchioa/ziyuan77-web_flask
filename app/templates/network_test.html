@@ -127,6 +127,41 @@
             <h3>测试历史</h3>
             <div class="history-list" id="test-history"></div>
         </div>
+
+        <div class="result-item" id="port-scan-section" style="display:none">
+            <h3>端口扫描结果</h3>
+            <div class="scan-progress">
+                <div id="scan-status">准备就绪</div>
+                <div class="progress-bar">
+                    <div id="progress-inner"></div>
+                </div>
+            </div>
+            
+            <div class="open-ports-summary">
+                <h4>开放端口摘要</h4>
+                <div id="open-ports-list"></div>
+            </div>
+            
+            <div class="port-list">
+                <table id="port-table">
+                    <thead>
+                        <tr>
+                            <th>端口</th>
+                            <th>状态</th>
+                            <th>服务</th>
+                        </tr>
+                    </thead>
+                    <tbody id="port-results"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="result-item">
+            <h3>响应时间</h3>
+            <div class="chart-container">
+                <canvas id="response-chart"></canvas>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
