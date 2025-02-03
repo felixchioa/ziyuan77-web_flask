@@ -601,4 +601,244 @@ function updatePortScanResults(data) {
         `;
         portResults.appendChild(row);
     });
+}
+
+// 添加网络测试数据分析函数
+function analyzeNetworkData() {
+    const analysisResults = document.getElementById('analysis-results');
+    
+    // 延迟分析
+    const latencyAnalysis = analyzeLatency(latencyData);
+    
+    // 丢包分析
+    const lossAnalysis = analyzePacketLoss(lossData);
+    
+    // 带宽分析
+    const bandwidthAnalysis = analyzeBandwidth(bandwidthData);
+    
+    // 显示分析结果
+    analysisResults.innerHTML = `
+        <div class="analysis-section">
+            <h4>延迟分析</h4>
+            <div class="analysis-grid">
+                <div class="analysis-item">
+                    <span class="label">最小延迟:</span>
+                    <span class="value ${getLatencyClass(latencyAnalysis.min)}">${latencyAnalysis.min.toFixed(2)} ms</span>
+                </div>
+                <div class="analysis-item">
+                    <span class="label">最大延迟:</span>
+                    <span class="value ${getLatencyClass(latencyAnalysis.max)}">${latencyAnalysis.max.toFixed(2)} ms</span>
+                </div>
+                <div class="analysis-item">
+                    <span class="label">平均延迟:</span>
+                    <span class="value ${getLatencyClass(latencyAnalysis.avg)}">${latencyAnalysis.avg.toFixed(2)} ms</span>
+                </div>
+                <div class="analysis-item">
+                    <span class="label">延迟抖动:</span>
+                    <span class="value ${getJitterClass(latencyAnalysis.jitter)}">${latencyAnalysis.jitter.toFixed(2)} ms</span>
+                </div>
+                <div class="analysis-item">
+                    <span class="label">标准差:</span>
+                    <span class="value">${latencyAnalysis.stdDev.toFixed(2)} ms</span>
+                </div>
+                <div class="analysis-item">
+                    <span class="label">稳定性评级:</span>
+                    <span class="value ${getStabilityClass(latencyAnalysis.stability)}">${latencyAnalysis.stability}</span>
+                </div>
+            </div>
+            <div class="analysis-distribution">
+                <h5>延迟分布</h5>
+                <div class="distribution-bars">
+                    ${generateDistributionBars(latencyAnalysis.distribution)}
+                </div>
+            </div>
+        </div>
+
+        <div class="analysis-section">
+            <h4>丢包分析</h4>
+            <div class="analysis-grid">
+                <div class="analysis-item">
+                    <span class="label">平均丢包率:</span>
+                    <span class="value ${getLossClass(lossAnalysis.avgLoss)}">${lossAnalysis.avgLoss.toFixed(2)}%</span>
+                </div>
+                <div class="analysis-item">
+                    <span class="label">最大丢包率:</span>
+                    <span class="value ${getLossClass(lossAnalysis.maxLoss)}">${lossAnalysis.maxLoss.toFixed(2)}%</span>
+                </div>
+                <div class="analysis-item">
+                    <span class="label">连续丢包:</span>
+                    <span class="value ${getConsecutiveLossClass(lossAnalysis.maxConsecutive)}">${lossAnalysis.maxConsecutive}</span>
+                </div>
+                <div class="analysis-item">
+                    <span class="label">网络质量:</span>
+                    <span class="value ${getQualityClass(lossAnalysis.quality)}">${lossAnalysis.quality}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="analysis-section">
+            <h4>带宽分析</h4>
+            <div class="analysis-grid">
+                <div class="analysis-item">
+                    <span class="label">平均下载速度:</span>
+                    <span class="value">${bandwidthAnalysis.avgDownload.toFixed(2)} Mbps</span>
+                </div>
+                <div class="analysis-item">
+                    <span class="label">峰值下载速度:</span>
+                    <span class="value">${bandwidthAnalysis.maxDownload.toFixed(2)} Mbps</span>
+                </div>
+                <div class="analysis-item">
+                    <span class="label">带宽稳定性:</span>
+                    <span class="value ${getStabilityClass(bandwidthAnalysis.stability)}">${bandwidthAnalysis.stability}</span>
+                </div>
+                <div class="analysis-item">
+                    <span class="label">带宽利用率:</span>
+                    <span class="value">${bandwidthAnalysis.utilization.toFixed(2)}%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="analysis-section">
+            <h4>综合评估</h4>
+            <div class="overall-analysis">
+                <div class="score-card ${getOverallClass(latencyAnalysis.score)}">
+                    <div class="score-label">延迟评分</div>
+                    <div class="score-value">${latencyAnalysis.score}/100</div>
+                </div>
+                <div class="score-card ${getOverallClass(lossAnalysis.score)}">
+                    <div class="score-label">丢包评分</div>
+                    <div class="score-value">${lossAnalysis.score}/100</div>
+                </div>
+                <div class="score-card ${getOverallClass(bandwidthAnalysis.score)}">
+                    <div class="score-label">带宽评分</div>
+                    <div class="score-value">${bandwidthAnalysis.score}/100</div>
+                </div>
+            </div>
+            <div class="recommendations">
+                <h5>优化建议</h5>
+                <ul>
+                    ${generateRecommendations(latencyAnalysis, lossAnalysis, bandwidthAnalysis)}
+                </ul>
+            </div>
+        </div>
+    `;
+}
+
+// 延迟数据分析
+function analyzeLatency(data) {
+    if (!data.length) return null;
+    
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    const avg = data.reduce((a, b) => a + b) / data.length;
+    const jitter = calculateJitter(data);
+    const stdDev = calculateStandardDeviation(data);
+    const stability = getLatencyStability(stdDev, avg);
+    const distribution = calculateDistribution(data);
+    const score = calculateLatencyScore(avg, jitter, stdDev);
+    
+    return {
+        min,
+        max,
+        avg,
+        jitter,
+        stdDev,
+        stability,
+        distribution,
+        score
+    };
+}
+
+// 丢包数据分析
+function analyzePacketLoss(data) {
+    if (!data.length) return null;
+    
+    const avgLoss = data.reduce((a, b) => a + b) / data.length;
+    const maxLoss = Math.max(...data);
+    const maxConsecutive = calculateMaxConsecutiveLoss(data);
+    const quality = getNetworkQuality(avgLoss, maxConsecutive);
+    const score = calculateLossScore(avgLoss, maxConsecutive);
+    
+    return {
+        avgLoss,
+        maxLoss,
+        maxConsecutive,
+        quality,
+        score
+    };
+}
+
+// 带宽数据分析
+function analyzeBandwidth(data) {
+    if (!data.length) return null;
+    
+    const avgDownload = data.reduce((a, b) => a + b) / data.length;
+    const maxDownload = Math.max(...data);
+    const stability = getBandwidthStability(data);
+    const utilization = calculateBandwidthUtilization(avgDownload, maxDownload);
+    const score = calculateBandwidthScore(avgDownload, stability, utilization);
+    
+    return {
+        avgDownload,
+        maxDownload,
+        stability,
+        utilization,
+        score
+    };
+}
+
+// 辅助函数
+function calculateJitter(data) {
+    let jitterSum = 0;
+    for (let i = 1; i < data.length; i++) {
+        jitterSum += Math.abs(data[i] - data[i-1]);
+    }
+    return jitterSum / (data.length - 1);
+}
+
+function calculateStandardDeviation(data) {
+    const avg = data.reduce((a, b) => a + b) / data.length;
+    const squareDiffs = data.map(value => Math.pow(value - avg, 2));
+    return Math.sqrt(squareDiffs.reduce((a, b) => a + b) / data.length);
+}
+
+function calculateDistribution(data) {
+    const min = Math.min(...data);
+    const max = Math.max(...data);
+    const range = max - min;
+    const buckets = 10;
+    const bucketSize = range / buckets;
+    
+    const distribution = new Array(buckets).fill(0);
+    data.forEach(value => {
+        const bucketIndex = Math.min(Math.floor((value - min) / bucketSize), buckets - 1);
+        distribution[bucketIndex]++;
+    });
+    
+    return distribution.map(count => count / data.length * 100);
+}
+
+function generateDistributionBars(distribution) {
+    return distribution.map((value, index) => `
+        <div class="distribution-bar" style="height: ${value}%;" title="${value.toFixed(1)}%"></div>
+    `).join('');
+}
+
+function generateRecommendations(latencyAnalysis, lossAnalysis, bandwidthAnalysis) {
+    const recommendations = [];
+    
+    if (latencyAnalysis.avg > 100) {
+        recommendations.push('考虑使用更近的服务器或CDN来减少网络延迟');
+    }
+    if (latencyAnalysis.jitter > 50) {
+        recommendations.push('网络抖动较大，建议检查网络设备和线路质量');
+    }
+    if (lossAnalysis.avgLoss > 1) {
+        recommendations.push('丢包率较高，建议排查网络拥塞或硬件问题');
+    }
+    if (bandwidthAnalysis.utilization < 50) {
+        recommendations.push('带宽利用率较低，可能存在网络配置优化空间');
+    }
+    
+    return recommendations.map(rec => `<li>${rec}</li>`).join('');
 } 
