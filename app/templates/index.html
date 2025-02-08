@@ -5,6 +5,60 @@
         <meta name="description" content="资源77主页，包括项目、日常、工具、资源站、博客、五子棋、常用控制台命令及其参数、网站更新、网站源码等，方便快捷。">
         <title>77资源站，提供各种有用的工具和资源</title>
         <link rel="stylesheet" href="/static/css/index.css" />
+        <style>
+        .network-info {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .network-info-header {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+        }
+
+        .network-info-header:hover {
+            background-color: #f0f0f0;
+        }
+
+        .network-info-content {
+            display: none;
+        }
+
+        .network-info-content.show {
+            display: block;
+        }
+
+        .toggle-icon {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.rotated {
+            transform: rotate(90deg);
+        }
+
+        .info-item {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .info-value {
+            margin-left: 10px;
+        }
+        </style>
     </head>
     <body>
         <div class="container">
@@ -34,6 +88,31 @@
                     <source src="/static/audio/1.flac" type="audio/mpeg">
                     您的浏览器不支持音频元素。
                 </audio>
+
+                <div class="network-info">
+                    <div class="network-info-header" onclick="toggleNetworkInfo()">
+                        <span class="toggle-icon">▶</span>
+                        <span>网络信息</span>
+                    </div>
+                    <div class="network-info-content">
+                        <div class="info-item">
+                            <span class="info-label">当前时间 (UTC+8):</span>
+                            <span class="info-value" id="current-time">{{ current_time }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">您的IP地址:</span>
+                            <span class="info-value" id="visitor-ip">{{ visitor_ip }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">服务器延迟:</span>
+                            <span class="info-value" id="server-latency">检测中...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">网络速率:</span>
+                            <span class="info-value" id="network-speed">检测中...</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             <footer class="footer">
                 <div class="feedback-link">
@@ -42,5 +121,127 @@
             </footer>
         </div>
         <script src="/static/js/index.js"></script>
+        <script>
+        function updateTime() {
+            const timeElement = document.getElementById('current-time');
+            const options = {
+                timeZone: 'Asia/Shanghai',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            
+            setInterval(() => {
+                const now = new Date();
+                timeElement.textContent = now.toLocaleString('zh-CN', options);
+            }, 1000);
+        }
+
+        function checkLatency() {
+            const latencyElement = document.getElementById('server-latency');
+            
+            // 定义测试延迟的函数
+            const testLatency = () => {
+                const startTime = performance.now();
+                
+                fetch('/ping', {
+                    method: 'GET',
+                    cache: 'no-store'
+                })
+                .then(() => {
+                    const latency = Math.round(performance.now() - startTime);
+                    latencyElement.textContent = latency + ' ms';
+                    
+                    // 根据延迟设置不同的颜色
+                    if (latency < 100) {
+                        latencyElement.style.color = '#32CD32'; // 浅绿色
+                    } else if (latency < 300) {
+                        latencyElement.style.color = '#FFA500'; // 橙色
+                    } else {
+                        latencyElement.style.color = '#FF4500'; // 红橙色
+                    }
+                })
+                .catch(() => {
+                    latencyElement.textContent = '连接失败';
+                    latencyElement.style.color = '#FF4500';
+                });
+            };
+            
+            // 页面加载时立即测试一次
+            testLatency();
+            
+            // 然后每10秒测试一次
+            setInterval(testLatency, 10000);
+        }
+
+        function checkNetworkSpeed() {
+            const speedElement = document.getElementById('network-speed');
+            
+            const testSpeed = () => {
+                const startTime = performance.now();
+                let downloadSize = 0;
+                
+                fetch('/static/test.bin', {
+                    cache: 'no-store'
+                })
+                .then(response => {
+                    downloadSize = parseInt(response.headers.get('content-length') || '0');
+                    return response.blob();
+                })
+                .then(data => {
+                    const endTime = performance.now();
+                    const duration = (endTime - startTime) / 1000; // 转换为秒
+                    const bitsLoaded = downloadSize * 8;
+                    const speedBps = (bitsLoaded / duration).toFixed(2);
+                    const speedMbps = (speedBps / 1024 / 1024).toFixed(2);
+                    
+                    speedElement.textContent = speedMbps + ' Mbps';
+                    
+                    // 根据速度设置不同的颜色
+                    if (speedMbps > 10) {
+                        speedElement.style.color = '#32CD32'; // 浅绿色
+                    } else if (speedMbps > 5) {
+                        speedElement.style.color = '#FFA500'; // 橙色
+                    } else {
+                        speedElement.style.color = '#FF4500'; // 红橙色
+                    }
+                })
+                .catch(() => {
+                    speedElement.textContent = '测速失败';
+                    speedElement.style.color = '#FF4500';
+                });
+            };
+            
+            // 页面加载时立即测试一次
+            testSpeed();
+            
+            // 然后每10秒测试一次
+            setInterval(testSpeed, 10000);
+        }
+
+        function toggleNetworkInfo() {
+            const content = document.querySelector('.network-info-content');
+            const icon = document.querySelector('.toggle-icon');
+            content.classList.toggle('show');
+            icon.classList.toggle('rotated');
+            
+            // 只在展开时才开始检测网络状态
+            if (content.classList.contains('show')) {
+                checkLatency();
+                checkNetworkSpeed();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateTime();
+            // 移除自动检测，只在展开时才检测
+            // checkLatency();
+            // checkNetworkSpeed();
+        });
+        </script>
     </body>
 </html>

@@ -27,6 +27,7 @@ from app.logger import Logger
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
+import pytz
 
 logger = Logger('routes')
 
@@ -171,7 +172,12 @@ def loading():
 
 @current_app.route('/')
 def index():
-    return render_template('index.html')
+    # 获取访问者IP
+    visitor_ip = request.remote_addr
+    # 获取UTC+8时区的当前时间
+    tz = pytz.timezone('Asia/Shanghai')
+    current_time = datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
+    return render_template('index.html', current_time=current_time, visitor_ip=visitor_ip)
 
 
 @current_app.route('/projects')
@@ -2200,3 +2206,23 @@ def check_admin_auth():
             'success': False,
             'error': '认证检查失败'
         }), 500
+
+@current_app.route('/ping')
+def ping():
+    return '', 204
+
+@current_app.route('/static/test.bin')
+def serve_test_file():
+    """提供用于测速的文件"""
+    # 创建一个10MB的测试文件
+    test_file_path = os.path.join(current_app.static_folder, 'test.bin')
+    if not os.path.exists(test_file_path):
+        with open(test_file_path, 'wb') as f:
+            f.write(os.urandom(1024 * 1024 * 10))  # 10MB的随机数据
+    
+    return send_file(
+        test_file_path,
+        mimetype='application/octet-stream',
+        as_attachment=True,
+        download_name='test.bin'
+    )

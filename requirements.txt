@@ -10,3 +10,4 @@ psutil
 dnspython
 requests
 pyOpenSSL>=23.0.0
+pytz
