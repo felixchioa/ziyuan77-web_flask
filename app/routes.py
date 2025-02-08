@@ -67,7 +67,7 @@ initial_checkers_board = {
     'red_1': {'x': 0, 'y': 1}, 'red_2': {'x': 0, 'y': 3}, 'red_3': {'x': 0, 'y': 5}, 'red_4': {'x': 0, 'y': 7},
     'red_5': {'x': 1, 'y': 0}, 'red_6': {'x': 1, 'y': 2}, 'red_7': {'x': 1, 'y': 4}, 'red_8': {'x': 1, 'y': 6},
     'red_9': {'x': 2, 'y': 1}, 'red_10': {'x': 2, 'y': 3}, 'red_11': {'x': 2, 'y': 5}, 'red_12': {'x': 2, 'y': 7},
-    
+
     'black_1': {'x': 5, 'y': 0}, 'black_2': {'x': 5, 'y': 2}, 'black_3': {'x': 5, 'y': 4}, 'black_4': {'x': 5, 'y': 6},
     'black_5': {'x': 6, 'y': 1}, 'black_6': {'x': 6, 'y': 3}, 'black_7': {'x': 6, 'y': 5}, 'black_8': {'x': 6, 'y': 7},
     'black_9': {'x': 7, 'y': 0}, 'black_10': {'x': 7, 'y': 2}, 'black_11': {'x': 7, 'y': 4}, 'black_12': {'x': 7, 'y': 6}
@@ -82,7 +82,7 @@ AI_LEVEL = 10  # AI难度等级(1-10)
 USER_AGENTS = [
     # Windows Chrome
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    # Windows Firefox 
+    # Windows Firefox
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
     # Windows Edge
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0',
@@ -125,7 +125,7 @@ def scan_port(host, port):
         sock.settimeout(TIMEOUT)
         result = sock.connect_ex((host, port))
         sock.close()
-        
+
         if result == 0:
             service = COMMON_PORTS.get(port, 'Unknown')
             return {
@@ -172,8 +172,17 @@ def loading():
 
 @current_app.route('/')
 def index():
-    # 获取访问者IP
-    visitor_ip = request.remote_addr
+    # 获取 X-Forwarded-For 头部的第一个 IP 地址
+    forwarded_for = request.headers.get('X-Forwarded-For')
+    if forwarded_for:
+        # X-Forwarded-For 头部可能有多个 IP，取第一个
+        visitor_ip = forwarded_for.split(',')[0]
+    else:
+        # 如果没有 X-Forwarded-For，直接使用 remote_addr
+        visitor_ip = request.remote_addr
+
+    # # 获取访问者IP
+    # visitor_ip = request.remote_addr
     # 获取UTC+8时区的当前时间
     tz = pytz.timezone('Asia/Shanghai')
     current_time = datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
@@ -199,7 +208,7 @@ def daily():
         db = client['chat']
         # 从数据库获取所有条目并按日期降序排序
         entries = list(db.daily.find().sort('date', -1))
-        
+
         return render_template('daily.html', entries=entries)
     except Exception as e:
         logger.error(f"Error loading daily entries: {e}")
@@ -636,7 +645,7 @@ def join_game():
     room = request.json.get('room')
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
-        
+
     if room not in games:
         return jsonify({'error': '房间不存在'}), 404
 
@@ -646,7 +655,7 @@ def join_game():
 
     # 第二个玩家是白棋
     game['players'].append(2)
-    
+
     return jsonify({
         'message': '加入游戏成功',
         'player': 2,
@@ -660,12 +669,12 @@ def create_game():
     room = data.get('room')
     allow_undo = data.get('allow_undo', False)  # 是否允许悔棋
     allow_surrender = data.get('allow_surrender', True)  # 是否允许认输
-    
+
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
     if room in games:
         return jsonify({'error': '房间已存在'}), 400
-    
+
     games[room] = {
         'board': [[0]*15 for _ in range(15)],
         'turn': 1,
@@ -675,9 +684,9 @@ def create_game():
         'allow_undo': allow_undo,
         'allow_surrender': allow_surrender
     }
-    
+
     games[room]['players'].append(1)
-    
+
     return jsonify({
         'message': '游戏创建成功',
         'player': 1,
@@ -758,14 +767,14 @@ def make_move():
         game['scores'][player] += 1
         # 先重置回合为黑方
         game['turn'] = 1
-        
+
         # 重置游戏前先广播最后一步
         socketio.emit('update_board', {
             'board': game['board'],
             'turn': 1,  # 确保显示为黑方回合
             'last_move': game['last_move']
         }, room=room)
-        
+
         # 延迟一小段时间后再发送游戏结束消息
         socketio.sleep(0.5)
         socketio.emit('game_over', {
@@ -775,7 +784,7 @@ def make_move():
             'turn': 1,  # 确保显示为黑方回合
             'last_move': game['last_move']
         }, room=room)
-        
+
         reset_game(room)
         return jsonify({
             'message': f'玩家{player}获胜!',
@@ -840,16 +849,16 @@ def delete_game():
     room = request.json.get('room')
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
-        
+
     if room not in games:
         return jsonify({'error': '房间不存在'}), 404
-        
+
     # 通知房间内的所有玩家游戏已被删除
     socketio.emit('game_deleted', {'message': '房间已被删除'}, room=room)
-    
+
     # 删除房间
     del games[room]
-    
+
     return jsonify({'message': '房间删除成功'}), 200
 
 
@@ -863,10 +872,10 @@ def undo_move():
         return jsonify({'error': '房间不存在'}), 404
 
     game = games[room]
-    
+
     if not game['allow_undo']:
         return jsonify({'error': '该房间不允许悔棋'}), 400
-        
+
     if not game['history']:
         return jsonify({'error': '没有可以悔棋的步骤'}), 400
 
@@ -894,7 +903,7 @@ def surrender():
         return jsonify({'error': '房间不存在'}), 404
 
     game = games[room]
-    
+
     if not game['allow_surrender']:
         return jsonify({'error': '该房间不允许认输'}), 400
 
@@ -917,7 +926,7 @@ def cleanup_online_users():
     """清理超时的用户"""
     current_time = datetime.now()
     timeout = timedelta(minutes=5)  # 5分钟超时
-    expired = [sid for sid, last_seen in online_users.items() 
+    expired = [sid for sid, last_seen in online_users.items()
               if current_time - last_seen > timeout]
     for sid in expired:
         online_users.pop(sid, None)
@@ -929,10 +938,10 @@ def handle_chat_message(data):
     room = data.get('room')
     message = data.get('message')
     player = data.get('player')
-    
+
     if not room or not message or player not in [1, 2]:
         return
-    
+
     # 广播消息到房间
     emit('chat_message', {
         'message': message,
@@ -946,20 +955,20 @@ def join_gomoku_game():
     room = request.json.get('room')
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
-        
+
     if room not in games:
         return jsonify({'error': '房间不存在'}), 404
-        
+
     if games[room]['player2']:
         return jsonify({'error': '房间已满'}), 400
-        
+
     games[room]['player2'] = True
     # 通知房间内的玩家有新玩家加入
     socketio.emit('player_joined', {
         'message': '对手已加入游戏',
         'timestamp': datetime.now().strftime('%H:%M:%S')
     }, room=room)
-    
+
     return jsonify({
         'message': '加入成功',
         'player': 2
@@ -977,10 +986,10 @@ def admin_gomoku():
 def get_gomoku_stats():
     try:
         active_rooms = len([room for room in games.values() if room['player1'] and room['player2']])
-        online_players = len(set(player for room in games.values() 
+        online_players = len(set(player for room in games.values()
                                for player in [room['player1'], room['player2']] if player))
         spectators = sum(len(room.get('spectators', [])) for room in games.values())
-        
+
         stats = {
             'activeRooms': active_rooms,
             'onlinePlayers': online_players,
@@ -1017,7 +1026,7 @@ def get_gomoku_rooms():
         except Exception as e:
             print(f"Error processing room {room_id}: {str(e)}")
             continue
-    
+
     print("Fetched rooms:", rooms)  # 添加调试输出
     return jsonify(rooms)
 
@@ -1040,7 +1049,7 @@ def clear_inactive_gomoku_rooms():
     for room_id in inactive_rooms:
         del games[room_id]
         socketio.emit('game_deleted', {'message': '非活跃房间已被清理'}, room=room_id)
-    
+
     return jsonify({'message': f'已清理 {len(inactive_rooms)} 个非活跃房间'})
 
 
@@ -1060,10 +1069,10 @@ def create_gomoku_game():
     room = request.json.get('room')
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
-        
+
     if room in games:
         return jsonify({'error': '房间已存在'}), 400
-        
+
     games[room] = {
         'board': [[0]*15 for _ in range(15)],
         'turn': 1,
@@ -1076,7 +1085,7 @@ def create_gomoku_game():
         'allow_undo': True,
         'allow_surrender': True
     }
-    
+
     return jsonify({
         'message': '创建成功',
         'player': 1
@@ -1093,11 +1102,11 @@ def admin_system():
 @admin_required
 def get_system_stats():
     from app.utils.system_monitor import (
-        get_system_info, get_cpu_info, 
+        get_system_info, get_cpu_info,
         get_memory_info, get_disk_info,
         get_network_info
     )
-    
+
     try:
         data = {
             'system': get_system_info(),
@@ -1137,11 +1146,11 @@ def background_task():
     while True:
         try:
             from app.utils.system_monitor import (
-                get_system_info, get_cpu_info, 
+                get_system_info, get_cpu_info,
                 get_memory_info, get_disk_info,
                 get_network_info
             )
-            
+
             data = {
                 'system': get_system_info(),
                 'cpu': get_cpu_info(),
@@ -1180,12 +1189,12 @@ def get_logs():
     end_date = data.get('endDate')
     page = data.get('page', 1)
     page_size = data.get('pageSize', 50)
-    
+
     # 读取日志文件
     log_dir = 'logs'  # 日志目录
     log_files = glob.glob(os.path.join(log_dir, '*.log'))
     logs = []
-    
+
     for log_file in log_files:
         try:
             with open(log_file, 'r', encoding='utf-8') as f:
@@ -1198,20 +1207,20 @@ def get_logs():
                             log_level = parts[1]
                             module = parts[2]
                             message = ' | '.join(parts[3:])
-                            
+
                             # 应用过滤条件
                             if level != 'all' and log_level.lower() != level.lower():
                                 continue
-                                
+
                             if search and search.lower() not in message.lower():
                                 continue
-                                
+
                             if start_date and timestamp < datetime.strptime(start_date, '%Y-%m-%d'):
                                 continue
-                                
+
                             if end_date and timestamp > datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1):
                                 continue
-                                
+
                             logs.append({
                                 'timestamp': timestamp.strftime('%Y-%m-%d %H:%M:%S'),
                                 'level': log_level,
@@ -1224,14 +1233,14 @@ def get_logs():
         except Exception as e:
             print(f"Error reading log file {log_file}: {e}")
             continue
-    
+
     # 排序和分页
     logs.sort(key=lambda x: x['timestamp'], reverse=True)
     total = len(logs)
     start_idx = (page - 1) * page_size
     end_idx = start_idx + page_size
     page_logs = logs[start_idx:end_idx]
-    
+
     return jsonify({
         'logs': page_logs,
         'total': total
@@ -1248,10 +1257,10 @@ def create_xiangqi_game():
     room = request.json.get('room')
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
-        
+
     if room in games:
         return jsonify({'error': '房间已存在'}), 400
-        
+
     games[room] = {
         'board': initialBoard.copy(),
         'turn': 'red',
@@ -1261,7 +1270,7 @@ def create_xiangqi_game():
         'history': [],
         'last_move': None
     }
-    
+
     return jsonify({
         'message': '创建成功',
         'player': 'red'
@@ -1273,19 +1282,19 @@ def join_xiangqi_game():
     room = request.json.get('room')
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
-        
+
     if room not in games:
         return jsonify({'error': '房间不存在'}), 404
-        
+
     if games[room]['player_black']:
         return jsonify({'error': '房间已满'}), 400
-        
+
     games[room]['player_black'] = True
     socketio.emit('player_joined', {
         'message': '对手已加入游戏',
         'timestamp': datetime.now().strftime('%H:%M:%S')
     }, room=room)
-    
+
     return jsonify({
         'message': '加入成功',
         'player': 'black'
@@ -1297,7 +1306,7 @@ def handle_move(data):
     room = data.get('room')
     if not room or room not in games:
         return
-    
+
     game = games[room]
     piece_id = data.get('piece')
     from_x = data.get('fromX')
@@ -1305,15 +1314,15 @@ def handle_move(data):
     to_x = data.get('toX')
     to_y = data.get('toY')
     captured_piece = data.get('capturedPiece')
-    
+
     # 更新棋盘状态
     game['board'][piece_id] = {'x': to_x, 'y': to_y}
-    
+
     # 如果有吃子，从棋盘上移除被吃的棋子
     if captured_piece:
         if captured_piece in game['board']:
             del game['board'][captured_piece]
-    
+
     # 切换回合
     game['turn'] = 'black' if game['turn'] == 'red' else 'red'
     game['last_move'] = {
@@ -1321,7 +1330,7 @@ def handle_move(data):
         'from': (from_x, from_y),
         'to': (to_x, to_y)
     }
-    
+
     # 广播更新
     socketio.emit('update_board', {
         'piece': piece_id,
@@ -1452,19 +1461,19 @@ def api_ping():
     target = request.args.get('target')
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
-    
+
     try:
         # Windows系统
         if platform.system().lower() == 'windows':
-            output = subprocess.check_output(['ping', '-n', '1', target], 
-                                          stderr=subprocess.STDOUT, 
+            output = subprocess.check_output(['ping', '-n', '1', target],
+                                          stderr=subprocess.STDOUT,
                                           universal_newlines=True)
         # Linux/Unix系统
         else:
             output = subprocess.check_output(['ping', '-c', '1', target],
                                           stderr=subprocess.STDOUT,
                                           universal_newlines=True)
-        
+
         # 解析输出获取延迟时间
         if 'time=' in output.lower():
             latency = float(output.lower().split('time=')[1].split('ms')[0])
@@ -1478,7 +1487,7 @@ def api_ping():
 def api_tcping():
     target = request.args.get('target')
     port = int(request.args.get('port', 80))
-    
+
     try:
         start_time = datetime.now()
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -1486,7 +1495,7 @@ def api_tcping():
         result = sock.connect_ex((target, port))
         end_time = datetime.now()
         sock.close()
-        
+
         latency = (end_time - start_time).total_seconds() * 1000
         return jsonify({
             'success': result == 0,
@@ -1501,11 +1510,11 @@ def api_dns():
     target = request.args.get('target')
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
-    
+
     try:
         records = []
         start_time = datetime.now()
-        
+
         # 查询不同类型的DNS记录
         for record_type in ['A', 'AAAA', 'MX', 'NS', 'TXT']:
             try:
@@ -1517,7 +1526,7 @@ def api_dns():
                     })
             except:
                 continue
-        
+
         resolve_time = (datetime.now() - start_time).total_seconds() * 1000
         return jsonify({
             'success': True,
@@ -1533,15 +1542,15 @@ def api_website():
     target = request.args.get('target')
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
-    
+
     if not target.startswith(('http://', 'https://')):
         target = 'https://' + target
-    
+
     try:
         start_time = datetime.now()
         response = requests.get(target, allow_redirects=True)
         response_time = (datetime.now() - start_time).total_seconds() * 1000
-        
+
         # 检查SSL证书
         parsed_url = urlparse(target)
         ssl_valid = False
@@ -1551,7 +1560,7 @@ def api_website():
             ssl_valid = datetime.now() < datetime.strptime(x509.get_notAfter().decode(), '%Y%m%d%H%M%SZ')
         except:
             pass
-        
+
         return jsonify({
             'success': True,
             'status': response.status_code,
@@ -1569,7 +1578,7 @@ def api_ports():
     ports = request.args.get('ports', '80,443')
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
-    
+
     try:
         results = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
@@ -1580,7 +1589,7 @@ def api_ports():
                     port_list.extend(range(start, end + 1))
                 else:
                     port_list.append(int(p))
-            
+
             def check_port(port):
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(1)
@@ -1589,10 +1598,10 @@ def api_ports():
                     return {'port': port, 'status': result == 0}
                 finally:
                     sock.close()
-            
+
             futures = [executor.submit(check_port, port) for port in port_list]
             results = [f.result() for f in concurrent.futures.as_completed(futures)]
-        
+
         return jsonify({'success': True, 'results': results})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
@@ -1608,10 +1617,10 @@ def create_checkers_game():
     room = request.json.get('room')
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
-        
+
     if room in checkers_games:
         return jsonify({'error': '房间已存在'}), 400
-        
+
     checkers_games[room] = {
         'board': initial_checkers_board.copy(),
         'turn': 'red',
@@ -1622,7 +1631,7 @@ def create_checkers_game():
         'last_move': None,
         'kings': set()  # 存储升王的棋子
     }
-    
+
     return jsonify({
         'message': '创建成功',
         'player': 'red'
@@ -1634,19 +1643,19 @@ def join_checkers_game():
     room = request.json.get('room')
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
-        
+
     if room not in checkers_games:
         return jsonify({'error': '房间不存在'}), 404
-        
+
     if checkers_games[room]['player_black']:
         return jsonify({'error': '房间已满'}), 400
-        
+
     checkers_games[room]['player_black'] = True
     socketio.emit('player_joined', {
         'message': '对手已加入游戏',
         'timestamp': datetime.now().strftime('%H:%M:%S')
     }, room=room)
-    
+
     return jsonify({
         'message': '加入成功',
         'player': 'black'
@@ -1658,7 +1667,7 @@ def handle_checkers_move(data):
     room = data.get('room')
     if not room or room not in checkers_games:
         return
-    
+
     game = checkers_games[room]
     piece_id = data.get('piece')
     from_x = data.get('fromX')
@@ -1666,21 +1675,21 @@ def handle_checkers_move(data):
     to_x = data.get('toX')
     to_y = data.get('toY')
     captured_pieces = data.get('capturedPieces', [])
-    
+
     # 更新棋盘状态
     game['board'][piece_id] = {'x': to_x, 'y': to_y}
-    
+
     # 处理吃子
     for captured in captured_pieces:
         if captured in game['board']:
             del game['board'][captured]
-    
+
     # 处理升王
     if piece_id.startswith('red_') and to_x == 7:  # 红棋到达底线
         game['kings'].add(piece_id)
     elif piece_id.startswith('black_') and to_x == 0:  # 黑棋到达底线
         game['kings'].add(piece_id)
-    
+
     # 切换回合
     game['turn'] = 'black' if game['turn'] == 'red' else 'red'
     game['last_move'] = {
@@ -1689,11 +1698,11 @@ def handle_checkers_move(data):
         'to': (to_x, to_y),
         'captured': captured_pieces
     }
-    
+
     # 检查游戏是否结束
     red_pieces = sum(1 for piece in game['board'] if piece.startswith('red_'))
     black_pieces = sum(1 for piece in game['board'] if piece.startswith('black_'))
-    
+
     if red_pieces == 0 or black_pieces == 0:
         winner = 'black' if red_pieces == 0 else 'red'
         socketio.emit('game_over', {
@@ -1720,13 +1729,13 @@ def go():
 def create_go_game():
     room = request.json.get('room')
     vs_ai = request.json.get('vs_ai', False)  # 添加是否对战AI的参数
-    
+
     if not room:
         return jsonify({'error': '房间号不能为空'}), 400
-        
+
     if room in go_games:
         return jsonify({'error': '房间已存在'}), 400
-        
+
     go_games[room] = {
         'board': [row[:] for row in initial_go_board],
         'turn': 'black',
@@ -1740,7 +1749,7 @@ def create_go_game():
         'vs_ai': vs_ai,  # 添加AI标记
         'ai_color': 'white' if vs_ai else None  # AI默认执白
     }
-    
+
     return jsonify({
         'message': '创建成功',
         'player': 'black',
@@ -1764,7 +1773,7 @@ def make_ai_move(game):
             '--level', str(AI_LEVEL),
             '--infile', temp_file
         ]
-        
+
         process = subprocess.Popen(
             cmd,
             stdin=subprocess.PIPE,
@@ -1772,16 +1781,16 @@ def make_ai_move(game):
             stderr=subprocess.PIPE,
             text=True
         )
-        
+
         # 获取AI的落子位置
         output, _ = process.communicate('genmove white\n')
         move = parse_gnugo_move(output)
-        
+
         # 清理临时文件
         os.unlink(temp_file)
-        
+
         return move
-        
+
     except Exception as e:
         logger.error(f"AI move error: {str(e)}")
         return None
@@ -1789,13 +1798,13 @@ def make_ai_move(game):
 def create_sgf_from_game(game):
     """将当前游戏状态转换为SGF格式"""
     sgf = "(;FF[4]GM[1]SZ[19]"
-    
+
     # 添加已下的棋子
     for move in game['history']:
         x, y = move['x'], move['y']
         color = move['color'].upper()
         sgf += f";{color}[{chr(97+y)}{chr(97+x)}]"
-    
+
     sgf += ")"
     return sgf
 
@@ -1806,7 +1815,7 @@ def parse_gnugo_move(output):
         move = output.strip().split(' ')[1]
         if move == 'PASS':
             return None
-            
+
         col = ord(move[0].lower()) - 97
         row = int(move[1:]) - 1
         return {'x': row, 'y': col}
@@ -1818,31 +1827,31 @@ def handle_go_move(data):
     room = data.get('room')
     if not room or room not in go_games:
         return
-    
+
     game = go_games[room]
     x = data.get('x')
     y = data.get('y')
     color = data.get('color')
-    
+
     # 检查是否轮到该玩家
     if color != game['turn']:
         return {'error': '不是你的回合'}
-    
+
     # 检查位置是否有效
     if not (0 <= x < 19 and 0 <= y < 19):
         return {'error': '无效的位置'}
-    
+
     # 检查位置是否已被占用
     if game['board'][x][y] != 0:
         return {'error': '该位置已有棋子'}
-    
+
     # 检查劫争
     if game['ko'] == (x, y):
         return {'error': '劫争禁手'}
-    
+
     # 模拟落子
     game['board'][x][y] = 1 if color == 'black' else 2
-    
+
     # 计算提子
     captured = []
     for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
@@ -1851,14 +1860,14 @@ def handle_go_move(data):
             group = get_connected_group(game['board'], nx, ny)
             if group and not has_liberty(game['board'], group):
                 captured.extend(group)
-    
+
     # 移除提子
     for cx, cy in captured:
         game['board'][cx][cy] = 0
-    
+
     # 更新提子数
     game['captures'][color] += len(captured)
-    
+
     # 检查落子后是否有气
     current_group = get_connected_group(game['board'], x, y)
     if not has_liberty(game['board'], current_group):
@@ -1867,17 +1876,17 @@ def handle_go_move(data):
         for cx, cy in captured:
             game['board'][cx][cy] = 1 if color == 'white' else 2
         return {'error': '自杀禁手'}
-    
+
     # 更新劫争状态
     game['ko'] = (captured[0] if len(captured) == 1 else None)
-    
+
     # 记录最后一手
     game['last_move'] = {'x': x, 'y': y, 'color': color}
     game['history'].append(game['last_move'])
-    
+
     # 切换回合
     game['turn'] = 'white' if color == 'black' else 'black'
-    
+
     # 广播更新
     socketio.emit('update_go_board', {
         'board': game['board'],
@@ -1885,31 +1894,31 @@ def handle_go_move(data):
         'lastMove': game['last_move'],
         'captures': game['captures']
     }, room=room)
-    
+
     return {'success': True}
 
 def get_connected_group(board, x, y):
     """获取与指定位置相连的同色棋子群"""
     if not (0 <= x < 19 and 0 <= y < 19) or board[x][y] == 0:
         return []
-    
+
     color = board[x][y]
     group = set()
     stack = [(x, y)]
-    
+
     while stack:
         cx, cy = stack.pop()
         if (cx, cy) in group:
             continue
-        
+
         group.add((cx, cy))
         for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
             nx, ny = cx + dx, cy + dy
-            if (0 <= nx < 19 and 0 <= ny < 19 and 
-                board[nx][ny] == color and 
+            if (0 <= nx < 19 and 0 <= ny < 19 and
+                board[nx][ny] == color and
                 (nx, ny) not in group):
                 stack.append((nx, ny))
-    
+
     return list(group)
 
 def has_liberty(board, group):
@@ -1928,7 +1937,7 @@ def text_analyzer():
 @current_app.route('/text_analyzer/sentiment', methods=['POST'])
 def analyze_sentiment():
     text = request.json.get('text', '')
-    
+
     # 这里可以使用任何情感分析库，如 TextBlob, NLTK, 等
     # 这里使用简单的示例返回
     return jsonify({
@@ -2077,7 +2086,7 @@ def manage_daily_entries():
     try:
         client = get_mongo_client()
         db = client['chat']
-        
+
         if request.method == 'GET':
             # GET 请求不需要管理员权限，所有人都可以查看
             try:
@@ -2092,14 +2101,14 @@ def manage_daily_entries():
                     'success': False,
                     'error': f'获取数据失败: {str(e)}'
                 }), 500
-        
+
         # 其他方法需要管理员权限
         if not session.get('is_admin'):
             return jsonify({
                 'success': False,
                 'error': '需要管理员权限'
             }), 403
-            
+
         if request.method == 'POST':
             try:
                 data = request.get_json()
@@ -2108,13 +2117,13 @@ def manage_daily_entries():
                         'success': False,
                         'error': '缺少必要的字段'
                     }), 400
-                
+
                 entry = {
                     'date': data['date'],
                     'content': data['content'],
                     'created_at': datetime.now()
                 }
-                
+
                 result = db.daily.insert_one(entry)
                 return jsonify({
                     'success': True,
@@ -2126,7 +2135,7 @@ def manage_daily_entries():
                     'success': False,
                     'error': f'创建记录失败: {str(e)}'
                 }), 500
-                
+
         elif request.method == 'PUT':
             try:
                 data = request.get_json()
@@ -2135,19 +2144,19 @@ def manage_daily_entries():
                         'success': False,
                         'error': '缺少ID字段'
                     }), 400
-                
+
                 entry_id = data.pop('id')
                 update_data = {
                     'date': data.get('date'),
                     'content': data.get('content'),
                     'updated_at': datetime.now()
                 }
-                
+
                 result = db.daily.update_one(
                     {'_id': ObjectId(entry_id)},
                     {'$set': update_data}
                 )
-                
+
                 if result.modified_count > 0:
                     return jsonify({'success': True})
                 else:
@@ -2161,7 +2170,7 @@ def manage_daily_entries():
                     'success': False,
                     'error': '更新记录失败'
                 }), 500
-            
+
         elif request.method == 'DELETE':
             try:
                 entry_id = request.args.get('id')
@@ -2170,9 +2179,9 @@ def manage_daily_entries():
                         'success': False,
                         'error': '缺少ID参数'
                     }), 400
-                
+
                 result = db.daily.delete_one({'_id': ObjectId(entry_id)})
-                
+
                 if result.deleted_count > 0:
                     return jsonify({'success': True})
                 else:
@@ -2186,7 +2195,7 @@ def manage_daily_entries():
                     'success': False,
                     'error': '删除记录失败'
                 }), 500
-                
+
     except Exception as e:
         logger.error(f"Database connection error: {str(e)}")
         return jsonify({
@@ -2219,7 +2228,7 @@ def serve_test_file():
     if not os.path.exists(test_file_path):
         with open(test_file_path, 'wb') as f:
             f.write(os.urandom(1024 * 1024 * 1))  # 10MB的随机数据
-    
+
     return send_file(
         test_file_path,
         mimetype='application/octet-stream',
