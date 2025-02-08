@@ -2065,331 +2065,159 @@ def transition():
     return render_template('transition.html')
 
 # 获取所有日志
-@current_app.route('/api/admin/daily/entries')
-@admin_required
-def get_daily_entries():
-    client = get_mongo_client()
-    db = client.get_database()  # 获取数据库实例
-    # 从daily.html文件中读取内容
-    with open('app/templates/daily.html', 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    # 使用正则表达式提取所有的日志条目
-    import re
-    pattern = r'<li>(.*?)：(.*?)</li>'
-    entries = []
-    for match in re.finditer(pattern, content):
-        date = match.group(1)
-        content = match.group(2)
-        entries.append({
-            'date': date,
-            'content': content,
-            'created_at': datetime.now()
-        })
-    
-    # 将提取的条目存入数据库
-    if not db.daily.count_documents({}):  # 如果数据库为空，则导入数据
-        db.daily.insert_many(entries)
-    
-    # 返回所有条目
-    all_entries = list(db.daily.find().sort('date', -1))
-    return json_util.dumps(all_entries)
-
-# 添加新日志
-@current_app.route('/api/admin/daily/entries', methods=['POST'])
-@admin_required
-def add_daily_entry():
-    data = request.json
-    client = get_mongo_client()
-    db = client.get_database()  # 获取数据库实例
-    
-    # 添加到数据库
-    result = db.daily.insert_one({
-        'date': data['date'],
-        'content': data['content'],
-        'created_at': datetime.now()
-    })
-    
-    # 更新daily.html文件
-    update_daily_html()
-    
-    return jsonify({'status': 'success'})
-
-# 编辑日志
-@current_app.route('/api/admin/daily/entries/<id>', methods=['PUT'])
-@admin_required
-def edit_daily_entry(id):
-    data = request.json
-    client = get_mongo_client()
-    db = client.get_database()  # 获取数据库实例
-    
-    # 更新数据库
-    result = db.daily.update_one(
-        {'_id': ObjectId(id)},
-        {'$set': {'content': data['content']}}
-    )
-    
-    # 更新daily.html文件
-    update_daily_html()
-    
-    return jsonify({'status': 'success'})
-
-# 删除日志
-@current_app.route('/api/admin/daily/entries/<id>', methods=['DELETE'])
-@admin_required
-def delete_daily_entry(id):
-    client = get_mongo_client()
-    db = client.get_database()  # 获取数据库实例
-    
-    # 从数据库删除
-    result = db.daily.delete_one({'_id': ObjectId(id)})
-    
-    # 更新daily.html文件
-    update_daily_html()
-    
-    return jsonify({'status': 'success'})
-
-def update_daily_html():
-    """更新daily.html文件的内容"""
-    client = get_mongo_client()
-    db = client.get_database()  # 获取数据库实例
-    entries = list(db.daily.find().sort('date', -1))
-    
-    # 读取原始模板
-    with open('app/templates/daily.html', 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    # 构建新的日志列表HTML
-    entries_html = ''
-    for entry in entries:
-        entries_html += f'    <li>{entry["date"]}：{entry["content"]}</li>\n'
-    
-    # 使用正则表达式替换原有的日志列表
-    import re
-    pattern = r'(<ul>[\s\S]*?</ul>)'
-    new_content = re.sub(pattern, f'<ul>\n{entries_html}</ul>', content)
-    
-    # 写入文件
-    with open('app/templates/daily.html', 'w', encoding='utf-8') as f:
-        f.write(new_content)
-
-@current_app.route('/admin/daily')
-@admin_required
-def admin_daily():
-    return render_template('admin/daily.html')
-
-@current_app.route('/update')
-def update():
-    return render_template('update.html')
-
-@current_app.route('/github')
-def github():
-    return render_template('github.html')
-
-@current_app.route('/github_chat')
-def github_chat():
-    return render_template('github_chat.html')
-
-@current_app.route('/github_miaobox')
-def github_miaobox():
-    return render_template('github_miaobox.html')
-
-@current_app.route('/test_network', methods=['POST'])
-def test_network():
-    url = request.json.get('url')
-    if not url:
-        return jsonify({'success': False, 'error': '请提供URL'})
-        
-    try:
-        # 随机选择一个UA
-        headers = {'User-Agent': random.choice(USER_AGENTS)}
-        
-        parsed_url = urlparse(url)
-        if not parsed_url.scheme:
-            url = 'http://' + url
-            
-        start_time = time.time()
-        response = requests.get(url, headers=headers, timeout=10, allow_redirects=True)
-        response_time = (time.time() - start_time) * 1000
-        
-        # 获取DNS解析时间
-        dns_start = time.time()
-        socket.gethostbyname(parsed_url.netloc)
-        dns_time = (time.time() - dns_start) * 1000
-        
-        # 获取SSL证书信息
-        cert_info = None
-        if parsed_url.scheme == 'https':
-            cert = ssl.get_server_certificate((parsed_url.netloc, 443))
-            x509 = OpenSSL_crypto.load_certificate(OpenSSL_crypto.FILETYPE_PEM, cert)
-            cert_info = {
-                'issuer': dict(x509.get_issuer().get_components()),
-                'subject': dict(x509.get_subject().get_components()),
-                'expires': x509.get_notAfter().decode('ascii')
-            }
-        
-        result = {
-            'success': True,
-            'status_code': response.status_code,
-            'response_time': round(response_time, 2),
-            'dns_time': round(dns_time, 2),
-            'content_length': len(response.content),
-            'headers': dict(response.headers),
-            'cert_info': cert_info,
-            'redirects': [r.url for r in response.history]
-        }
-        
-        return jsonify(result)
-        
-    except Exception as e:
-        logger.error(f"Network test error: {e}")
-        return jsonify({'success': False, 'error': str(e)})
-
-@current_app.route('/scan_ports', methods=['POST'])
-def scan_ports():
-    """端口扫描API"""
-    host = request.json.get('host')
-    if not host:
-        return jsonify({'success': False, 'error': '请提供主机地址'})
-        
-    try:
-        # 解析主机名为IP
-        ip = socket.gethostbyname(host)
-        
-        # 创建线程池
-        open_ports = []
-        total_ports = 65535
-        scanned_ports = 0
-        last_update_time = time.time()
-        
-        def scan_callback(future):
-            nonlocal scanned_ports, last_update_time
-            scanned_ports += 1
-            
-            # 每秒更新一次进度
-            current_time = time.time()
-            if current_time - last_update_time >= 1.0:
-                last_update_time = current_time
-                socketio.emit('scan_progress', {
-                    'current': scanned_ports,
-                    'total': total_ports,
-                    'percentage': round((scanned_ports / total_ports) * 100, 1),
-                    'current_port': future_to_port[future]  # 当前扫描的端口
-                })
-        
-        with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
-            # 提交所有扫描任务
-            future_to_port = {
-                executor.submit(scan_port, ip, port): port 
-                for port in range(1, total_ports + 1)
-            }
-            
-            # 添加回调
-            for future in future_to_port:
-                future.add_done_callback(scan_callback)
-            
-            # 收集结果
-            for future in as_completed(future_to_port):
-                result = future.result()
-                if result:
-                    open_ports.append(result)
-        
-        # 按端口号排序
-        open_ports.sort(key=lambda x: x['port'])
-        
-        # 发送最终进度
-        socketio.emit('scan_progress', {
-            'current': total_ports,
-            'total': total_ports,
-            'percentage': 100,
-            'current_port': total_ports
-        })
-        
-        return jsonify({
-            'success': True,
-            'ip': ip,
-            'total_open': len(open_ports),
-            'open_ports': open_ports
-        })
-        
-    except Exception as e:
-        logger.error(f"Port scan error: {e}")
-        return jsonify({'success': False, 'error': str(e)})
-
-@current_app.route('/feedback')
-def feedback():
-    return render_template('feedback.html')
-
-@current_app.route('/api/feedback', methods=['POST'])
-def submit_feedback():
-    try:
-        data = request.json
-        client = get_mongo_client()
-        db = client['chat']  # 指定使用 'chat' 数据库
-        
-        # 添加时间戳
-        data['created_at'] = datetime.now()
-        
-        # 存储到数据库
-        result = db.feedback.insert_one(data)
-        return jsonify({'success': True})  # 添加返回语句
-    except Exception as e:
-        logger.error(f"Error submitting feedback: {e}")
-        return jsonify({'success': False, 'error': str(e)})
-
-@current_app.route('/admin/feedback')
-@admin_required
-def admin_feedback():
-    return render_template('admin/feedback.html')
-
-@current_app.route('/api/admin/feedback')
-@admin_required
-def get_feedback():
-    try:
-        client = get_mongo_client()
-        db = client['chat']  # 指定使用 'chat' 数据库
-        feedback_list = list(db.feedback.find().sort('created_at', -1))
-        return jsonify({
-            'success': True,
-            'feedback': json_util.dumps(feedback_list)
-        })
-    except Exception as e:
-        logger.error(f"Error getting feedback: {e}")
-        return jsonify({'success': False, 'error': str(e)})
-
 @current_app.route('/api/admin/daily/entries', methods=['GET', 'POST', 'PUT', 'DELETE'])
 @admin_required
 def manage_daily_entries():
-    client = get_mongo_client()
-    db = client['chat']
-    
-    if request.method == 'GET':
-        # 获取所有日常条目
-        entries = list(db.daily.find().sort('date', -1))
+    try:
+        client = get_mongo_client()
+        db = client['chat']  # 直接指定使用 'chat' 数据库
+        
+        if request.method == 'GET':
+            try:
+                # 获取所有日常条目并按日期降序排序
+                entries = list(db.daily.find().sort('date', -1))
+                
+                # 如果数据库为空，从 daily.html 导入初始数据
+                if not entries:
+                    try:
+                        with open('app/templates/daily.html', 'r', encoding='utf-8') as f:
+                            content = f.read()
+                        
+                        # 使用正则表达式提取所有的日志条目
+                        import re
+                        pattern = r'<li>(.*?)：(.*?)</li>'
+                        initial_entries = []
+                        for match in re.finditer(pattern, content):
+                            date = match.group(1)
+                            content = match.group(2)
+                            initial_entries.append({
+                                'date': date,
+                                'content': content,
+                                'created_at': datetime.now()
+                            })
+                        
+                        if initial_entries:
+                            # 将提取的条目存入数据库
+                            db.daily.insert_many(initial_entries)
+                            # 重新获取所有条目
+                            entries = list(db.daily.find().sort('date', -1))
+                    except Exception as e:
+                        logger.error(f"Error importing initial data: {str(e)}")
+                
+                return jsonify({
+                    'success': True,
+                    'entries': json_util.dumps(entries)
+                })
+            except Exception as e:
+                logger.error(f"Error fetching entries: {str(e)}")
+                return jsonify({
+                    'success': False,
+                    'error': f'获取数据失败: {str(e)}'
+                }), 500
+            
+        elif request.method == 'POST':
+            try:
+                data = request.get_json()
+                if not data or 'date' not in data or 'content' not in data:
+                    return jsonify({
+                        'success': False,
+                        'error': '缺少必要的字段'
+                    }), 400
+                
+                entry = {
+                    'date': data['date'],
+                    'content': data['content'],
+                    'created_at': datetime.now()
+                }
+                
+                result = db.daily.insert_one(entry)
+                return jsonify({
+                    'success': True,
+                    'id': str(result.inserted_id)
+                })
+            except Exception as e:
+                logger.error(f"Error creating entry: {str(e)}")
+                return jsonify({
+                    'success': False,
+                    'error': f'创建记录失败: {str(e)}'
+                }), 500
+                
+        elif request.method == 'PUT':
+            try:
+                data = request.get_json()
+                if not data or 'id' not in data:
+                    return jsonify({
+                        'success': False,
+                        'error': '缺少ID字段'
+                    }), 400
+                
+                entry_id = data.pop('id')
+                update_data = {
+                    'date': data.get('date'),
+                    'content': data.get('content'),
+                    'updated_at': datetime.now()
+                }
+                
+                result = db.daily.update_one(
+                    {'_id': ObjectId(entry_id)},
+                    {'$set': update_data}
+                )
+                
+                if result.modified_count > 0:
+                    return jsonify({'success': True})
+                else:
+                    return jsonify({
+                        'success': False,
+                        'error': '记录未找到或未修改'
+                    }), 404
+            except Exception as e:
+                logger.error(f"Error updating entry: {str(e)}")
+                return jsonify({
+                    'success': False,
+                    'error': '更新记录失败'
+                }), 500
+            
+        elif request.method == 'DELETE':
+            try:
+                entry_id = request.args.get('id')
+                if not entry_id:
+                    return jsonify({
+                        'success': False,
+                        'error': '缺少ID参数'
+                    }), 400
+                
+                result = db.daily.delete_one({'_id': ObjectId(entry_id)})
+                
+                if result.deleted_count > 0:
+                    return jsonify({'success': True})
+                else:
+                    return jsonify({
+                        'success': False,
+                        'error': '记录未找到'
+                    }), 404
+            except Exception as e:
+                logger.error(f"Error deleting entry: {str(e)}")
+                return jsonify({
+                    'success': False,
+                    'error': '删除记录失败'
+                }), 500
+                
+    except Exception as e:
+        logger.error(f"Database connection error: {str(e)}")
         return jsonify({
-            'success': True,
-            'entries': json_util.dumps(entries)
-        })
-        
-    elif request.method == 'POST':
-        # 添加新条目
-        data = request.json
-        data['created_at'] = datetime.now()
-        result = db.daily.insert_one(data)
-        return jsonify({'success': True, 'id': str(result.inserted_id)})
-        
-    elif request.method == 'PUT':
-        # 更新条目
-        data = request.json
-        entry_id = data.pop('id')
-        db.daily.update_one(
-            {'_id': ObjectId(entry_id)},
-            {'$set': data}
-        )
-        return jsonify({'success': True})
-        
-    elif request.method == 'DELETE':
-        # 删除条目
-        entry_id = request.args.get('id')
-        db.daily.delete_one({'_id': ObjectId(entry_id)})
-        return jsonify({'success': True})
+            'success': False,
+            'error': f'数据库连接失败: {str(e)}'
+        }), 500
+
+@current_app.route('/api/admin/check_auth')
+def check_admin_auth():
+    """检查当前用户是否是管理员"""
+    try:
+        is_admin = session.get('is_admin', False)
+        return jsonify({'is_admin': is_admin})
+    except Exception as e:
+        logger.error(f"Error checking admin auth: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': '认证检查失败'
+        }), 500
