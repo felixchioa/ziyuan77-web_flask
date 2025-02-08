@@ -157,9 +157,9 @@
                     latencyElement.textContent = latency + ' ms';
                     
                     // 根据延迟设置不同的颜色
-                    if (latency < 100) {
+                    if (latency < 200) {
                         latencyElement.style.color = '#32CD32'; // 浅绿色
-                    } else if (latency < 300) {
+                    } else if (latency < 500) {
                         latencyElement.style.color = '#FFA500'; // 橙色
                     } else {
                         latencyElement.style.color = '#FF4500'; // 红橙色
@@ -202,9 +202,9 @@
                     speedElement.textContent = speedMbps + ' Mbps';
                     
                     // 根据速度设置不同的颜色
-                    if (speedMbps > 10) {
+                    if (speedMbps > 5) {
                         speedElement.style.color = '#32CD32'; // 浅绿色
-                    } else if (speedMbps > 5) {
+                    } else if (speedMbps > 1) {
                         speedElement.style.color = '#FFA500'; // 橙色
                     } else {
                         speedElement.style.color = '#FF4500'; // 红橙色
