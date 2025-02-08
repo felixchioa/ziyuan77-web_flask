@@ -2066,44 +2066,16 @@ def transition():
 
 # 获取所有日志
 @current_app.route('/api/admin/daily/entries', methods=['GET', 'POST', 'PUT', 'DELETE'])
-@admin_required
 def manage_daily_entries():
+    """处理日常记录的 CRUD 操作"""
     try:
         client = get_mongo_client()
-        db = client['chat']  # 直接指定使用 'chat' 数据库
+        db = client['chat']
         
         if request.method == 'GET':
+            # GET 请求不需要管理员权限，所有人都可以查看
             try:
-                # 获取所有日常条目并按日期降序排序
                 entries = list(db.daily.find().sort('date', -1))
-                
-                # 如果数据库为空，从 daily.html 导入初始数据
-                if not entries:
-                    try:
-                        with open('app/templates/daily.html', 'r', encoding='utf-8') as f:
-                            content = f.read()
-                        
-                        # 使用正则表达式提取所有的日志条目
-                        import re
-                        pattern = r'<li>(.*?)：(.*?)</li>'
-                        initial_entries = []
-                        for match in re.finditer(pattern, content):
-                            date = match.group(1)
-                            content = match.group(2)
-                            initial_entries.append({
-                                'date': date,
-                                'content': content,
-                                'created_at': datetime.now()
-                            })
-                        
-                        if initial_entries:
-                            # 将提取的条目存入数据库
-                            db.daily.insert_many(initial_entries)
-                            # 重新获取所有条目
-                            entries = list(db.daily.find().sort('date', -1))
-                    except Exception as e:
-                        logger.error(f"Error importing initial data: {str(e)}")
-                
                 return jsonify({
                     'success': True,
                     'entries': json_util.dumps(entries)
@@ -2114,8 +2086,15 @@ def manage_daily_entries():
                     'success': False,
                     'error': f'获取数据失败: {str(e)}'
                 }), 500
+        
+        # 其他方法需要管理员权限
+        if not session.get('is_admin'):
+            return jsonify({
+                'success': False,
+                'error': '需要管理员权限'
+            }), 403
             
-        elif request.method == 'POST':
+        if request.method == 'POST':
             try:
                 data = request.get_json()
                 if not data or 'date' not in data or 'content' not in data:

@@ -115,20 +115,37 @@
 
             function loadEntries() {
                 fetch('/api/admin/daily/entries')
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
+                        if (!data.success) {
+                            throw new Error(data.error || '加载失败');
+                        }
+                        
                         const entries = JSON.parse(data.entries);
                         const list = document.getElementById('entriesList');
+                        const isAdmin = document.getElementById('editControls').style.display === 'block';
+                        
                         list.innerHTML = entries.map(entry => `
                             <li class="entry" data-id="${entry._id.$oid}">
                                 <span class="entry-date">${entry.date}</span>：
                                 <span class="entry-content">${entry.content}</span>
-                                <div class="entry-controls" style="display: none;">
-                                    <button onclick="editEntry('${entry._id.$oid}')">编辑</button>
-                                    <button onclick="deleteEntry('${entry._id.$oid}')">删除</button>
-                                </div>
+                                ${isAdmin ? `
+                                    <div class="entry-controls" style="display: none;">
+                                        <button onclick="editEntry('${entry._id.$oid}')">编辑</button>
+                                        <button onclick="deleteEntry('${entry._id.$oid}')">删除</button>
+                                    </div>
+                                ` : ''}
                             </li>
                         `).join('');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('加载失败：' + error.message);
                     });
             }
 
