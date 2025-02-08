@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>反馈管理 - 77资源站</title>
+    <style>
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .feedback-item {
+            background: #f5f5f5;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        .feedback-type { font-weight: bold; color: #007bff; }
+        .feedback-date { color: #666; }
+        .feedback-content { margin: 10px 0; }
+        .feedback-contact { color: #28a745; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>用户反馈管理</h1>
+        <div id="feedbackList"></div>
+    </div>
+
+    <script>
+        async function loadFeedback() {
+            try {
+                const response = await fetch('/api/admin/feedback');
+                const data = await response.json();
+                if (data.success) {
+                    const feedback = JSON.parse(data.feedback);
+                    const container = document.getElementById('feedbackList');
+                    container.innerHTML = feedback.map(item => `
+                        <div class="feedback-item">
+                            <div class="feedback-type">
+                                ${item.feedbackType === 'improve' ? '改进现有页面' : '新增页面'}
+                            </div>
+                            <div class="feedback-date">
+                                ${new Date(item.created_at.$date).toLocaleString()}
+                            </div>
+                            <div class="feedback-content">
+                                ${item.feedbackType === 'improve' ? 
+                                    `<p>页面：${item.pagePath}</p>
+                                     <p>建议：${item.improvement}</p>` :
+                                    `<p>新页面功能：${item.newPageFeatures}</p>`
+                                }
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('加载反馈失败:', error);
+            }
+        }
+
+        loadFeedback();
+    </script>
+</body>
+</html> 

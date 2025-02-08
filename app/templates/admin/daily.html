@@ -1,40 +1,234 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>日志管理</title>
-    <link rel="stylesheet" href="/static/css/admin/daily.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日常管理 - 77资源站</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+    <style>
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .entry-form {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .entry-list {
+            margin-top: 20px;
+        }
+        .entry-item {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-edit {
+            background: #28a745;
+            color: white;
+        }
+        .entry-actions {
+            margin-top: 10px;
+        }
+        .tox-tinymce {
+            margin-bottom: 15px;
+        }
+        .entry-content {
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+        .ck-editor__editable {
+            min-height: 300px;
+        }
+    </style>
 </head>
 <body>
-    <div class="daily-container">
-        <h2>日志管理</h2>
+    <div class="container">
+        <h1>日常管理</h1>
         
-        <div class="add-entry">
-            <h3>添加新日志</h3>
-            <div class="input-group">
-                <label>日期:</label>
-                <input type="date" id="entry-date">
-            </div>
-            <div class="input-group">
-                <label>内容:</label>
-                <textarea id="entry-content" placeholder="请输入日志内容"></textarea>
-            </div>
-            <button onclick="addEntry()">添加</button>
+        <p>这里是一些日常记录。</p>
+        <div class="entry-form">
+            <form id="entryForm">
+                <div class="form-group">
+                    <label for="date">日期：</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="content">内容：</label>
+                    <textarea id="content" name="content" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">添加条目</button>
+            </form>
         </div>
 
-        <div class="entries-list">
-            <h3>日志列表</h3>
-            <div class="filters">
-                <input type="text" id="search" placeholder="搜索内容...">
-                <div class="date-range">
-                    <input type="date" id="start-date">
-                    <span>至</span>
-                    <input type="date" id="end-date">
-                </div>
-            </div>
-            <div id="entries"></div>
-        </div>
+        <ul id="entryList"></ul>
     </div>
-    <script src="/static/js/admin/daily.js"></script>
+
+    <script>
+        // 初始化CKEditor
+        let editor;
+        ClassicEditor
+            .create(document.querySelector('#content'))
+            .then(newEditor => {
+                editor = newEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        // 加载所有条目
+        async function loadEntries() {
+            try {
+                const response = await fetch('/api/admin/daily/entries');
+                const data = await response.json();
+                if (data.success) {
+                    const entries = JSON.parse(data.entries);
+                    const container = document.getElementById('entryList');
+                    container.innerHTML = entries.map(entry => `
+                        <li data-id="${entry._id.$oid}">
+                            ${entry.date}：${entry.content || ''}
+                            <div class="entry-actions" style="display:inline-block;margin-left:10px;">
+                                <button class="btn btn-edit" onclick="editEntry('${entry._id.$oid}', '${entry.content}')">编辑</button>
+                                <button class="btn btn-danger" onclick="deleteEntry('${entry._id.$oid}')">删除</button>
+                            </div>
+                        </li>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('加载失败:', error);
+            }
+        }
+
+        // 添加新条目
+        document.getElementById('entryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const content = editor.getData();
+            const data = {
+                date: document.getElementById('date').value,
+                content: content
+            };
+            
+            try {
+                const response = await fetch('/api/admin/daily/entries', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    e.target.reset();
+                    editor.setData('');
+                    loadEntries();
+                }
+            } catch (error) {
+                console.error('添加失败:', error);
+            }
+        });
+
+        // 编辑条目
+        async function editEntry(id, content) {
+            const newContent = await openEditDialog(content);
+            if (newContent) {
+                try {
+                    const response = await fetch('/api/admin/daily/entries', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id: id,
+                            content: newContent
+                        })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        loadEntries();
+                    }
+                } catch (error) {
+                    console.error('更新失败:', error);
+                }
+            }
+        }
+
+        // 添加编辑对话框
+        function openEditDialog(content) {
+            return new Promise((resolve) => {
+                const dialog = document.createElement('div');
+                dialog.innerHTML = `
+                    <div class="edit-dialog" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;padding:20px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.1);z-index:1000;width:80%;max-width:800px;">
+                        <h3>编辑内容</h3>
+                        <textarea id="editContent" style="width:100%;margin:10px 0;">${content}</textarea>
+                        <div style="text-align:right;margin-top:10px;">
+                            <button onclick="this.closest('.edit-dialog').remove();resolve(null);" class="btn">取消</button>
+                            <button onclick="resolveEdit();" class="btn btn-primary">保存</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(dialog);
+                let editEditor;
+                ClassicEditor
+                    .create(document.querySelector('#editContent'))
+                    .then(newEditor => {
+                        editEditor = newEditor;
+                        window.resolveEdit = () => {
+                            const value = editEditor.getData();
+                            editEditor.destroy();
+                            dialog.remove();
+                            resolve(value);
+                        };
+                    });
+            });
+        }
+
+        // 删除条目
+        async function deleteEntry(id) {
+            if (confirm('确定要删除这条记录吗？')) {
+                try {
+                    const response = await fetch(`/api/admin/daily/entries?id=${id}`, {
+                        method: 'DELETE'
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        loadEntries();
+                    }
+                } catch (error) {
+                    console.error('删除失败:', error);
+                }
+            }
+        }
+
+        // 初始加载
+        loadEntries();
+    </script>
 </body>
 </html> 

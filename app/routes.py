@@ -188,8 +188,16 @@ def tools():
 
 @current_app.route('/daily')
 def daily():
-    logger.debug("Rendering daily.html")
-    return render_template('daily.html')
+    try:
+        client = get_mongo_client()
+        db = client['chat']
+        # 从数据库获取所有条目并按日期降序排序
+        entries = list(db.daily.find().sort('date', -1))
+        
+        return render_template('daily.html', entries=entries)
+    except Exception as e:
+        logger.error(f"Error loading daily entries: {e}")
+        return render_template('daily.html', entries=[])
 
 
 @current_app.route('/BingSiteAuth.xml')
@@ -2307,3 +2315,81 @@ def scan_ports():
     except Exception as e:
         logger.error(f"Port scan error: {e}")
         return jsonify({'success': False, 'error': str(e)})
+
+@current_app.route('/feedback')
+def feedback():
+    return render_template('feedback.html')
+
+@current_app.route('/api/feedback', methods=['POST'])
+def submit_feedback():
+    try:
+        data = request.json
+        client = get_mongo_client()
+        db = client['chat']  # 指定使用 'chat' 数据库
+        
+        # 添加时间戳
+        data['created_at'] = datetime.now()
+        
+        # 存储到数据库
+        result = db.feedback.insert_one(data)
+        return jsonify({'success': True})  # 添加返回语句
+    except Exception as e:
+        logger.error(f"Error submitting feedback: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@current_app.route('/admin/feedback')
+@admin_required
+def admin_feedback():
+    return render_template('admin/feedback.html')
+
+@current_app.route('/api/admin/feedback')
+@admin_required
+def get_feedback():
+    try:
+        client = get_mongo_client()
+        db = client['chat']  # 指定使用 'chat' 数据库
+        feedback_list = list(db.feedback.find().sort('created_at', -1))
+        return jsonify({
+            'success': True,
+            'feedback': json_util.dumps(feedback_list)
+        })
+    except Exception as e:
+        logger.error(f"Error getting feedback: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@current_app.route('/api/admin/daily/entries', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@admin_required
+def manage_daily_entries():
+    client = get_mongo_client()
+    db = client['chat']
+    
+    if request.method == 'GET':
+        # 获取所有日常条目
+        entries = list(db.daily.find().sort('date', -1))
+        return jsonify({
+            'success': True,
+            'entries': json_util.dumps(entries)
+        })
+        
+    elif request.method == 'POST':
+        # 添加新条目
+        data = request.json
+        data['created_at'] = datetime.now()
+        result = db.daily.insert_one(data)
+        return jsonify({'success': True, 'id': str(result.inserted_id)})
+        
+    elif request.method == 'PUT':
+        # 更新条目
+        data = request.json
+        entry_id = data.pop('id')
+        db.daily.update_one(
+            {'_id': ObjectId(entry_id)},
+            {'$set': data}
+        )
+        return jsonify({'success': True})
+        
+    elif request.method == 'DELETE':
+        # 删除条目
+        entry_id = request.args.get('id')
+        db.daily.delete_one({'_id': ObjectId(entry_id)})
+        return jsonify({'success': True})
