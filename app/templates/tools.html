@@ -13,247 +13,593 @@
                 <img src="/static/images/back.png" alt="返回" />
             </a>
         </header>
+
+        <!-- 面包屑导航 -->
+        <nav class="breadcrumb">
+            <a href="/">首页</a>
+            <span class="separator">/</span>
+            <a href="/tools">工具合集</a>
+            <span class="separator">/</span>
+            <span id="currentCategory">所有工具</span>
+        </nav>
+
+        <!-- 搜索栏 -->
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" class="search-input" id="toolSearch" 
+                       placeholder="搜索工具名称、功能描述..." 
+                       onkeyup="filterTools()">
+            </div>
+        </div>
+
+        <!-- 分类导航 -->
+        <nav class="nav-container">
+            <div class="nav-categories">
+                <a href="#all" class="nav-category active" data-category="all">
+                    所有工具 <span class="count">0</span>
+                </a>
+                <a href="#convert" class="nav-category" data-category="convert">
+                    格式转换 <span class="count">0</span>
+                </a>
+                <a href="#calculate" class="nav-category" data-category="calculate">
+                    计算工具 <span class="count">0</span>
+                </a>
+                <a href="#develop" class="nav-category" data-category="develop">
+                    开发工具 <span class="count">0</span>
+                </a>
+                <a href="#text" class="nav-category" data-category="text">
+                    文本工具 <span class="count">0</span>
+                </a>
+                <a href="#encode" class="nav-category" data-category="encode">
+                    编码解码 <span class="count">0</span>
+                </a>
+                <a href="#image" class="nav-category" data-category="image">
+                    图像处理 <span class="count">0</span>
+                </a>
+                <a href="#network" class="nav-category" data-category="network">
+                    网络工具 <span class="count">0</span>
+                </a>
+                <a href="#time" class="nav-category" data-category="time">
+                    时间日期 <span class="count">0</span>
+                </a>
+                <a href="#other" class="nav-category" data-category="other">
+                    其他工具 <span class="count">0</span>
+                </a>
+            </div>
+        </nav>
+
         <div class="tools-grid">
-            <a href="https://photo.ziyuan77.com" class="tool-card" target="_blank">
+            <!-- 图像处理工具 -->
+            <a href="https://photo.ziyuan77.com" class="tool-card" data-category="image" target="_blank">
                 <h3>证件照生成器</h3>
-                <p>在线证件照生成器，提供你的照片，生成证件照，推荐抠图模型：birefnet-v1-lite</p>
+                <p>在线证件照生成器，提供你的照片，生成证件照</p>
             </a>
-            <a href="/password" class="tool-card">
+
+            <!-- 编码解码工具 -->
+            <a href="/password" class="tool-card" data-category="encode">
                 <h3>安全密码生成器</h3>
                 <p>生成安全、随机的密码</p>
             </a>
-            <a href="https://xyz.ziyuan77.com" class="tool-card" target="_blank">
+
+            <!-- 其他工具 -->
+            <a href="https://xyz.ziyuan77.com" class="tool-card" data-category="other" target="_blank">
                 <h3>元科技的脉搏</h3>
                 <p>探索科技前沿资讯</p>
             </a>
-            <a href="/worldtime" class="tool-card">
+
+            <!-- 时间日期工具 -->
+            <a href="/worldtime" class="tool-card" data-category="time">
                 <h3>世界时间</h3>
                 <p>查看全球各地时间</p>
             </a>
-            <a href="/excel" class="tool-card">
+
+            <!-- 计算工具 -->
+            <a href="/excel" class="tool-card" data-category="calculate">
                 <h3>Excel公式生成器</h3>
                 <p>快速生成Excel公式</p>
             </a>
-            <a href="/calculator" class="tool-card">
+
+            <a href="/calculator" class="tool-card" data-category="calculate">
                 <h3>多功能计算器</h3>
                 <p>各种数学计算功能</p>
             </a>
-            <a href="/math" class="tool-card">
+
+            <a href="/math" class="tool-card" data-category="calculate">
                 <h3>数学计算生成器</h3>
                 <p>数学公式和计算工具</p>
             </a>
-            <a href="/translate" class="tool-card">
+
+            <!-- 文本工具 -->
+            <a href="/translate" class="tool-card" data-category="text">
                 <h3>在线翻译</h3>
                 <p>多语言在线翻译工具</p>
             </a>
-            <a href="/ascii" class="tool-card">
+
+            <a href="/ascii" class="tool-card" data-category="text">
                 <h3>ASCII艺术生成器</h3>
                 <p>创建ASCII艺术字符</p>
             </a>
-            <a href="/download/index" class="tool-card">
+
+            <!-- 网络工具 -->
+            <a href="/download/index" class="tool-card" data-category="network">
                 <h3>下载器</h3>
                 <p>文件下载工具</p>
             </a>
-            <a href="/regex" class="tool-card">
+
+            <!-- 开发工具 -->
+            <a href="/regex" class="tool-card" data-category="develop">
                 <h3>正则表达式测试</h3>
                 <p>正则表达式验证工具</p>
             </a>
-            <a href="/crontab" class="tool-card">
+
+            <a href="/crontab" class="tool-card" data-category="develop">
                 <h3>Cron表达式生成器</h3>
                 <p>生成定时任务表达式</p>
             </a>
-            <a href="/diff" class="tool-card">
+
+            <!-- 文本工具 -->
+            <a href="/diff" class="tool-card" data-category="text">
                 <h3>文本差异对比</h3>
                 <p>比较文本差异</p>
             </a>
-            <a href="/chat" class="tool-card">
+
+            <!-- 网络工具 -->
+            <a href="/chat" class="tool-card" data-category="network">
                 <h3>实时聊天</h3>
                 <p>在线即时通讯工具</p>
             </a>
-            <a href="/binary_converter" class="tool-card">
+
+            <!-- 格式转换工具 -->
+            <a href="/binary_converter" class="tool-card" data-category="convert">
                 <h3>二进制转换器</h3>
                 <p>进制转换工具</p>
             </a>
-            <a href="/encoding" class="tool-card">
+
+            <a href="/encoding" class="tool-card" data-category="encode">
                 <h3>编码转换器</h3>
                 <p>各种编码格式转换</p>
             </a>
-            <a href="/hash" class="tool-card">
+
+            <a href="/hash" class="tool-card" data-category="encode">
                 <h3>哈希计算器</h3>
                 <p>计算文本哈希值</p>
             </a>
-            <a href="/qrcode" class="tool-card">
+
+            <a href="/qrcode" class="tool-card" data-category="encode">
                 <h3>二维码生成器</h3>
                 <p>生成自定义二维码</p>
             </a>
-            <a href="/json" class="tool-card">
+
+            <!-- 开发工具 -->
+            <a href="/json" class="tool-card" data-category="develop">
                 <h3>JSON格式化工具</h3>
                 <p>JSON美化与验证</p>
             </a>
-            <a href="https://file.ziyuan77.com" class="tool-card" target="_blank">
+
+            <!-- 其他工具 -->
+            <a href="https://file.ziyuan77.com" class="tool-card" data-category="other" target="_blank">
                 <h3>资源站</h3>
                 <p>各类资源下载</p>
             </a>
-            <a href="/image" class="tool-card">
+
+            <!-- 图像处理工具 -->
+            <a href="/image" class="tool-card" data-category="image">
                 <h3>图片处理工具</h3>
                 <p>图片编辑与处理</p>
             </a>
-            <a href="/palette" class="tool-card">
+
+            <a href="/palette" class="tool-card" data-category="image">
                 <h3>调色板工具</h3>
                 <p>颜色选择与搭配</p>
             </a>
-            <a href="/svg" class="tool-card">
+
+            <a href="/svg" class="tool-card" data-category="image">
                 <h3>SVG编辑器</h3>
                 <p>SVG图形编辑工具</p>
             </a>
-            <a href="/ip" class="tool-card">
+
+            <!-- 网络工具 -->
+            <a href="/ip" class="tool-card" data-category="network">
                 <h3>IP地址查询</h3>
                 <p>查询IP地址信息</p>
             </a>
-            <a href="/ping" class="tool-card">
+
+            <a href="/ping" class="tool-card" data-category="network">
                 <h3>网络连通性测试</h3>
                 <p>测试网络连接状态</p>
             </a>
-            <a href="/unit" class="tool-card">
+
+            <!-- 格式转换工具 -->
+            <a href="/unit" class="tool-card" data-category="convert">
                 <h3>单位换算器</h3>
                 <p>各种单位转换计算</p>
             </a>
-            <a href="/text_analyzer" class="tool-card">
+
+            <!-- 文本工具 -->
+            <a href="/text_analyzer" class="tool-card" data-category="text">
                 <h3>文本分析器</h3>
                 <p>分析文本特征</p>
             </a>
-            <a href="/date" class="tool-card">
+
+            <!-- 时间日期工具 -->
+            <a href="/date" class="tool-card" data-category="time">
                 <h3>日期计算器</h3>
                 <p>日期时间计算工具</p>
             </a>
-            <a href="/color_picker" class="tool-card">
+
+            <!-- 图像处理工具 -->
+            <a href="/color_picker" class="tool-card" data-category="image">
                 <h3>颜色选择器</h3>
                 <p>颜色拾取与转换</p>
             </a>
-            <a href="/markdown_editor" class="tool-card">
+
+            <!-- 开发工具 -->
+            <a href="/markdown_editor" class="tool-card" data-category="develop">
                 <h3>Markdown编辑器</h3>
                 <p>在线Markdown编辑</p>
             </a>
-            <a href="/base64_encoder" class="tool-card">
+
+            <!-- 编码解码工具 -->
+            <a href="/base64_encoder" class="tool-card" data-category="encode">
                 <h3>Base64编码器</h3>
                 <p>Base64编码转换</p>
             </a>
-            <a href="/html_formatter" class="tool-card">
+
+            <!-- 开发工具 -->
+            <a href="/html_formatter" class="tool-card" data-category="develop">
                 <h3>HTML格式化工具</h3>
                 <p>HTML代码格式化</p>
             </a>
-            <a href="/css_minifier" class="tool-card">
+
+            <a href="/css_minifier" class="tool-card" data-category="develop">
                 <h3>CSS压缩工具</h3>
                 <p>CSS代码压缩优化</p>
             </a>
-            <a href="/js_minifier" class="tool-card">
+
+            <a href="/js_minifier" class="tool-card" data-category="develop">
                 <h3>JavaScript压缩工具</h3>
                 <p>JS代码压缩优化</p>
             </a>
-            <a href="/uuid_generator" class="tool-card">
+
+            <!-- 开发工具 -->
+            <a href="/uuid_generator" class="tool-card" data-category="develop">
                 <h3>UUID生成器</h3>
                 <p>生成唯一标识符</p>
             </a>
-            <a href="/text_replacer" class="tool-card">
+
+            <!-- 文本工具 -->
+            <a href="/text_replacer" class="tool-card" data-category="text">
                 <h3>文本替换工具</h3>
                 <p>批量文本替换</p>
             </a>
-            <a href="/stopwatch" class="tool-card">
+
+            <!-- 时间日期工具 -->
+            <a href="/stopwatch" class="tool-card" data-category="time">
                 <h3>秒表</h3>
                 <p>精确计时工具</p>
             </a>
-            <a href="/timer" class="tool-card">
+
+            <a href="/timer" class="tool-card" data-category="time">
                 <h3>计时器</h3>
                 <p>倒计时工具</p>
             </a>
-            <a href="/notepad" class="tool-card">
+
+            <!-- 文本工具 -->
+            <a href="/notepad" class="tool-card" data-category="text">
                 <h3>记事本</h3>
                 <p>在线文本编辑器</p>
             </a>
-            <a href="/character_counter" class="tool-card">
+
+            <a href="/character_counter" class="tool-card" data-category="text">
                 <h3>字符计数器</h3>
                 <p>文本字符统计工具</p>
             </a>
-            <a href="/word_counter" class="tool-card">
+
+            <a href="/word_counter" class="tool-card" data-category="text">
                 <h3>单词计数器</h3>
                 <p>英文单词统计工具</p>
             </a>
-            <a href="/random_number" class="tool-card">
+
+            <!-- 计算工具 -->
+            <a href="/random_number" class="tool-card" data-category="calculate">
                 <h3>随机数生成器</h3>
                 <p>生成随机数字序列</p>
             </a>
-            <a href="/tip_calculator" class="tool-card">
+
+            <a href="/tip_calculator" class="tool-card" data-category="calculate">
                 <h3>小费计算器</h3>
                 <p>餐饮小费计算工具</p>
             </a>
-            <a href="/bmi_calculator" class="tool-card">
+
+            <a href="/bmi_calculator" class="tool-card" data-category="calculate">
                 <h3>BMI计算器</h3>
                 <p>身体质量指数计算</p>
             </a>
-            <a href="/age_calculator" class="tool-card">
+
+            <!-- 时间日期工具 -->
+            <a href="/age_calculator" class="tool-card" data-category="time">
                 <h3>年龄计算器</h3>
                 <p>精确计算年龄和日期</p>
             </a>
-            <a href="/simple_todo" class="tool-card">
+
+            <!-- 其他工具 -->
+            <a href="/simple_todo" class="tool-card" data-category="other">
                 <h3>简单待办事项</h3>
                 <p>任务清单管理工具</p>
             </a>
-            <a href="/morse_code" class="tool-card">
+
+            <!-- 格式转换工具 -->
+            <a href="/morse_code" class="tool-card" data-category="convert">
                 <h3>摩尔斯电码转换器</h3>
                 <p>转换摩尔斯电码</p>
             </a>
-            <a href="/roman_numerals" class="tool-card">
+
+            <a href="/roman_numerals" class="tool-card" data-category="convert">
                 <h3>罗马数字转换器</h3>
                 <p>转换罗马数字</p>
             </a>
-            <a href="/temperature_converter" class="tool-card">
+
+            <!-- 单位转换工具 -->
+            <a href="/temperature_converter" class="tool-card" data-category="convert">
                 <h3>温度转换器</h3>
                 <p>转换不同温度单位</p>
             </a>
-            <a href="/length_converter" class="tool-card">
+
+            <a href="/length_converter" class="tool-card" data-category="convert">
                 <h3>长度单位转换器</h3>
                 <p>转换不同长度单位</p>
             </a>
-            <a href="/weight_converter" class="tool-card">
+
+            <a href="/weight_converter" class="tool-card" data-category="convert">
                 <h3>重量单位转换器</h3>
                 <p>转换不同重量单位</p>
             </a>
-            <a href="/volume_converter" class="tool-card">
+
+            <a href="/volume_converter" class="tool-card" data-category="convert">
                 <h3>体积单位转换器</h3>
                 <p>转换不同体积单位</p>
             </a>
-            <a href="/area_converter" class="tool-card">
+
+            <a href="/area_converter" class="tool-card" data-category="convert">
                 <h3>面积单位转换器</h3>
                 <p>转换不同面积单位</p>
             </a>
-            <a href="/speed_converter" class="tool-card">
+
+            <a href="/speed_converter" class="tool-card" data-category="convert">
                 <h3>速度单位转换器</h3>
                 <p>转换不同速度单位</p>
             </a>
-            <a href="/time_converter" class="tool-card">
+
+            <a href="/time_converter" class="tool-card" data-category="convert">
                 <h3>时间单位转换器</h3>
                 <p>转换不同时间单位</p>
             </a>
-            <a href="/angle_converter" class="tool-card">
+
+            <a href="/angle_converter" class="tool-card" data-category="convert">
                 <h3>角度单位转换器</h3>
                 <p>转换不同角度单位</p>
             </a>
-            <a href="/pressure_converter" class="tool-card">
+
+            <a href="/pressure_converter" class="tool-card" data-category="convert">
                 <h3>压力单位转换器</h3>
                 <p>转换不同压力单位</p>
             </a>
-            <a href="/energy_converter" class="tool-card">
+
+            <a href="/energy_converter" class="tool-card" data-category="convert">
                 <h3>能量单位转换器</h3>
                 <p>转换不同能量单位</p>
             </a>
-            <a href="/power_converter" class="tool-card">
+
+            <a href="/power_converter" class="tool-card" data-category="convert">
                 <h3>功率单位转换器</h3>
                 <p>转换不同功率单位</p>
             </a>
-            <a href="/paint" class="tool-card">
+
+            <!-- 图像处理工具 -->
+            <a href="/paint" class="tool-card" data-category="image">
                 <h3>画板</h3>
                 <p>在线画板</p>
             </a>
         </div>
+
+        <script>
+            // 模糊搜索功能
+            function filterTools() {
+                const searchText = document.getElementById('toolSearch').value.toLowerCase();
+                const activeCategory = document.querySelector('.nav-category.active').dataset.category;
+                const tools = document.querySelectorAll('.tool-card');
+                
+                // 将搜索文本分割成关键词
+                const keywords = searchText.split(/\s+/).filter(k => k.length > 0);
+                
+                tools.forEach(tool => {
+                    const toolName = tool.querySelector('h3').textContent.toLowerCase();
+                    const toolDesc = tool.querySelector('p').textContent.toLowerCase();
+                    const toolCategory = tool.dataset.category;
+                    
+                    // 检查分类匹配
+                    const matchesCategory = activeCategory === 'all' || toolCategory === activeCategory;
+                    
+                    // 检查关键词匹配
+                    const matchesSearch = keywords.length === 0 || keywords.every(keyword => {
+                        // 检查工具名称
+                        if (toolName.includes(keyword)) return true;
+                        
+                        // 检查工具描述
+                        if (toolDesc.includes(keyword)) return true;
+                        
+                        // 检查功能相关性（添加常见功能别名和相关词）
+                        const functionKeywords = getFunctionKeywords(toolCategory, toolName);
+                        return functionKeywords.some(k => k.includes(keyword));
+                    });
+                    
+                    tool.style.display = matchesSearch && matchesCategory ? 'flex' : 'none';
+                    
+                    // 如果匹配，高亮匹配的文本
+                    if (matchesSearch && keywords.length > 0) {
+                        highlightMatches(tool, keywords);
+                    } else {
+                        removeHighlights(tool);
+                    }
+                });
+            }
+            
+            // 获取工具功能相关的关键词
+            function getFunctionKeywords(category, toolName) {
+                const keywords = {
+                    'convert': ['转换', '换算', '格式', '单位'],
+                    'calculate': ['计算', '运算', '数学', '统计'],
+                    'develop': ['开发', '编程', '代码', '调试'],
+                    'text': ['文本', '文字', '编辑', '处理'],
+                    'encode': ['编码', '解码', '加密', '解密'],
+                    'image': ['图片', '图像', '照片', '绘图'],
+                    'network': ['网络', '连接', '通信', '在线'],
+                    'time': ['时间', '日期', '计时', '日历'],
+                    'other': ['工具', '其他', '实用']
+                };
+                
+                // 添加特定工具的相关词
+                const specificKeywords = {
+                    '密码生成器': ['密码', '安全', '随机'],
+                    'JSON格式化': ['json', '格式化', '美化'],
+                    'Base64': ['base64', '编码', '解码'],
+                    'MD5': ['md5', '哈希', '加密'],
+                    'IP查询': ['ip', '地址', '位置'],
+                    'BMI计算器': ['bmi', '体重', '健康'],
+                    '二维码': ['qr', '扫码', '条码'],
+                    // ... 可以继续添加更多特定工具的关键词
+                };
+                
+                // 合并通用关键词和特定关键词
+                let allKeywords = [...(keywords[category] || [])];
+                
+                // 查找工具特定的关键词
+                for (const [key, values] of Object.entries(specificKeywords)) {
+                    if (toolName.toLowerCase().includes(key.toLowerCase())) {
+                        allKeywords = [...allKeywords, ...values];
+                    }
+                }
+                
+                return Array.from(new Set(allKeywords)); // 去重
+            }
+            
+            // 高亮匹配的文本
+            function highlightMatches(tool, keywords) {
+                const title = tool.querySelector('h3');
+                const desc = tool.querySelector('p');
+                
+                let titleText = title.textContent;
+                let descText = desc.textContent;
+                
+                keywords.forEach(keyword => {
+                    const regex = new RegExp(keyword, 'gi');
+                    titleText = titleText.replace(regex, match => `<mark>${match}</mark>`);
+                    descText = descText.replace(regex, match => `<mark>${match}</mark>`);
+                });
+                
+                title.innerHTML = titleText;
+                desc.innerHTML = descText;
+            }
+            
+            // 移除高亮
+            function removeHighlights(tool) {
+                const title = tool.querySelector('h3');
+                const desc = tool.querySelector('p');
+                
+                title.innerHTML = title.textContent;
+                desc.innerHTML = desc.textContent;
+            }
+            
+            // 添加搜索建议功能
+            let searchTimeout;
+            document.getElementById('toolSearch').addEventListener('input', function(e) {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(filterTools, 300); // 延迟执行，避免频繁搜索
+            });
+
+            // 更新分类计数
+            function updateCategoryCounts() {
+                const categories = {};
+                const tools = document.querySelectorAll('.tool-card');
+                
+                // 计算总数
+                categories.all = tools.length;
+                
+                // 计算各分类数量
+                tools.forEach(tool => {
+                    const category = tool.dataset.category;
+                    categories[category] = (categories[category] || 0) + 1;
+                });
+                
+                // 更新显示
+                document.querySelectorAll('.nav-category').forEach(nav => {
+                    const category = nav.dataset.category;
+                    const count = categories[category] || 0;
+                    nav.querySelector('.count').textContent = count;
+                });
+            }
+
+            // 分类切换
+            document.querySelectorAll('.nav-category').forEach(nav => {
+                nav.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // 更新激活状态
+                    document.querySelectorAll('.nav-category').forEach(el => {
+                        el.classList.remove('active');
+                    });
+                    nav.classList.add('active');
+                    
+                    // 更新面包屑
+                    document.getElementById('currentCategory').textContent = 
+                        nav.textContent.split(' ')[0];
+                    
+                    // 筛选工具
+                    filterTools();
+                });
+            });
+
+            // 初始化
+            window.addEventListener('load', () => {
+                updateCategoryCounts();
+                
+                // 检查 URL hash 并激活相应分类
+                const hash = window.location.hash.slice(1);
+                if (hash) {
+                    const category = document.querySelector(`.nav-category[data-category="${hash}"]`);
+                    if (category) {
+                        category.click();
+                    }
+                }
+            });
+        </script>
+
+        <style>
+            /* 添加高亮样式 */
+            mark {
+                background-color: rgba(255, 255, 0, 0.3);
+                padding: 0 2px;
+                border-radius: 2px;
+            }
+            
+            /* 改进搜索框样式 */
+            .search-input {
+                width: 100%;
+                padding: 12px 15px;
+                font-size: 1rem;
+                border: 2px solid #e9ecef;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+            
+            .search-input:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            }
+            
+            .search-input::placeholder {
+                color: #adb5bd;
+            }
+        </style>
     </body>
 </html>

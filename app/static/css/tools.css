@@ -103,3 +103,130 @@ body {
         font-size: 1.2rem;
     }
 }
+
+/* 导航样式 */
+.nav-container {
+    background-color: #fff;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.nav-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.nav-category {
+    padding: 8px 15px;
+    background-color: #f8f9fa;
+    border-radius: 20px;
+    color: #495057;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    border: 1px solid #dee2e6;
+}
+
+.nav-category:hover {
+    background-color: #e9ecef;
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.nav-category.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.nav-category .count {
+    display: inline-block;
+    background: rgba(0,0,0,0.1);
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    margin-left: 5px;
+}
+
+/* 面包屑导航 */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: #fff;
+    border-radius: 4px;
+    margin: 0 auto 20px;
+    max-width: 1600px;
+    font-size: 0.9rem;
+}
+
+.breadcrumb a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    color: #007bff;
+}
+
+.breadcrumb .separator {
+    margin: 0 8px;
+    color: #adb5bd;
+}
+
+/* 搜索栏 */
+.search-container {
+    max-width: 1600px;
+    margin: 0 auto 20px;
+    padding: 0 20px;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .nav-container {
+        padding: 10px;
+        overflow-x: auto;
+    }
+    
+    .nav-categories {
+        flex-wrap: nowrap;
+        padding-bottom: 5px;
+    }
+    
+    .nav-category {
+        white-space: nowrap;
+    }
+    
+    .breadcrumb {
+        padding: 10px;
+        margin: 0 10px 15px;
+        font-size: 0.8rem;
+    }
+    
+    .search-container {
+        padding: 0 10px;
+    }
+}
