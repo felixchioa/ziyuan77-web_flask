@@ -2218,7 +2218,7 @@ def serve_test_file():
     test_file_path = os.path.join(current_app.static_folder, 'test.bin')
     if not os.path.exists(test_file_path):
         with open(test_file_path, 'wb') as f:
-            f.write(os.urandom(1024 * 1024 * 10))  # 10MB的随机数据
+            f.write(os.urandom(1024 * 1024 * 1))  # 10MB的随机数据
     
     return send_file(
         test_file_path,
