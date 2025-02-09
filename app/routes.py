@@ -2281,3 +2281,14 @@ def get_feedback():
         logger.error(f"Error getting feedback: {e}")
         return jsonify({'success': False, 'error': str(e)})
 
+@current_app.route('/github')
+def github():
+    return render_template('github.html')
+
+@current_app.route('/github_miaobox')
+def github_miaobox():
+    return render_template('github_miaobox.html')
+
+@current_app.route('/github_chat')
+def github_chat():
+    return render_template('github_chat.html')

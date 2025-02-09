@@ -64,6 +64,7 @@
                         <option value="">请选择反馈类型</option>
                         <option value="improve">改进现有页面</option>
                         <option value="new">增加新页面</option>
+                        <option value="bug">反馈Bug</option>
                     </select>
                 </div>
 
@@ -87,6 +88,22 @@
                     </div>
                 </div>
 
+                <!-- Bug反馈的表单字段 -->
+                <div id="bugFields" class="feedback-type">
+                    <div class="form-group">
+                        <label for="bugLocation">Bug出现位置：</label>
+                        <input type="text" id="bugLocation" name="bugLocation" placeholder="例如：/tools 或 密码生成器">
+                    </div>
+                    <div class="form-group">
+                        <label for="bugDescription">Bug描述：</label>
+                        <textarea id="bugDescription" name="bugDescription" placeholder="请详细描述Bug的现象，最好包含重现步骤..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="expectedBehavior">期望的正确行为：</label>
+                        <textarea id="expectedBehavior" name="expectedBehavior" placeholder="请描述您认为应该是什么样的正确表现..."></textarea>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label for="contact">联系方式（选填）：</label>
                     <input type="text" id="contact" name="contact" placeholder="你的邮箱">
@@ -104,6 +121,8 @@
                 document.getElementById('improveFields').classList.add('active');
             } else if (this.value === 'new') {
                 document.getElementById('newFields').classList.add('active');
+            } else if (this.value === 'bug') {
+                document.getElementById('bugFields').classList.add('active');
             }
         });
 
