@@ -2121,6 +2121,8 @@ def manage_daily_entries():
                 entry = {
                     'date': data['date'],
                     'content': data['content'],
+                    'rawContent': data.get('rawContent', ''),
+                    'images': data.get('images', []),  # 存储图片数据
                     'created_at': datetime.now()
                 }
 
@@ -2149,6 +2151,8 @@ def manage_daily_entries():
                 update_data = {
                     'date': data.get('date'),
                     'content': data.get('content'),
+                    'rawContent': data.get('rawContent', ''),
+                    'images': data.get('images', []),  # 存储图片数据
                     'updated_at': datetime.now()
                 }
 
