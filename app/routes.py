@@ -2235,3 +2235,45 @@ def serve_test_file():
         as_attachment=True,
         download_name='test.bin'
     )
+
+@current_app.route('/feedback')
+def feedback():
+    return render_template('feedback.html')
+
+@current_app.route('/api/feedback', methods=['POST'])
+def submit_feedback():
+    try:
+        data = request.json
+        client = get_mongo_client()
+        db = client['chat']  # 指定使用 'chat' 数据库
+        
+        # 添加时间戳
+        data['created_at'] = datetime.now()
+        
+        # 存储到数据库
+        result = db.feedback.insert_one(data)
+        return jsonify({'success': True})  # 添加返回语句
+    except Exception as e:
+        logger.error(f"Error submitting feedback: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@current_app.route('/admin/feedback')
+@admin_required
+def admin_feedback():
+    return render_template('admin/feedback.html')
+
+@current_app.route('/api/admin/feedback')
+@admin_required
+def get_feedback():
+    try:
+        client = get_mongo_client()
+        db = client['chat']  # 指定使用 'chat' 数据库
+        feedback_list = list(db.feedback.find().sort('created_at', -1))
+        return jsonify({
+            'success': True,
+            'feedback': json_util.dumps(feedback_list)
+        })
+    except Exception as e:
+        logger.error(f"Error getting feedback: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
