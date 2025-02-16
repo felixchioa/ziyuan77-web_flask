@@ -181,12 +181,28 @@ def index():
         # 如果没有 X-Forwarded-For，直接使用 remote_addr
         visitor_ip = request.remote_addr
 
-    # # 获取访问者IP
-    # visitor_ip = request.remote_addr
+    # 获取地理位置信息
+    location = "未知"
+    try:
+        if visitor_ip == '127.0.0.1' or visitor_ip == 'localhost' or visitor_ip.startswith('192.168.') or visitor_ip.startswith('10.'):
+            location = "本地网络"
+        else:
+            response = requests.get(f'http://ip-api.com/json/{visitor_ip}')
+            if response.status_code == 200:
+                data = response.json()
+                if data['status'] == 'success':
+                    location = f"{data['country']} {data['regionName']} {data['city']}"
+    except Exception as e:
+        logger.error(f"Error getting location: {e}")
+
     # 获取UTC+8时区的当前时间
     tz = pytz.timezone('Asia/Shanghai')
     current_time = datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
-    return render_template('index.html', current_time=current_time, visitor_ip=visitor_ip)
+    
+    return render_template('index.html', 
+                         current_time=current_time, 
+                         visitor_ip=visitor_ip,
+                         location=location)
 
 
 @current_app.route('/projects')
