@@ -437,7 +437,41 @@
                 connectionType.textContent = '本地网络';
             } else if ('connection' in navigator) {
                 const conn = navigator.connection;
-                connectionType.textContent = conn.effectiveType || conn.type || '未知';
+                let type = '未知';
+                if (conn.effectiveType) {
+                    switch (conn.effectiveType) {
+                        case 'slow-2g':
+                            type = '2G弱网';
+                            break;
+                        case '2g':
+                            type = '2G';
+                            break;
+                        case '3g':
+                            type = '3G';
+                            break;
+                        case '4g':
+                            type = '4G/LTE';
+                            break;
+                    }
+                } else if (conn.type) {
+                    switch (conn.type) {
+                        case 'wifi':
+                            type = 'WiFi';
+                            break;
+                        case 'cellular':
+                            type = '移动网络';
+                            break;
+                        case 'ethernet':
+                            type = '有线网络';
+                            break;
+                        case 'none':
+                            type = '离线';
+                            break;
+                        default:
+                            type = conn.type;
+                    }
+                }
+                connectionType.textContent = type;
             } else {
                 connectionType.textContent = '浏览器不支持此功能';
             }
