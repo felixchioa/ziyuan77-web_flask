@@ -438,10 +438,68 @@
             } else if ('connection' in navigator) {
                 const conn = navigator.connection;
                 let type = '未知';
-                if (conn.effectiveType) {
+                
+                // 优先检查实际的连接类型
+                if (conn.type) {
+                    switch (conn.type) {
+                        case 'wifi':
+                            type = 'WiFi';
+                            break;
+                        case 'cellular':
+                            // 如果是移动网络，再检查具体的网络代
+                            if (conn.effectiveType) {
+                                switch (conn.effectiveType) {
+                                    case 'slow-2g':
+                                        type = '2G弱网';
+                                        break;
+                                    case '2g':
+                                        type = '2G';
+                                        break;
+                                    case '3g':
+                                        type = '3G';
+                                        break;
+                                    case '4g':
+                                        type = '4G/LTE';
+                                        break;
+                                    default:
+                                        type = '移动网络';
+                                }
+                            } else {
+                                type = '移动网络';
+                            }
+                            break;
+                        case 'ethernet':
+                            type = '有线网络';
+                            break;
+                        case 'none':
+                            type = '离线';
+                            break;
+                        default:
+                            // 如果type无法判断，使用effectiveType
+                            if (conn.effectiveType) {
+                                switch (conn.effectiveType) {
+                                    case 'slow-2g':
+                                        type = '低速网络';
+                                        break;
+                                    case '2g':
+                                        type = '2G';
+                                        break;
+                                    case '3g':
+                                        type = '3G';
+                                        break;
+                                    case '4g':
+                                        type = '4G/LTE';
+                                        break;
+                                    default:
+                                        type = '宽带网络';
+                                }
+                            }
+                    }
+                } else if (conn.effectiveType) {
+                    // 如果只有effectiveType可用
                     switch (conn.effectiveType) {
                         case 'slow-2g':
-                            type = '2G弱网';
+                            type = '低速网络';
                             break;
                         case '2g':
                             type = '2G';
@@ -452,23 +510,8 @@
                         case '4g':
                             type = '4G/LTE';
                             break;
-                    }
-                } else if (conn.type) {
-                    switch (conn.type) {
-                        case 'wifi':
-                            type = 'WiFi';
-                            break;
-                        case 'cellular':
-                            type = '移动网络';
-                            break;
-                        case 'ethernet':
-                            type = '有线网络';
-                            break;
-                        case 'none':
-                            type = '离线';
-                            break;
                         default:
-                            type = conn.type;
+                            type = '宽带网络';
                     }
                 }
                 connectionType.textContent = type;
