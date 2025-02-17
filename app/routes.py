@@ -828,6 +828,10 @@ def internal_server_error(e):
 def serve_robots():
     return send_from_directory('static', 'robots.txt')
 
+@current_app.route('/tencent14469080315895846531.txt')
+def serve_tencent():
+    return send_from_directory('static', 'tencent14469080315895846531.txt')
+
 
 @current_app.route('/index')
 def loading():
