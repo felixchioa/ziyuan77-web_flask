@@ -841,4 +841,224 @@ function generateRecommendations(latencyAnalysis, lossAnalysis, bandwidthAnalysi
     }
     
     return recommendations.map(rec => `<li>${rec}</li>`).join('');
+}
+
+// 添加反向DNS测试函数
+async function testReverseDNS() {
+    const target = document.getElementById('target-input').value.trim();
+    if (!target) {
+        addLog('错误', '请输入目标IP地址');
+        return;
+    }
+
+    // 验证输入是否为有效的IP地址
+    const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+    if (!ipPattern.test(target)) {
+        addLog('错误', '请输入有效的IP地址');
+        return;
+    }
+
+    try {
+        addLog('信息', `正在对 ${target} 进行反向DNS查询...`);
+        
+        const response = await fetch(`/api/reverse_dns?target=${target}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            addLog('成功', `IP: ${data.ip} -> 主机名: ${data.hostname}`);
+            updateStatusPanel({
+                status: '成功',
+                type: 'reverse_dns',
+                result: data
+            });
+        } else {
+            addLog('错误', data.error);
+            updateStatusPanel({
+                status: '失败',
+                type: 'reverse_dns',
+                error: data.error
+            });
+        }
+    } catch (error) {
+        addLog('错误', `反向DNS查询失败: ${error.message}`);
+        updateStatusPanel({
+            status: '失败',
+            type: 'reverse_dns',
+            error: error.message
+        });
+    }
+}
+
+// 更新状态面板函数（如果还没有的话）
+function updateStatusPanel(result) {
+    const statusElement = document.getElementById('connection-status');
+    statusElement.textContent = result.status;
+    statusElement.className = `value ${result.status === '成功' ? 'success' : 'error'}`;
+    
+    // 更新其他统计信息...
+}
+
+// 添加日志函数（如果还没有的话）
+function addLog(type, message) {
+    const logPanel = document.getElementById('test-log');
+    const timestamp = new Date().toLocaleTimeString();
+    const logEntry = document.createElement('div');
+    logEntry.className = `log-entry ${type.toLowerCase()}`;
+    logEntry.innerHTML = `
+        <span class="timestamp">[${timestamp}]</span>
+        <span class="type">[${type}]</span>
+        <span class="message">${message}</span>
+    `;
+    logPanel.insertBefore(logEntry, logPanel.firstChild);
+}
+
+// 检查测试限制
+async function checkTestLimit() {
+    try {
+        const response = await fetch('/api/test_limit');
+        const data = await response.json();
+        
+        // 更新剩余次数显示
+        const remainingElement = document.getElementById('remaining-tests');
+        if (data.is_admin) {
+            remainingElement.innerHTML = '∞'; // 显示无限符号
+            remainingElement.classList.add('infinite');
+            enableTestButtons();
+        } else {
+            remainingElement.textContent = data.remaining;
+            remainingElement.classList.remove('infinite');
+            if (data.remaining <= 0) {
+                disableTestButtons();
+            } else {
+                enableTestButtons();
+            }
+        }
+        
+        // 更新重置时间显示
+        const resetTimeElement = document.getElementById('reset-time');
+        if (data.reset_time) {
+            resetTimeElement.textContent = new Date(data.reset_time).toLocaleTimeString();
+            resetTimeElement.parentElement.style.display = 'block';
+        } else {
+            resetTimeElement.parentElement.style.display = 'none';
+        }
+        
+        return data.remaining;
+    } catch (error) {
+        console.error('Error checking test limit:', error);
+        return 0;
+    }
+}
+
+// 禁用测试按钮
+function disableTestButtons() {
+    document.querySelectorAll('.tool-group button').forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+    });
+}
+
+// 启用测试按钮
+function enableTestButtons() {
+    document.querySelectorAll('.tool-group button').forEach(btn => {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+    });
+}
+
+// 显示管理员对话框
+function showAdminDialog() {
+    document.getElementById('admin-dialog').style.display = 'block';
+}
+
+// 隐藏管理员对话框
+function hideAdminDialog() {
+    document.getElementById('admin-dialog').style.display = 'none';
+    document.getElementById('admin-password').value = '';
+}
+
+// 验证管理员密码
+async function verifyAdmin() {
+    const password = document.getElementById('admin-password').value;
+    
+    try {
+        const response = await fetch('/api/admin_override', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ password })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            enableTestButtons();
+            hideAdminDialog();
+            addLog('成功', '管理员权限已启用');
+            // 更新登录状态
+            checkLoginStatus();
+        } else {
+            addLog('错误', '管理员密码错误');
+        }
+    } catch (error) {
+        addLog('错误', '验证失败: ' + error.message);
+    }
+}
+
+// 定期检查测试限制
+setInterval(checkTestLimit, 30000); // 每30秒检查一次
+document.addEventListener('DOMContentLoaded', checkTestLimit);
+
+// 添加检查登录状态的函数
+async function checkLoginStatus() {
+    try {
+        const response = await fetch('/api/test_limit');
+        const data = await response.json();
+        
+        // 更新IP显示
+        document.getElementById('user-ip').textContent = data.ip || '-';
+        
+        // 如果是管理员，显示退出按钮
+        if (data.is_admin) {
+            document.getElementById('logout-btn').style.display = 'inline-block';
+            document.getElementById('admin-override-btn').style.display = 'none';
+        } else {
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('admin-override-btn').style.display = 'inline-block';
+        }
+    } catch (error) {
+        console.error('Error checking login status:', error);
+    }
+}
+
+// 添加登出函数
+async function logout() {
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            // 重置界面状态
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('admin-override-btn').style.display = 'inline-block';
+            document.getElementById('remaining-tests').textContent = '100';
+            document.getElementById('reset-time').parentElement.style.display = 'block';
+            
+            // 移除无限符号样式
+            document.getElementById('remaining-tests').classList.remove('infinite');
+            
+            // 刷新测试限制
+            checkTestLimit();
+            
+            addLog('成功', '已退出登录');
+        }
+    } catch (error) {
+        addLog('错误', '退出失败: ' + error.message);
+    }
 } 
