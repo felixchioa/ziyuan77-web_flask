@@ -1112,7 +1112,16 @@ async function checkLoginStatus() {
         
         // 更新IP显示
         const userIp = data.ip || '-';
-        document.getElementById('user-ip').textContent = userIp === 'unknown' ? '未知' : userIp;
+        let ipDisplay = userIp;
+        
+        // 如果是代理用户，显示特殊标记
+        if (data.proxy) {
+            ipDisplay = userIp === 'proxy-user' ? '代理用户' : `${userIp} (代理)`;
+        } else if (userIp === 'unknown') {
+            ipDisplay = '未知';
+        }
+        
+        document.getElementById('user-ip').textContent = ipDisplay;
         
         // 如果是管理员，显示退出按钮
         if (data.is_admin) {

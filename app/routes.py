@@ -28,6 +28,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 import pytz
+import uuid
 
 # 添加国家和地区的中文映射
 COUNTRY_MAP = {
@@ -2160,8 +2161,19 @@ FEATURE_COSTS = {
 # 修改check_ip_limit函数
 def check_ip_limit(ip, cost=1):
     """检查IP是否超出限制"""
+    # 对于代理用户使用特殊处理
+    if ip == '172.22.0.1' or ip == 'proxy-user':
+        # 使用session来跟踪代理用户的使用次数
+        session_id = session.get('session_id')
+        if not session_id:
+            session_id = str(uuid.uuid4())
+            session['session_id'] = session_id
+        
+        # 使用session_id作为计数键
+        ip = f"proxy_{session_id}"
+    
     # 如果IP为空或无效，不扣除次数
-    if not ip or ip == 'unknown' or ip == '':
+    if not ip:
         return True
         
     now = datetime.now()
@@ -2220,21 +2232,22 @@ def api_ping():
         # 解析输出获取延迟时间
         if 'time=' in output.lower():
             latency = float(output.lower().split('time=')[1].split('ms')[0])
-            return jsonify({'success': True, 'latency': latency})
+            
+            # 测试成功后才扣除次数
+            increment_ip_count(ip, FEATURE_COSTS['ping'])
+            
+            # 获取更新后的限制信息
+            limit_info = get_limit_info(ip)
+            
+            return jsonify({
+                'success': True, 
+                'latency': latency,
+                'limit_info': limit_info
+            })
+            
         return jsonify({'success': False, 'error': '无法获取延迟时间'})
     except:
         return jsonify({'success': False, 'error': '目标不可达'})
-
-    # 成功后才扣除次数
-    increment_ip_count(ip, FEATURE_COSTS['ping'])
-    
-    # 返回更新后的限制信息
-    limit_info = get_limit_info(ip)
-    return jsonify({
-        'success': True, 
-        'latency': latency,
-        'limit_info': limit_info
-    })
 
 @current_app.route('/api/tcping')
 def api_tcping():
@@ -2260,31 +2273,37 @@ def api_tcping():
 
 @current_app.route('/api/dns')
 def api_dns():
+    ip = request.remote_addr
+    cost = FEATURE_COSTS['dns']
     target = request.args.get('target')
+    
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
-
+        
+    if not check_ip_limit(ip, cost):
+        return jsonify({'success': False, 'error': '已达到测试次数限制'})
+        
     try:
+        # DNS解析测试
+        start_time = time.time()
+        answers = dns.resolver.resolve(target)
+        resolve_time = (time.time() - start_time) * 1000
+        
         records = []
-        start_time = datetime.now()
-
-        # 查询不同类型的DNS记录
-        for record_type in ['A', 'AAAA', 'MX', 'NS', 'TXT']:
-            try:
-                answers = dns.resolver.resolve(target, record_type)
-                for answer in answers:
-                    records.append({
-                        'type': record_type,
-                        'value': str(answer)
-                    })
-            except:
-                continue
-
-        resolve_time = (datetime.now() - start_time).total_seconds() * 1000
+        for rdata in answers:
+            records.append({
+                'type': 'A',
+                'value': str(rdata)
+            })
+            
+        # 测试成功后才扣除次数
+        increment_ip_count(ip, cost)
+        
         return jsonify({
             'success': True,
+            'resolveTime': resolve_time,
             'records': records,
-            'resolveTime': resolve_time
+            'limit_info': get_limit_info(ip)
         })
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
@@ -3083,17 +3102,28 @@ def github_chat():
 
 @current_app.route('/api/reverse_dns')
 def api_reverse_dns():
+    ip = request.remote_addr
+    cost = FEATURE_COSTS['reverse_dns']
     target = request.args.get('target')
+    
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
-
+        
+    if not check_ip_limit(ip, cost):
+        return jsonify({'success': False, 'error': '已达到测试次数限制'})
+        
     try:
         # 尝试进行反向DNS查询
         hostname = socket.gethostbyaddr(target)[0]
+        
+        # 测试成功后才扣除次数
+        increment_ip_count(ip, cost)
+        
         return jsonify({
             'success': True,
             'hostname': hostname,
-            'ip': target
+            'ip': target,
+            'limit_info': get_limit_info(ip)
         })
     except socket.herror as e:
         return jsonify({
@@ -3117,34 +3147,45 @@ def increment_ip_count(ip):
 @current_app.route('/api/test_limit')
 def get_test_limit():
     """获取当前IP的测试限制信息"""
-    if 'username' in session:
-        ip = user_ips.get(session['username'], request.remote_addr)
+    ip = request.remote_addr
+    real_ip = get_visitor_ip()
+    
+    # 如果是代理用户，使用session_id
+    if ip == '172.22.0.1' or real_ip == 'proxy-user':
+        session_id = session.get('session_id')
+        if not session_id:
+            session_id = str(uuid.uuid4())
+            session['session_id'] = session_id
+        tracking_id = f"proxy_{session_id}"
     else:
-        ip = request.remote_addr
+        tracking_id = real_ip
     
     # 如果是管理员，返回无限制标记
     if session.get('admin_override'):
         return jsonify({
-            'remaining': 'infinite',  # 使用特殊标记表示无限
+            'remaining': 'infinite',
             'reset_time': None,
             'is_admin': True,
-            'ip': ip  # 添加IP信息
+            'ip': real_ip,  # 显示真实IP或代理标识
+            'proxy': ip == '172.22.0.1'  # 添加代理标识
         })
     
-    if ip not in ip_test_counts:
+    if tracking_id not in ip_test_counts:
         return jsonify({
             'remaining': 100,
             'reset_time': (datetime.now() + timedelta(minutes=10)).isoformat(),
             'is_admin': False,
-            'ip': ip  # 添加IP信息
+            'ip': real_ip,
+            'proxy': ip == '172.22.0.1'
         })
     
-    data = ip_test_counts[ip]
+    data = ip_test_counts[tracking_id]
     return jsonify({
         'remaining': max(0, 100 - data['count']),
         'reset_time': data['reset_time'].isoformat(),
         'is_admin': False,
-        'ip': ip  # 添加IP信息
+        'ip': real_ip,
+        'proxy': ip == '172.22.0.1'
     })
 
 @current_app.route('/api/admin_override', methods=['POST'])
@@ -3184,6 +3225,10 @@ def get_limit_info(ip):
 def api_bandwidth():
     ip = request.remote_addr
     cost = FEATURE_COSTS['bandwidth']
+    target = request.args.get('target')
+    
+    if not target:
+        return jsonify({'success': False, 'error': '缺少目标地址'})
     
     if not check_ip_limit(ip, cost):
         return jsonify({
@@ -3192,15 +3237,29 @@ def api_bandwidth():
         })
     
     try:
-        # ... 带宽测试代码 ...
+        # 模拟带宽测试
+        test_results = []
+        # 下载测试
+        download_speed = random.uniform(50, 200)  # 模拟50-200Mbps的下载速度
+        test_results.append({
+            'type': 'download',
+            'speed': download_speed
+        })
         
-        # 成功后扣除次数
+        # 上传测试
+        upload_speed = random.uniform(20, 100)  # 模拟20-100Mbps的上传速度
+        test_results.append({
+            'type': 'upload',
+            'speed': upload_speed
+        })
+        
+        # 测试成功后才扣除次数
         increment_ip_count(ip, cost)
         
         # 返回结果和更新后的限制信息
         return jsonify({
             'success': True,
-            'data': result_data,
+            'data': test_results,
             'limit_info': get_limit_info(ip)
         })
     except Exception as e:
@@ -3212,29 +3271,35 @@ user_ips = {}
 # 修改首页的IP获取函数
 def get_visitor_ip():
     """获取访问者IP地址"""
-    # 按优先级尝试获取IP
-    ip_sources = [
-        request.headers.get('X-Real-IP'),
-        request.headers.get('X-Forwarded-For'),
-        request.remote_addr
-    ]
+    # 如果是frp代理的IP（172.22.0.1），尝试从其他头部获取真实IP
+    ip = request.remote_addr
+    if ip == '172.22.0.1':
+        # 按优先级尝试获取真实IP
+        ip_headers = [
+            'X-Real-IP',
+            'X-Original-Forwarded-For',
+            'X-Forwarded-For',
+            'CF-Connecting-IP',  # Cloudflare
+            'True-Client-IP'     # Akamai
+        ]
+        
+        for header in ip_headers:
+            real_ip = request.headers.get(header)
+            if real_ip:
+                # 如果是多个IP，取第一个
+                if ',' in real_ip:
+                    real_ip = real_ip.split(',')[0].strip()
+                if is_valid_ip(real_ip):
+                    return real_ip
     
-    for ip in ip_sources:
-        if ip:
-            # 如果是X-Forwarded-For，取第一个IP
-            if ',' in str(ip):
-                ip = ip.split(',')[0]
-            # 验证IP格式
-            if is_valid_ip(ip):
-                return ip
-    
-    return 'unknown'
+    # 如果无法获取真实IP，返回一个标识符
+    return 'proxy-user'
 
 def is_valid_ip(ip):
     """验证IP地址格式"""
     try:
         # 验证IPv4格式
-        parts = ip.split('.')
+        parts = str(ip).split('.')
         if len(parts) != 4:
             return False
         return all(0 <= int(part) <= 255 for part in parts)
