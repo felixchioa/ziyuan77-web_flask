@@ -1111,7 +1111,8 @@ async function checkLoginStatus() {
         const data = await response.json();
         
         // 更新IP显示
-        document.getElementById('user-ip').textContent = data.ip || '-';
+        const userIp = data.ip || '-';
+        document.getElementById('user-ip').textContent = userIp === 'unknown' ? '未知' : userIp;
         
         // 如果是管理员，显示退出按钮
         if (data.is_admin) {
@@ -1123,6 +1124,7 @@ async function checkLoginStatus() {
         }
     } catch (error) {
         console.error('Error checking login status:', error);
+        document.getElementById('user-ip').textContent = '获取失败';
     }
 }
 

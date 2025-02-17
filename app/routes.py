@@ -2160,6 +2160,10 @@ FEATURE_COSTS = {
 # 修改check_ip_limit函数
 def check_ip_limit(ip, cost=1):
     """检查IP是否超出限制"""
+    # 如果IP为空或无效，不扣除次数
+    if not ip or ip == 'unknown' or ip == '':
+        return True
+        
     now = datetime.now()
     if ip not in ip_test_counts:
         ip_test_counts[ip] = {
@@ -2181,7 +2185,16 @@ def check_ip_limit(ip, cost=1):
     # 检查是否超出限制
     return ip_test_counts[ip]['count'] + cost <= 100
 
-# 修改各个API端点
+# 修改increment_ip_count函数
+def increment_ip_count(ip, cost=1):
+    """增加IP的测试计数"""
+    # 如果IP为空或无效，不增加计数
+    if not ip or ip == 'unknown' or ip == '':
+        return
+        
+    if ip in ip_test_counts:
+        ip_test_counts[ip]['count'] += cost
+
 @current_app.route('/api/ping')
 def api_ping():
     ip = request.remote_addr
@@ -3114,21 +3127,24 @@ def get_test_limit():
         return jsonify({
             'remaining': 'infinite',  # 使用特殊标记表示无限
             'reset_time': None,
-            'is_admin': True
+            'is_admin': True,
+            'ip': ip  # 添加IP信息
         })
     
     if ip not in ip_test_counts:
         return jsonify({
             'remaining': 100,
             'reset_time': (datetime.now() + timedelta(minutes=10)).isoformat(),
-            'is_admin': False
+            'is_admin': False,
+            'ip': ip  # 添加IP信息
         })
     
     data = ip_test_counts[ip]
     return jsonify({
         'remaining': max(0, 100 - data['count']),
         'reset_time': data['reset_time'].isoformat(),
-        'is_admin': False
+        'is_admin': False,
+        'ip': ip  # 添加IP信息
     })
 
 @current_app.route('/api/admin_override', methods=['POST'])
@@ -3196,14 +3212,34 @@ user_ips = {}
 # 修改首页的IP获取函数
 def get_visitor_ip():
     """获取访问者IP地址"""
-    forwarded_for = request.headers.get('X-Forwarded-For')
-    if forwarded_for:
-        # X-Forwarded-For 头部可能有多个 IP，取第一个
-        visitor_ip = forwarded_for.split(',')[0]
-    else:
-        # 如果没有 X-Forwarded-For，直接使用 remote_addr
-        visitor_ip = request.remote_addr
-    return visitor_ip
+    # 按优先级尝试获取IP
+    ip_sources = [
+        request.headers.get('X-Real-IP'),
+        request.headers.get('X-Forwarded-For'),
+        request.remote_addr
+    ]
+    
+    for ip in ip_sources:
+        if ip:
+            # 如果是X-Forwarded-For，取第一个IP
+            if ',' in str(ip):
+                ip = ip.split(',')[0]
+            # 验证IP格式
+            if is_valid_ip(ip):
+                return ip
+    
+    return 'unknown'
+
+def is_valid_ip(ip):
+    """验证IP地址格式"""
+    try:
+        # 验证IPv4格式
+        parts = ip.split('.')
+        if len(parts) != 4:
+            return False
+        return all(0 <= int(part) <= 255 for part in parts)
+    except (AttributeError, TypeError, ValueError):
+        return False
 
 @current_app.route('/api/logout', methods=['POST'])
 def api_logout():
