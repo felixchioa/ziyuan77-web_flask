@@ -31,6 +31,7 @@
                     <button id="ping-btn" onclick="startPing()">Ping测试</button>
                     <button onclick="startTCPing()">TCPing测试</button>
                     <button onclick="testDNS()">DNS解析</button>
+                    <button onclick="testReverseDNS()">反向DNS</button>
                     <button onclick="testWebsite()">网站测试</button>
                 </div>
 
@@ -39,6 +40,9 @@
                     <div class="port-input">
                         <input type="text" id="port-input" placeholder="输入端口（例如：80,443 或 1-1000）">
                         <button onclick="testPorts()">测试端口</button>
+                    </div>
+                    <div class="port-input-hint">
+                        注意：每10个端口消耗1次测试机会
                     </div>
                 </div>
 
@@ -160,6 +164,29 @@
             <h3>响应时间</h3>
             <div class="chart-container">
                 <canvas id="response-chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-limit-counter">
+        <div class="limit-info">
+            剩余测试次数: <span id="remaining-tests">100</span>
+            <div class="reset-time">重置时间: <span id="reset-time">-</span></div>
+            <div class="user-info">
+                IP: <span id="user-ip">-</span>
+                <button id="logout-btn" onclick="logout()" style="display: none;">退出登录</button>
+            </div>
+        </div>
+        <button id="admin-override-btn" onclick="showAdminDialog()">管理员解锁</button>
+    </div>
+
+    <div class="admin-dialog" id="admin-dialog">
+        <div class="admin-dialog-content">
+            <h3>管理员验证</h3>
+            <input type="password" id="admin-password" placeholder="请输入管理员密码">
+            <div class="admin-dialog-buttons">
+                <button onclick="verifyAdmin()">确认</button>
+                <button onclick="hideAdminDialog()">取消</button>
             </div>
         </div>
     </div>

@@ -23,6 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 加载历史记录
     loadHistory();
+
+    // 检查测试限制
+    checkTestLimit();
+
+    // 检查登录状态
+    checkLoginStatus();
 });
 
 // 初始化图表
@@ -222,7 +228,29 @@ async function testMTU() {
 async function testPorts() {
     const target = document.getElementById('target-input').value.trim();
     const ports = document.getElementById('port-input').value.trim();
-    if (!target || !ports) return;
+    if (!target || !ports) {
+        addLog('错误', '请输入目标地址和端口');
+        return;
+    }
+
+    // 计算将要测试的端口数量
+    let portCount = 0;
+    ports.split(',').forEach(p => {
+        if (p.includes('-')) {
+            const [start, end] = p.split('-').map(Number);
+            portCount += end - start + 1;
+        } else {
+            portCount += 1;
+        }
+    });
+
+    // 计算需要的测试次数
+    const requiredTests = Math.ceil(portCount / 10);
+    
+    // 显示确认对话框
+    if (!confirm(`将测试 ${portCount} 个端口，需要消耗 ${requiredTests} 次测试机会，是否继续？`)) {
+        return;
+    }
 
     logResult(`开始端口扫描: ${target}`, 'info');
     
@@ -237,6 +265,18 @@ async function testPorts() {
                 logResult(`端口 ${result.port} (${service}): ${status}`,
                     result.status ? 'success' : 'warning');
             });
+            
+            // 直接使用返回的限制信息更新UI
+            if (data.limit_info) {
+                document.getElementById('remaining-tests').textContent = data.limit_info.remaining;
+                document.getElementById('reset-time').textContent = 
+                    new Date(data.limit_info.reset_time).toLocaleTimeString();
+                
+                // 如果剩余次数为0，禁用测试按钮
+                if (data.limit_info.remaining <= 0) {
+                    disableTestButtons();
+                }
+            }
         } else {
             logResult(`端口扫描失败: ${data.error}`, 'error');
         }
@@ -265,26 +305,80 @@ function getServiceName(port) {
 
 // 带宽测试
 async function testBandwidth() {
+    const target = document.getElementById('target-input').value.trim();
+    if (!target) {
+        addLog('错误', '请输入目标地址');
+        return;
+    }
+
+    // 显示消耗提示
+    if (!confirm('带宽测试将消耗5次测试机会，是否继续？')) {
+        return;
+    }
+
     logResult('开始带宽测试...', 'info');
     
-    // 模拟下载测试
-    logResult('测试下载速度...', 'info');
-    for (let i = 0; i < 5; i++) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const speed = Math.random() * 100 + 50;
-        logResult(`下载速度: ${speed.toFixed(2)} Mbps`, 'success');
-        bandwidthData.push(speed);
+    try {
+        const response = await fetch(`/api/bandwidth?target=${target}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            // 处理测试结果
+            data.data.forEach(result => {
+                logResult(`带宽: ${result.speed.toFixed(2)} Mbps`, 'success');
+            });
+            
+            // 更新限制信息
+            updateLimitInfo(data.limit_info);
+        } else {
+            logResult(`带宽测试失败: ${data.error}`, 'error');
+        }
+    } catch (error) {
+        logResult(`带宽测试失败: ${error.message}`, 'error');
     }
+}
 
-    // 模拟上传测试
-    logResult('测试上传速度...', 'info');
-    for (let i = 0; i < 5; i++) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const speed = Math.random() * 50 + 20;
-        logResult(`上传速度: ${speed.toFixed(2)} Mbps`, 'success');
+// 添加更新限制信息的通用函数
+function updateLimitInfo(limitInfo) {
+    const remainingElement = document.getElementById('remaining-tests');
+    const resetTimeElement = document.getElementById('reset-time');
+    
+    if (limitInfo.is_admin) {
+        remainingElement.innerHTML = '∞';
+        remainingElement.classList.add('infinite');
+        resetTimeElement.parentElement.style.display = 'none';
+    } else {
+        remainingElement.textContent = limitInfo.remaining;
+        remainingElement.classList.remove('infinite');
+        resetTimeElement.textContent = new Date(limitInfo.reset_time).toLocaleTimeString();
+        resetTimeElement.parentElement.style.display = 'block';
     }
+    
+    // 根据剩余次数启用/禁用按钮
+    if (limitInfo.remaining <= 0 && !limitInfo.is_admin) {
+        disableTestButtons();
+    }
+}
 
-    updateCharts();
+// 在每个测试函数开始时添加成本提示
+function getFeatureCost(feature) {
+    const costs = {
+        'ping': 1,
+        'tcping': 1,
+        'dns': 1,
+        'reverse_dns': 1,
+        'website': 2,
+        'bandwidth': 5,
+        'latency': 3,
+        'packet_loss': 3,
+        'jitter': 3
+    };
+    return costs[feature] || 1;
+}
+
+// 添加成本确认函数
+function confirmCost(feature, cost) {
+    return confirm(`${feature}测试将消耗${cost}次测试机会，是否继续？`);
 }
 
 // 延迟测试
@@ -841,4 +935,224 @@ function generateRecommendations(latencyAnalysis, lossAnalysis, bandwidthAnalysi
     }
     
     return recommendations.map(rec => `<li>${rec}</li>`).join('');
+}
+
+// 添加反向DNS测试函数
+async function testReverseDNS() {
+    const target = document.getElementById('target-input').value.trim();
+    if (!target) {
+        addLog('错误', '请输入目标IP地址');
+        return;
+    }
+
+    // 验证输入是否为有效的IP地址
+    const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+    if (!ipPattern.test(target)) {
+        addLog('错误', '请输入有效的IP地址');
+        return;
+    }
+
+    try {
+        addLog('信息', `正在对 ${target} 进行反向DNS查询...`);
+        
+        const response = await fetch(`/api/reverse_dns?target=${target}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            addLog('成功', `IP: ${data.ip} -> 主机名: ${data.hostname}`);
+            updateStatusPanel({
+                status: '成功',
+                type: 'reverse_dns',
+                result: data
+            });
+        } else {
+            addLog('错误', data.error);
+            updateStatusPanel({
+                status: '失败',
+                type: 'reverse_dns',
+                error: data.error
+            });
+        }
+    } catch (error) {
+        addLog('错误', `反向DNS查询失败: ${error.message}`);
+        updateStatusPanel({
+            status: '失败',
+            type: 'reverse_dns',
+            error: error.message
+        });
+    }
+}
+
+// 更新状态面板函数（如果还没有的话）
+function updateStatusPanel(result) {
+    const statusElement = document.getElementById('connection-status');
+    statusElement.textContent = result.status;
+    statusElement.className = `value ${result.status === '成功' ? 'success' : 'error'}`;
+    
+    // 更新其他统计信息...
+}
+
+// 添加日志函数（如果还没有的话）
+function addLog(type, message) {
+    const logPanel = document.getElementById('test-log');
+    const timestamp = new Date().toLocaleTimeString();
+    const logEntry = document.createElement('div');
+    logEntry.className = `log-entry ${type.toLowerCase()}`;
+    logEntry.innerHTML = `
+        <span class="timestamp">[${timestamp}]</span>
+        <span class="type">[${type}]</span>
+        <span class="message">${message}</span>
+    `;
+    logPanel.insertBefore(logEntry, logPanel.firstChild);
+}
+
+// 检查测试限制
+async function checkTestLimit() {
+    try {
+        const response = await fetch('/api/test_limit');
+        const data = await response.json();
+        
+        // 更新剩余次数显示
+        const remainingElement = document.getElementById('remaining-tests');
+        if (data.is_admin) {
+            remainingElement.innerHTML = '∞'; // 显示无限符号
+            remainingElement.classList.add('infinite');
+            enableTestButtons();
+        } else {
+            remainingElement.textContent = data.remaining;
+            remainingElement.classList.remove('infinite');
+            if (data.remaining <= 0) {
+                disableTestButtons();
+            } else {
+                enableTestButtons();
+            }
+        }
+        
+        // 更新重置时间显示
+        const resetTimeElement = document.getElementById('reset-time');
+        if (data.reset_time) {
+            resetTimeElement.textContent = new Date(data.reset_time).toLocaleTimeString();
+            resetTimeElement.parentElement.style.display = 'block';
+        } else {
+            resetTimeElement.parentElement.style.display = 'none';
+        }
+        
+        return data.remaining;
+    } catch (error) {
+        console.error('Error checking test limit:', error);
+        return 0;
+    }
+}
+
+// 禁用测试按钮
+function disableTestButtons() {
+    document.querySelectorAll('.tool-group button').forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+    });
+}
+
+// 启用测试按钮
+function enableTestButtons() {
+    document.querySelectorAll('.tool-group button').forEach(btn => {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+    });
+}
+
+// 显示管理员对话框
+function showAdminDialog() {
+    document.getElementById('admin-dialog').style.display = 'block';
+}
+
+// 隐藏管理员对话框
+function hideAdminDialog() {
+    document.getElementById('admin-dialog').style.display = 'none';
+    document.getElementById('admin-password').value = '';
+}
+
+// 验证管理员密码
+async function verifyAdmin() {
+    const password = document.getElementById('admin-password').value;
+    
+    try {
+        const response = await fetch('/api/admin_override', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ password })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            enableTestButtons();
+            hideAdminDialog();
+            addLog('成功', '管理员权限已启用');
+            // 更新登录状态
+            checkLoginStatus();
+        } else {
+            addLog('错误', '管理员密码错误');
+        }
+    } catch (error) {
+        addLog('错误', '验证失败: ' + error.message);
+    }
+}
+
+// 定期检查测试限制
+setInterval(checkTestLimit, 30000); // 每30秒检查一次
+document.addEventListener('DOMContentLoaded', checkTestLimit);
+
+// 添加检查登录状态的函数
+async function checkLoginStatus() {
+    try {
+        const response = await fetch('/api/test_limit');
+        const data = await response.json();
+        
+        // 更新IP显示
+        document.getElementById('user-ip').textContent = data.ip || '-';
+        
+        // 如果是管理员，显示退出按钮
+        if (data.is_admin) {
+            document.getElementById('logout-btn').style.display = 'inline-block';
+            document.getElementById('admin-override-btn').style.display = 'none';
+        } else {
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('admin-override-btn').style.display = 'inline-block';
+        }
+    } catch (error) {
+        console.error('Error checking login status:', error);
+    }
+}
+
+// 添加登出函数
+async function logout() {
+    try {
+        const response = await fetch('/api/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            // 重置界面状态
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('admin-override-btn').style.display = 'inline-block';
+            document.getElementById('remaining-tests').textContent = '100';
+            document.getElementById('reset-time').parentElement.style.display = 'block';
+            
+            // 移除无限符号样式
+            document.getElementById('remaining-tests').classList.remove('infinite');
+            
+            // 刷新测试限制
+            checkTestLimit();
+            
+            addLog('成功', '已退出登录');
+        }
+    } catch (error) {
+        addLog('错误', '退出失败: ' + error.message);
+    }
 } 

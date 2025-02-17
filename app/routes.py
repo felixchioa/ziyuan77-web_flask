@@ -840,15 +840,11 @@ def loading():
 
 @current_app.route('/')
 def index():
-    # 获取 X-Forwarded-For 头部的第一个 IP 地址
-    forwarded_for = request.headers.get('X-Forwarded-For')
-    if forwarded_for:
-        # X-Forwarded-For 头部可能有多个 IP，取第一个
-        visitor_ip = forwarded_for.split(',')[0]
-    else:
-        # 如果没有 X-Forwarded-For，直接使用 remote_addr
-        visitor_ip = request.remote_addr
-
+    visitor_ip = get_visitor_ip()
+    # 存储用户IP
+    if 'username' in session:
+        user_ips[session['username']] = visitor_ip
+    
     # 获取地理位置信息
     location = "未知"
     try:
@@ -2147,9 +2143,51 @@ def network_test():
 def unit_converter():
     return render_template('unit_converter.html')
 
+# 添加功能消耗配置
+FEATURE_COSTS = {
+    'ping': 1,  # 基础ping测试消耗1次
+    'tcping': 1,  # TCP ping测试消耗1次
+    'dns': 1,  # DNS解析消耗1次
+    'reverse_dns': 1,  # 反向DNS消耗1次
+    'website': 2,  # 网站测试消耗2次（因为包含SSL检查）
+    'ports': lambda count: (count + 9) // 10,  # 每10个端口消耗1次
+    'bandwidth': 5,  # 带宽测试消耗5次
+    'latency': 3,  # 延迟测试消耗3次
+    'packet_loss': 3,  # 丢包测试消耗3次
+    'jitter': 3,  # 抖动测试消耗3次
+}
 
+# 修改check_ip_limit函数
+def check_ip_limit(ip, cost=1):
+    """检查IP是否超出限制"""
+    now = datetime.now()
+    if ip not in ip_test_counts:
+        ip_test_counts[ip] = {
+            'count': 0,
+            'reset_time': now + timedelta(minutes=10)
+        }
+    
+    # 如果已过重置时间，重置计数
+    if now >= ip_test_counts[ip]['reset_time']:
+        ip_test_counts[ip] = {
+            'count': 0,
+            'reset_time': now + timedelta(minutes=10)
+        }
+    
+    # 检查是否有管理员权限
+    if session.get('admin_override'):
+        return True
+    
+    # 检查是否超出限制
+    return ip_test_counts[ip]['count'] + cost <= 100
+
+# 修改各个API端点
 @current_app.route('/api/ping')
 def api_ping():
+    ip = request.remote_addr
+    if not check_ip_limit(ip, FEATURE_COSTS['ping']):
+        return jsonify({'success': False, 'error': '已达到测试次数限制'})
+    
     target = request.args.get('target')
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
@@ -2174,6 +2212,16 @@ def api_ping():
     except:
         return jsonify({'success': False, 'error': '目标不可达'})
 
+    # 成功后才扣除次数
+    increment_ip_count(ip, FEATURE_COSTS['ping'])
+    
+    # 返回更新后的限制信息
+    limit_info = get_limit_info(ip)
+    return jsonify({
+        'success': True, 
+        'latency': latency,
+        'limit_info': limit_info
+    })
 
 @current_app.route('/api/tcping')
 def api_tcping():
@@ -2271,17 +2319,35 @@ def api_ports():
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
 
+    # 检查IP限制
+    ip = request.remote_addr
+    if not check_ip_limit(ip):
+        return jsonify({'success': False, 'error': '已达到测试次数限制'})
+
     try:
+        # 解析端口列表
+        port_list = []
+        for p in ports.split(','):
+            if '-' in p:
+                start, end = map(int, p.split('-'))
+                port_list.extend(range(start, end + 1))
+            else:
+                port_list.append(int(p))
+
+        # 计算需要消耗的测试次数（每10个端口算1次）
+        test_count = (len(port_list) + 9) // 10  # 向上取整
+        
+        # 检查剩余次数是否足够
+        if ip in ip_test_counts:
+            remaining = 100 - ip_test_counts[ip]['count']
+            if remaining < test_count:
+                return jsonify({
+                    'success': False, 
+                    'error': f'剩余测试次数不足，需要{test_count}次，剩余{remaining}次'
+                })
+
         results = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            port_list = []
-            for p in ports.split(','):
-                if '-' in p:
-                    start, end = map(int, p.split('-'))
-                    port_list.extend(range(start, end + 1))
-                else:
-                    port_list.append(int(p))
-
             def check_port(port):
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(1)
@@ -2294,10 +2360,27 @@ def api_ports():
             futures = [executor.submit(check_port, port) for port in port_list]
             results = [f.result() for f in concurrent.futures.as_completed(futures)]
 
-        return jsonify({'success': True, 'results': results})
+        # 增加测试计数
+        increment_ip_count_by(ip, test_count)
+        
+        # 获取更新后的限制信息
+        limit_info = {
+            'remaining': max(0, 100 - ip_test_counts[ip]['count']),
+            'reset_time': ip_test_counts[ip]['reset_time'].isoformat()
+        }
+
+        return jsonify({
+            'success': True, 
+            'results': results,
+            'limit_info': limit_info  # 返回更新后的限制信息
+        })
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
+def increment_ip_count_by(ip, count):
+    """增加指定数量的IP测试计数"""
+    if ip in ip_test_counts:
+        ip_test_counts[ip]['count'] += count
 
 @current_app.route('/checkers')
 def checkers():
@@ -2984,3 +3067,152 @@ def github_miaobox():
 @current_app.route('/github_chat')
 def github_chat():
     return render_template('github_chat.html')
+
+@current_app.route('/api/reverse_dns')
+def api_reverse_dns():
+    target = request.args.get('target')
+    if not target:
+        return jsonify({'success': False, 'error': '缺少目标地址'})
+
+    try:
+        # 尝试进行反向DNS查询
+        hostname = socket.gethostbyaddr(target)[0]
+        return jsonify({
+            'success': True,
+            'hostname': hostname,
+            'ip': target
+        })
+    except socket.herror as e:
+        return jsonify({
+            'success': False, 
+            'error': f'反向DNS查询失败: {str(e)}'
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'查询出错: {str(e)}'
+        })
+
+# 存储IP访问记录
+ip_test_counts = {}
+
+def increment_ip_count(ip):
+    """增加IP的测试计数"""
+    if ip in ip_test_counts:
+        ip_test_counts[ip]['count'] += 1
+
+@current_app.route('/api/test_limit')
+def get_test_limit():
+    """获取当前IP的测试限制信息"""
+    if 'username' in session:
+        ip = user_ips.get(session['username'], request.remote_addr)
+    else:
+        ip = request.remote_addr
+    
+    # 如果是管理员，返回无限制标记
+    if session.get('admin_override'):
+        return jsonify({
+            'remaining': 'infinite',  # 使用特殊标记表示无限
+            'reset_time': None,
+            'is_admin': True
+        })
+    
+    if ip not in ip_test_counts:
+        return jsonify({
+            'remaining': 100,
+            'reset_time': (datetime.now() + timedelta(minutes=10)).isoformat(),
+            'is_admin': False
+        })
+    
+    data = ip_test_counts[ip]
+    return jsonify({
+        'remaining': max(0, 100 - data['count']),
+        'reset_time': data['reset_time'].isoformat(),
+        'is_admin': False
+    })
+
+@current_app.route('/api/admin_override', methods=['POST'])
+def admin_override():
+    """管理员密码验证"""
+    password = request.json.get('password')
+    if password == "admin123": 
+        session['admin_override'] = True
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'error': '密码错误'}), 401
+
+# 添加获取限制信息的辅助函数
+def get_limit_info(ip):
+    """获取IP的限制信息"""
+    if session.get('admin_override'):
+        return {
+            'remaining': 'infinite',
+            'reset_time': None,
+            'is_admin': True
+        }
+    
+    if ip not in ip_test_counts:
+        return {
+            'remaining': 100,
+            'reset_time': (datetime.now() + timedelta(minutes=10)).isoformat(),
+            'is_admin': False
+        }
+    
+    data = ip_test_counts[ip]
+    return {
+        'remaining': max(0, 100 - data['count']),
+        'reset_time': data['reset_time'].isoformat(),
+        'is_admin': False
+    }
+
+@current_app.route('/api/bandwidth')
+def api_bandwidth():
+    ip = request.remote_addr
+    cost = FEATURE_COSTS['bandwidth']
+    
+    if not check_ip_limit(ip, cost):
+        return jsonify({
+            'success': False, 
+            'error': f'测试次数不足，需要{cost}次测试次数'
+        })
+    
+    try:
+        # ... 带宽测试代码 ...
+        
+        # 成功后扣除次数
+        increment_ip_count(ip, cost)
+        
+        # 返回结果和更新后的限制信息
+        return jsonify({
+            'success': True,
+            'data': result_data,
+            'limit_info': get_limit_info(ip)
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+# 添加全局变量存储用户IP
+user_ips = {}
+
+# 修改首页的IP获取函数
+def get_visitor_ip():
+    """获取访问者IP地址"""
+    forwarded_for = request.headers.get('X-Forwarded-For')
+    if forwarded_for:
+        # X-Forwarded-For 头部可能有多个 IP，取第一个
+        visitor_ip = forwarded_for.split(',')[0]
+    else:
+        # 如果没有 X-Forwarded-For，直接使用 remote_addr
+        visitor_ip = request.remote_addr
+    return visitor_ip
+
+@current_app.route('/api/logout', methods=['POST'])
+def api_logout():
+    if 'username' in session:
+        username = session['username']
+        session.pop('username', None)
+        session.pop('admin_override', None)
+        # 清除用户IP记录
+        if username in user_ips:
+            del user_ips[username]
+        return jsonify({'success': True})
+    return jsonify({'success': False, 'error': '未登录'}), 401
