@@ -2,13 +2,7 @@ from flask_socketio import emit, join_room, leave_room
 from app.decorators import admin_required
 import glob
 import socket
-import dns.resolver
 import subprocess
-import platform
-from urllib.parse import urlparse
-import ssl
-from OpenSSL import crypto as OpenSSL_crypto
-import concurrent.futures
 import random
 from collections import Counter
 import tempfile
@@ -29,6 +23,10 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
 import pytz
 from app.mappings import get_location_info, get_visitor_ip, get_current_time
+from app.network import (
+    ping_host, tcp_ping, check_dns, check_website, scan_ports,
+    USER_AGENTS, COMMON_PORTS, MAX_THREADS, TIMEOUT
+)
 
 logger = Logger('routes')
 
@@ -1459,48 +1457,14 @@ def api_ping():
     target = request.args.get('target')
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
-
-    try:
-        # Windows系统
-        if platform.system().lower() == 'windows':
-            output = subprocess.check_output(['ping', '-n', '1', target],
-                                          stderr=subprocess.STDOUT,
-                                          universal_newlines=True)
-        # Linux/Unix系统
-        else:
-            output = subprocess.check_output(['ping', '-c', '1', target],
-                                          stderr=subprocess.STDOUT,
-                                          universal_newlines=True)
-
-        # 解析输出获取延迟时间
-        if 'time=' in output.lower():
-            latency = float(output.lower().split('time=')[1].split('ms')[0])
-            return jsonify({'success': True, 'latency': latency})
-        return jsonify({'success': False, 'error': '无法获取延迟时间'})
-    except:
-        return jsonify({'success': False, 'error': '目标不可达'})
+    return jsonify(ping_host(target))
 
 
 @current_app.route('/api/tcping')
 def api_tcping():
     target = request.args.get('target')
     port = int(request.args.get('port', 80))
-
-    try:
-        start_time = datetime.now()
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(5)
-        result = sock.connect_ex((target, port))
-        end_time = datetime.now()
-        sock.close()
-
-        latency = (end_time - start_time).total_seconds() * 1000
-        return jsonify({
-            'success': result == 0,
-            'latency': latency if result == 0 else None
-        })
-    except:
-        return jsonify({'success': False, 'error': '连接失败'})
+    return jsonify(tcp_ping(target, port))
 
 
 @current_app.route('/api/dns')
@@ -1508,31 +1472,7 @@ def api_dns():
     target = request.args.get('target')
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
-
-    try:
-        records = []
-        start_time = datetime.now()
-
-        # 查询不同类型的DNS记录
-        for record_type in ['A', 'AAAA', 'MX', 'NS', 'TXT']:
-            try:
-                answers = dns.resolver.resolve(target, record_type)
-                for answer in answers:
-                    records.append({
-                        'type': record_type,
-                        'value': str(answer)
-                    })
-            except:
-                continue
-
-        resolve_time = (datetime.now() - start_time).total_seconds() * 1000
-        return jsonify({
-            'success': True,
-            'records': records,
-            'resolveTime': resolve_time
-        })
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    return jsonify(check_dns(target))
 
 
 @current_app.route('/api/website')
@@ -1540,34 +1480,7 @@ def api_website():
     target = request.args.get('target')
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
-
-    if not target.startswith(('http://', 'https://')):
-        target = 'https://' + target
-
-    try:
-        start_time = datetime.now()
-        response = requests.get(target, allow_redirects=True)
-        response_time = (datetime.now() - start_time).total_seconds() * 1000
-
-        # 检查SSL证书
-        parsed_url = urlparse(target)
-        ssl_valid = False
-        try:
-            cert = ssl.get_server_certificate((parsed_url.netloc, 443))
-            x509 = OpenSSL_crypto.load_certificate(OpenSSL_crypto.FILETYPE_PEM, cert)
-            ssl_valid = datetime.now() < datetime.strptime(x509.get_notAfter().decode(), '%Y%m%d%H%M%SZ')
-        except:
-            pass
-
-        return jsonify({
-            'success': True,
-            'status': response.status_code,
-            'responseTime': response_time,
-            'ssl': ssl_valid,
-            'redirects': [str(r.url) for r in response.history]
-        })
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    return jsonify(check_website(target))
 
 
 @current_app.route('/api/ports')
@@ -1576,33 +1489,7 @@ def api_ports():
     ports = request.args.get('ports', '80,443')
     if not target:
         return jsonify({'success': False, 'error': '缺少目标地址'})
-
-    try:
-        results = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            port_list = []
-            for p in ports.split(','):
-                if '-' in p:
-                    start, end = map(int, p.split('-'))
-                    port_list.extend(range(start, end + 1))
-                else:
-                    port_list.append(int(p))
-
-            def check_port(port):
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.settimeout(1)
-                try:
-                    result = sock.connect_ex((target, port))
-                    return {'port': port, 'status': result == 0}
-                finally:
-                    sock.close()
-
-            futures = [executor.submit(check_port, port) for port in port_list]
-            results = [f.result() for f in concurrent.futures.as_completed(futures)]
-
-        return jsonify({'success': True, 'results': results})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+    return jsonify(scan_ports(target, ports))
 
 
 @current_app.route('/checkers')
