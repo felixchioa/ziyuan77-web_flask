@@ -140,42 +140,6 @@ def scan_port(host, port):
     except:
         return None
 
-@current_app.before_request
-def before_request():
-    logger.debug(f"Received request: {request.method} {request.path}")
-
-
-@current_app.after_request
-def after_request(response):
-    logger.debug(f"Response status: {response.status}")
-    return response
-
-
-@current_app.errorhandler(404)
-def page_not_found(e):
-    logger.error(f"Page not found: {request.path}")
-    return jsonify(error="Page not found"), 404
-
-
-@current_app.errorhandler(500)
-def internal_server_error(e):
-    logger.error(f"Internal server error: {str(e)}")
-    return jsonify(error="Internal server error"), 500
-
-
-@current_app.route('/robots.txt')
-def serve_robots():
-    return send_from_directory('static', 'robots.txt')
-
-@current_app.route('/tencent14469080315895846531.txt')
-def serve_tencent():
-    return send_from_directory('static', 'tencent14469080315895846531.txt')
-
-
-@current_app.route('/index')
-def loading():
-    return render_template('loading.html')
-
 
 @current_app.route('/')
 def index():
@@ -187,18 +151,6 @@ def index():
                          current_time=current_time, 
                          visitor_ip=visitor_ip,
                          location=location)
-
-
-@current_app.route('/projects')
-def projects():
-    logger.debug("Rendering projects.html")
-    return render_template('projects.html')
-
-
-@current_app.route('/tools')
-def tools():
-    logger.debug("Rendering tools.html")
-    return render_template('tools.html')
 
 
 @current_app.route('/daily')
@@ -266,37 +218,6 @@ def generate_password():
     else:
         return render_template('password.html')
 
-
-@current_app.route('/worldtime')
-def worldtime():
-    logger.debug("Rendering worldtime.html")
-    return render_template('worldtime.html')
-
-
-@current_app.route('/excel')
-def excel():
-    logger.debug("Rendering excel_if.html")
-    return render_template('excel_if.html')
-
-
-@current_app.route('/calculator')
-def calculator():
-    logger.debug("Rendering calculator.html")
-    return render_template('calculator.html')
-
-
-@current_app.route('/math')
-def math():
-    logger.debug("Rendering math.html")
-    return render_template('math.html')
-
-
-@current_app.route('/download/index', methods=['GET', 'POST'])
-def download_index():
-    logger.debug("Rendering download.html")
-    return render_template('download.html')
-
-
 @current_app.route('/download', methods=['POST'])
 def download():
     data = request.json
@@ -332,61 +253,6 @@ def download():
         if 'tmp_file_path' in locals() and os.path.exists(tmp_file_path):
             os.remove(tmp_file_path)
 
-
-@current_app.route('/ssh_commands')
-def ssh_commands():
-    logger.debug("Rendering ssh_commands.html")
-    return render_template('ssh_commands.html')
-
-
-@current_app.route('/ground1')
-def ground1():
-    logger.debug("Rendering ground1.html")
-    return render_template('ground1.html')
-
-
-@current_app.route('/ground2')
-def ground2():
-    logger.debug("Rendering ground2.html")
-    return render_template('ground2.html')
-
-
-@current_app.route('/ground')
-def ground():
-    logger.debug("Rendering ground.html")
-    return render_template('ground.html')
-
-
-@current_app.route('/ground3')
-def ground3():
-    logger.debug("Rendering ground3.html")
-    return render_template('ground3.html')
-
-
-@current_app.route('/text')
-def text():
-    logger.debug("Rendering text.html")
-    return render_template('text.html')
-
-
-@current_app.route('/cmd_commands')
-def cmd_commands():
-    logger.debug("Rendering cmd_commands.html")
-    return render_template('cmd_commands.html')
-
-
-@current_app.route('/web')
-def web():
-    logger.debug("Rendering web.html")
-    return render_template('web.html')
-
-
-@current_app.route('/win11')
-def win11():
-    logger.debug("Rendering win11.html")
-    return render_template('win11.html')
-
-# 此至 422 行为聊天
 
 
 @current_app.route('/crawl', methods=['POST'])
@@ -1367,94 +1233,6 @@ def handle_player_left(data):
         leave_room(room)
 
 
-@current_app.route('/binary_converter')
-def binary_converter():
-    return render_template('binary_converter.html')
-
-
-@current_app.route('/encoding')
-def encoding_converter():
-    return render_template('encoding_converter.html')
-
-
-@current_app.route('/hash')
-def hash_calculator():
-    return render_template('hash_calculator.html')
-
-
-@current_app.route('/qrcode')
-def qrcode_generator():
-    return render_template('qrcode_generator.html')
-
-
-@current_app.route('/json')
-def json_formatter():
-    return render_template('json_formatter.html')
-
-
-@current_app.route('/regex')
-def regex_tester():
-    return render_template('regex_tester.html')
-
-
-@current_app.route('/crontab')
-def crontab_generator():
-    return render_template('crontab_generator.html')
-
-
-@current_app.route('/diff')
-def text_diff():
-    return render_template('text_diff.html')
-
-
-@current_app.route('/image')
-def image_processor():
-    return render_template('image_processor.html')
-
-
-@current_app.route('/palette')
-def color_palette():
-    return render_template('color_palette.html')
-
-
-@current_app.route('/svg')
-def svg_editor():
-    return render_template('svg_editor.html')
-
-@current_app.route('/date')
-def date_calculator():
-    return render_template('date_calculator.html')
-
-
-@current_app.route('/translate')
-def translator():
-    return render_template('translator.html')
-
-
-@current_app.route('/text')
-def text_processor():
-    return render_template('text_processor.html')
-
-
-@current_app.route('/ascii')
-def ascii_art():
-    return render_template('ascii_art.html')
-
-
-@current_app.route('/ip')
-def ip_lookup():
-    return render_template('ip_lookup.html')
-
-
-@current_app.route('/ping')
-def network_test():
-    return render_template('network_test.html')
-
-
-@current_app.route('/unit')
-def unit_converter():
-    return render_template('unit_converter.html')
-
 
 @current_app.route('/api/ping')
 def api_ping():
@@ -1836,6 +1614,124 @@ def analyze_sentiment():
         'intensity': 0.8
     })
 
+
+# 获取所有日志
+@current_app.route('/api/admin/daily/entries', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def manage_daily_entries():
+    """处理日常记录的 CRUD 操作"""
+    try:
+        if request.method == 'GET':
+            return jsonify(get_daily_entries())
+
+        # 其他方法需要管理员权限
+        if not session.get('is_admin'):
+            return jsonify({
+                'success': False,
+                'error': '需要管理员权限'
+            }), 403
+
+        if request.method == 'POST':
+            return jsonify(create_daily_entry(request.get_json()))
+
+        elif request.method == 'PUT':
+            return jsonify(update_daily_entry(request.get_json()))
+
+        elif request.method == 'DELETE':
+            return jsonify(delete_daily_entry(request.args.get('id')))
+
+    except Exception as e:
+        logger.error(f"Database connection error: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': f'数据库连接失败: {str(e)}'
+        }), 500
+
+@current_app.route('/api/admin/check_auth')
+def check_admin_auth():
+    """检查当前用户是否是管理员"""
+    try:
+        is_admin = session.get('is_admin', False)
+        return jsonify({'is_admin': is_admin})
+    except Exception as e:
+        logger.error(f"Error checking admin auth: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': '认证检查失败'
+        }), 500
+
+@current_app.route('/ping')
+def ping():
+    return '', 204
+
+@current_app.route('/static/test.bin')
+def serve_test_file():
+    """提供用于测速的文件"""
+    # 创建一个10MB的测试文件
+    test_file_path = os.path.join(current_app.static_folder, 'test.bin')
+    if not os.path.exists(test_file_path):
+        with open(test_file_path, 'wb') as f:
+            f.write(os.urandom(1024 * 1024 * 1))  # 10MB的随机数据
+
+    return send_file(
+        test_file_path,
+        mimetype='application/octet-stream',
+        as_attachment=True,
+        download_name='test.bin'
+    )
+
+@current_app.route('/feedback')
+def feedback():
+    return render_template('feedback.html')
+
+@current_app.route('/api/feedback', methods=['POST'])
+def submit_feedback():
+    try:
+        data = request.json
+        client = get_mongo_client()
+        db = client['chat']  # 指定使用 'chat' 数据库
+        
+        # 添加时间戳
+        data['created_at'] = datetime.now()
+        
+        # 存储到数据库
+        result = db.feedback.insert_one(data)
+        return jsonify({'success': True})  # 添加返回语句
+    except Exception as e:
+        logger.error(f"Error submitting feedback: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@current_app.route('/admin/feedback')
+@admin_required
+def admin_feedback():
+    return render_template('admin/feedback.html')
+
+@current_app.route('/api/admin/feedback')
+@admin_required
+def get_feedback():
+    try:
+        client = get_mongo_client()
+        db = client['chat']  # 指定使用 'chat' 数据库
+        feedback_list = list(db.feedback.find().sort('created_at', -1))
+        return jsonify({
+            'success': True,
+            'feedback': json_util.dumps(feedback_list)
+        })
+    except Exception as e:
+        logger.error(f"Error getting feedback: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@current_app.route('/github')
+def github():
+    return render_template('github.html')
+
+@current_app.route('/github_miaobox')
+def github_miaobox():
+    return render_template('github_miaobox.html')
+
+@current_app.route('/github_chat')
+def github_chat():
+    return render_template('github_chat.html')
+
 @current_app.route('/color_picker')
 def color_picker():
     return render_template('color_picker.html')
@@ -1968,119 +1864,219 @@ def paint():
 def transition():
     return render_template('transition.html')
 
-# 获取所有日志
-@current_app.route('/api/admin/daily/entries', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def manage_daily_entries():
-    """处理日常记录的 CRUD 操作"""
-    try:
-        if request.method == 'GET':
-            return jsonify(get_daily_entries())
+@current_app.route('/binary_converter')
+def binary_converter():
+    return render_template('binary_converter.html')
 
-        # 其他方法需要管理员权限
-        if not session.get('is_admin'):
-            return jsonify({
-                'success': False,
-                'error': '需要管理员权限'
-            }), 403
 
-        if request.method == 'POST':
-            return jsonify(create_daily_entry(request.get_json()))
+@current_app.route('/encoding')
+def encoding_converter():
+    return render_template('encoding_converter.html')
 
-        elif request.method == 'PUT':
-            return jsonify(update_daily_entry(request.get_json()))
 
-        elif request.method == 'DELETE':
-            return jsonify(delete_daily_entry(request.args.get('id')))
+@current_app.route('/hash')
+def hash_calculator():
+    return render_template('hash_calculator.html')
 
-    except Exception as e:
-        logger.error(f"Database connection error: {str(e)}")
-        return jsonify({
-            'success': False,
-            'error': f'数据库连接失败: {str(e)}'
-        }), 500
 
-@current_app.route('/api/admin/check_auth')
-def check_admin_auth():
-    """检查当前用户是否是管理员"""
-    try:
-        is_admin = session.get('is_admin', False)
-        return jsonify({'is_admin': is_admin})
-    except Exception as e:
-        logger.error(f"Error checking admin auth: {str(e)}")
-        return jsonify({
-            'success': False,
-            'error': '认证检查失败'
-        }), 500
+@current_app.route('/qrcode')
+def qrcode_generator():
+    return render_template('qrcode_generator.html')
+
+
+@current_app.route('/json')
+def json_formatter():
+    return render_template('json_formatter.html')
+
+
+@current_app.route('/regex')
+def regex_tester():
+    return render_template('regex_tester.html')
+
+
+@current_app.route('/crontab')
+def crontab_generator():
+    return render_template('crontab_generator.html')
+
+
+@current_app.route('/diff')
+def text_diff():
+    return render_template('text_diff.html')
+
+
+@current_app.route('/image')
+def image_processor():
+    return render_template('image_processor.html')
+
+
+@current_app.route('/palette')
+def color_palette():
+    return render_template('color_palette.html')
+
+
+@current_app.route('/svg')
+def svg_editor():
+    return render_template('svg_editor.html')
+
+@current_app.route('/date')
+def date_calculator():
+    return render_template('date_calculator.html')
+
+
+@current_app.route('/translate')
+def translator():
+    return render_template('translator.html')
+
+
+@current_app.route('/text')
+def text_processor():
+    return render_template('text_processor.html')
+
+
+@current_app.route('/ascii')
+def ascii_art():
+    return render_template('ascii_art.html')
+
+
+@current_app.route('/ip')
+def ip_lookup():
+    return render_template('ip_lookup.html')
+
 
 @current_app.route('/ping')
-def ping():
-    return '', 204
+def network_test():
+    return render_template('network_test.html')
 
-@current_app.route('/static/test.bin')
-def serve_test_file():
-    """提供用于测速的文件"""
-    # 创建一个10MB的测试文件
-    test_file_path = os.path.join(current_app.static_folder, 'test.bin')
-    if not os.path.exists(test_file_path):
-        with open(test_file_path, 'wb') as f:
-            f.write(os.urandom(1024 * 1024 * 1))  # 10MB的随机数据
 
-    return send_file(
-        test_file_path,
-        mimetype='application/octet-stream',
-        as_attachment=True,
-        download_name='test.bin'
-    )
+@current_app.route('/unit')
+def unit_converter():
+    return render_template('unit_converter.html')
 
-@current_app.route('/feedback')
-def feedback():
-    return render_template('feedback.html')
+@current_app.before_request
+def before_request():
+    logger.debug(f"Received request: {request.method} {request.path}")
 
-@current_app.route('/api/feedback', methods=['POST'])
-def submit_feedback():
-    try:
-        data = request.json
-        client = get_mongo_client()
-        db = client['chat']  # 指定使用 'chat' 数据库
-        
-        # 添加时间戳
-        data['created_at'] = datetime.now()
-        
-        # 存储到数据库
-        result = db.feedback.insert_one(data)
-        return jsonify({'success': True})  # 添加返回语句
-    except Exception as e:
-        logger.error(f"Error submitting feedback: {e}")
-        return jsonify({'success': False, 'error': str(e)})
 
-@current_app.route('/admin/feedback')
-@admin_required
-def admin_feedback():
-    return render_template('admin/feedback.html')
+@current_app.after_request
+def after_request(response):
+    logger.debug(f"Response status: {response.status}")
+    return response
 
-@current_app.route('/api/admin/feedback')
-@admin_required
-def get_feedback():
-    try:
-        client = get_mongo_client()
-        db = client['chat']  # 指定使用 'chat' 数据库
-        feedback_list = list(db.feedback.find().sort('created_at', -1))
-        return jsonify({
-            'success': True,
-            'feedback': json_util.dumps(feedback_list)
-        })
-    except Exception as e:
-        logger.error(f"Error getting feedback: {e}")
-        return jsonify({'success': False, 'error': str(e)})
 
-@current_app.route('/github')
-def github():
-    return render_template('github.html')
+@current_app.errorhandler(404)
+def page_not_found(e):
+    logger.error(f"Page not found: {request.path}")
+    return jsonify(error="Page not found"), 404
 
-@current_app.route('/github_miaobox')
-def github_miaobox():
-    return render_template('github_miaobox.html')
 
-@current_app.route('/github_chat')
-def github_chat():
-    return render_template('github_chat.html')
+@current_app.errorhandler(500)
+def internal_server_error(e):
+    logger.error(f"Internal server error: {str(e)}")
+    return jsonify(error="Internal server error"), 500
+
+
+@current_app.route('/robots.txt')
+def serve_robots():
+    return send_from_directory('static', 'robots.txt')
+
+@current_app.route('/tencent14469080315895846531.txt')
+def serve_tencent():
+    return send_from_directory('static', 'tencent14469080315895846531.txt')
+
+
+@current_app.route('/index')
+def loading():
+    return render_template('loading.html')
+
+@current_app.route('/ssh_commands')
+def ssh_commands():
+    logger.debug("Rendering ssh_commands.html")
+    return render_template('ssh_commands.html')
+
+
+@current_app.route('/ground1')
+def ground1():
+    logger.debug("Rendering ground1.html")
+    return render_template('ground1.html')
+
+
+@current_app.route('/ground2')
+def ground2():
+    logger.debug("Rendering ground2.html")
+    return render_template('ground2.html')
+
+
+@current_app.route('/ground')
+def ground():
+    logger.debug("Rendering ground.html")
+    return render_template('ground.html')
+
+
+@current_app.route('/ground3')
+def ground3():
+    logger.debug("Rendering ground3.html")
+    return render_template('ground3.html')
+
+
+@current_app.route('/text')
+def text():
+    logger.debug("Rendering text.html")
+    return render_template('text.html')
+
+
+@current_app.route('/cmd_commands')
+def cmd_commands():
+    logger.debug("Rendering cmd_commands.html")
+    return render_template('cmd_commands.html')
+
+
+@current_app.route('/web')
+def web():
+    logger.debug("Rendering web.html")
+    return render_template('web.html')
+
+
+@current_app.route('/win11')
+def win11():
+    logger.debug("Rendering win11.html")
+    return render_template('win11.html')
+
+@current_app.route('/projects')
+def projects():
+    logger.debug("Rendering projects.html")
+    return render_template('projects.html')
+
+
+@current_app.route('/tools')
+def tools():
+    logger.debug("Rendering tools.html")
+    return render_template('tools.html')
+
+@current_app.route('/worldtime')
+def worldtime():
+    logger.debug("Rendering worldtime.html")
+    return render_template('worldtime.html')
+
+
+@current_app.route('/excel')
+def excel():
+    logger.debug("Rendering excel_if.html")
+    return render_template('excel_if.html')
+
+
+@current_app.route('/calculator')
+def calculator():
+    logger.debug("Rendering calculator.html")
+    return render_template('calculator.html')
+
+
+@current_app.route('/math')
+def math():
+    logger.debug("Rendering math.html")
+    return render_template('math.html')
+
+
+@current_app.route('/download/index', methods=['GET', 'POST'])
+def download_index():
+    logger.debug("Rendering download.html")
+    return render_template('download.html')
