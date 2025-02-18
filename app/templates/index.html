@@ -186,14 +186,9 @@
                     </div>
                 </div>
 
-                <audio controls>
-                    <source src="/static/audio/index.mp3" type="audio/mpeg">
-                    您的浏览器不支持音频元素。
-                </audio>
-                <audio controls>
-                    <source src="/static/audio/1.flac" type="audio/mpeg">
-                    您的浏览器不支持音频元素。
-                </audio>
+                <div id="audio-container">
+                    <!-- 音频将通过JavaScript动态加载 -->
+                </div>
 
                 <div class="device-info">
                     <div class="device-info-header" onclick="toggleDeviceInfo()">
@@ -583,7 +578,39 @@
             icon.classList.toggle('rotated');
         }
 
-        // 页面加载时恢复用户的样式选择
+        // 添加异步加载音频的函数
+        function loadAudioFiles() {
+            const audioContainer = document.getElementById('audio-container');
+            const audioFiles = [
+                { src: '/static/audio/index.mp3', type: 'audio/mpeg' },
+                { src: '/static/audio/1.flac', type: 'audio/flac' }
+            ];
+
+            audioFiles.forEach(file => {
+                // 创建audio元素
+                const audio = document.createElement('audio');
+                audio.controls = true;
+                
+                // 创建source元素
+                const source = document.createElement('source');
+                source.src = file.src;
+                source.type = file.type;
+                
+                // 添加错误提示文本
+                audio.appendChild(source);
+                audio.appendChild(document.createTextNode('您的浏览器不支持音频元素。'));
+                
+                // 将audio元素添加到容器中
+                audioContainer.appendChild(audio);
+                
+                // 添加加载错误处理
+                audio.onerror = () => {
+                    console.error(`Error loading audio file: ${file.src}`);
+                };
+            });
+        }
+
+        // 在页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', () => {
             const savedStyle = localStorage.getItem('preferredTimeStyle');
             if (savedStyle) {
@@ -592,6 +619,7 @@
             }
             updateTime();
             updateSystemInfo();
+            loadAudioFiles(); // 添加音频加载
         });
         </script>
     </body>
