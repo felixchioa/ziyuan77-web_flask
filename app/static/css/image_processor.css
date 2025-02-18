@@ -1,0 +1,250 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.processor-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.upload-section {
+    margin-bottom: 20px;
+}
+
+.file-input {
+    margin-bottom: 10px;
+}
+
+.file-input input[type="file"] {
+    display: none;
+}
+
+.file-input label {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.file-input label:hover {
+    background: #0056b3;
+}
+
+.drag-area {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.drag-area.active {
+    border-color: #007bff;
+    background: #f8f9fa;
+}
+
+#preview-image {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.tools-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.tool-group {
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.tool-group h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+.slider-control {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.slider-control label {
+    width: 80px;
+}
+
+.slider-control input[type="range"] {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.slider-control .value {
+    width: 50px;
+    text-align: right;
+}
+
+.filter-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+}
+
+.filter-buttons button {
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    background: #6c757d;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-buttons button:hover {
+    background: #5a6268;
+}
+
+.filter-buttons button.active {
+    background: #007bff;
+}
+
+.size-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-group input[type="number"] {
+    width: 80px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.transform-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.transform-buttons button {
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    background: #28a745;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.transform-buttons button:hover {
+    background: #218838;
+}
+
+.output-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.format-options {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+}
+
+.quality-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#download-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background: #28a745;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#download-btn:hover {
+    background: #218838;
+}
+
+#download-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.advanced-controls {
+    padding: 10px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.watermark-controls {
+    display: grid;
+    gap: 10px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 4px;
+}
+
+.watermark-controls input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.watermark-controls input[type="color"] {
+    width: 50px;
+    height: 30px;
+    padding: 0;
+    border: none;
+}
+
+.vignette-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.5) 150%);
+} 

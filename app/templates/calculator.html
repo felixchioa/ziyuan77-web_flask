@@ -2,47 +2,156 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="资源77提供多功能计算器，支持标准、科学、程序员、日期、货币、容量、长度、重量、温度、能量、面积、速度、时间、功率、数据、压力、角度等多种计算功能，方便快捷。">
     <title>多功能计算器</title>
     <link rel="stylesheet" href="/static/css/calculator.css" />
 </head>
 <body>
     <h1>多功能计算器</h1>
-    <a href="/tools"><img src="/static/images/back.png"  width="32" alt="logo" /></a>
-    <a href="/"><img src="/static/images/home.png" alt="logo" /></a>
-    <div class="calculator">
-        <input type="text" id="display" class="display" disabled>
-        <div>
-            <button class="button" onclick="clearDisplay()">C</button>
-            <button class="button" onclick="appendToDisplay('(')">(</button>
-            <button class="button" onclick="appendToDisplay(')')">)</button>
-            <button class="button" onclick="appendToDisplay('/')">/</button>
+    <div class="calculator-container">
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="standard">标准</button>
+            <button class="mode-btn" data-mode="scientific">科学</button>
+            <button class="mode-btn" data-mode="programmer">程序员</button>
+            <button class="mode-btn" data-mode="date">日期</button>
+            <button class="mode-btn" data-mode="currency">货币</button>
+            <button class="mode-btn" data-mode="volume">容量</button>
+            <button class="mode-btn" data-mode="length">长度</button>
+            <button class="mode-btn" data-mode="weight">重量</button>
+            <button class="mode-btn" data-mode="temperature">温度</button>
+            <button class="mode-btn" data-mode="energy">能量</button>
+            <button class="mode-btn" data-mode="area">面积</button>
+            <button class="mode-btn" data-mode="speed">速度</button>
+            <button class="mode-btn" data-mode="time">时间</button>
+            <button class="mode-btn" data-mode="power">功率</button>
+            <button class="mode-btn" data-mode="data">数据</button>
+            <button class="mode-btn" data-mode="pressure">压力</button>
+            <button class="mode-btn" data-mode="angle">角度</button>
         </div>
-        <div>
-            <button class="button" onclick="appendToDisplay('7')">7</button>
-            <button class="button" onclick="appendToDisplay('8')">8</button>
-            <button class="button" onclick="appendToDisplay('9')">9</button>
-            <button class="button" onclick="appendToDisplay('*')">*</button>
-        </div>
-        <div>
-            <button class="button" onclick="appendToDisplay('4')">4</button>
-            <button class="button" onclick="appendToDisplay('5')">5</button>
-            <button class="button" onclick="appendToDisplay('6')">6</button>
-            <button class="button" onclick="appendToDisplay('-')">-</button>
-        </div>
-        <div>
-            <button class="button" onclick="appendToDisplay('1')">1</button>
-            <button class="button" onclick="appendToDisplay('2')">2</button>
-            <button class="button" onclick="appendToDisplay('3')">3</button>
-            <button class="button" onclick="appendToDisplay('+')">+</button>
-        </div>
-        <div>
-            <button class="button" onclick="appendToDisplay('0')">0</button>
-            <button class="button" onclick="appendToDisplay('.')">.</button>
-            <button class="button" onclick="calculateResult()">=</button>
+        
+        <div class="calculator">
+            <div class="memory-display">
+                <span id="memory-value"></span>
+                <div class="memory-buttons">
+                    <button class="memory-btn" id="mc" disabled>MC</button>
+                    <button class="memory-btn" id="mr" disabled>MR</button>
+                    <button class="memory-btn" id="m-plus">M+</button>
+                    <button class="memory-btn" id="m-minus">M-</button>
+                    <button class="memory-btn" id="ms">MS</button>
+                </div>
+            </div>
+            
+            <input type="text" id="display" class="display" readonly>
+            <div class="history-display" id="history"></div>
+            
+            <div class="keypad standard-keypad">
+                <div class="function-keys">
+                    <button class="btn function" onclick="percentage()">%</button>
+                    <button class="btn function" onclick="clearEntry()">CE</button>
+                    <button class="btn function" onclick="clearAll()">C</button>
+                    <button class="btn function" onclick="backspace()">⌫</button>
+                </div>
+                
+                <div class="main-keys">
+                    <button class="btn" onclick="appendToDisplay('7')">7</button>
+                    <button class="btn" onclick="appendToDisplay('8')">8</button>
+                    <button class="btn" onclick="appendToDisplay('9')">9</button>
+                    <button class="btn operator" onclick="appendToDisplay('/')">/</button>
+                    <button class="btn function" onclick="squareRoot()">√</button>
+                    
+                    <button class="btn" onclick="appendToDisplay('4')">4</button>
+                    <button class="btn" onclick="appendToDisplay('5')">5</button>
+                    <button class="btn" onclick="appendToDisplay('6')">6</button>
+                    <button class="btn operator" onclick="appendToDisplay('*')">×</button>
+                    <button class="btn function" onclick="square()">x²</button>
+                    
+                    <button class="btn" onclick="appendToDisplay('1')">1</button>
+                    <button class="btn" onclick="appendToDisplay('2')">2</button>
+                    <button class="btn" onclick="appendToDisplay('3')">3</button>
+                    <button class="btn operator" onclick="appendToDisplay('-')">-</button>
+                    <button class="btn function" onclick="reciprocal()">1/x</button>
+                    
+                    <button class="btn" onclick="appendToDisplay('0')">0</button>
+                    <button class="btn" onclick="appendToDisplay('.')">.</button>
+                    <button class="btn" onclick="toggleSign()">±</button>
+                    <button class="btn operator" onclick="appendToDisplay('+')">+</button>
+                    <button class="btn equals" onclick="calculateResult()">=</button>
+                </div>
+            </div>
+            
+            <div class="keypad scientific-keypad hidden">
+                <!-- 科学计算器按键 -->
+                <div class="scientific-functions">
+                    <button class="btn function" onclick="factorial()">n!</button>
+                    <button class="btn function" onclick="sin()">sin</button>
+                    <button class="btn function" onclick="cos()">cos</button>
+                    <button class="btn function" onclick="tan()">tan</button>
+                    <button class="btn function" onclick="ln()">ln</button>
+                    <button class="btn function" onclick="log()">log</button>
+                    <button class="btn function" onclick="pi()">π</button>
+                    <button class="btn function" onclick="e()">e</button>
+                    <button class="btn function" onclick="power()">x^y</button>
+                    <button class="btn function" onclick="root()">y√x</button>
+                </div>
+            </div>
+            
+            <div class="keypad programmer-keypad hidden">
+                <!-- 程序员计算器按键 -->
+                <div class="number-system">
+                    <div class="radio-group">
+                        <input type="radio" id="hex" name="numSystem" value="16">
+                        <label for="hex">Hex</label>
+                        <input type="radio" id="dec" name="numSystem" value="10" checked>
+                        <label for="dec">Dec</label>
+                        <input type="radio" id="oct" name="numSystem" value="8">
+                        <label for="oct">Oct</label>
+                        <input type="radio" id="bin" name="numSystem" value="2">
+                        <label for="bin">Bin</label>
+                    </div>
+                </div>
+                <div class="bit-operations">
+                    <button class="btn function" onclick="and()">AND</button>
+                    <button class="btn function" onclick="or()">OR</button>
+                    <button class="btn function" onclick="xor()">XOR</button>
+                    <button class="btn function" onclick="not()">NOT</button>
+                    <button class="btn function" onclick="leftShift()"><<</button>
+                    <button class="btn function" onclick="rightShift()">>></button>
+                </div>
+            </div>
+            
+            <div class="keypad date-keypad hidden">
+                <!-- 日期计算器 -->
+                <div class="date-inputs">
+                    <input type="date" id="date1">
+                    <input type="date" id="date2">
+                    <button class="btn" onclick="calculateDateDiff()">计算差值</button>
+                    <div class="date-result" id="dateResult"></div>
+                </div>
+            </div>
+            
+            <div class="converter-template hidden">
+                <div class="converter-header">
+                    <select class="unit-from"></select>
+                    <input type="number" class="value-from" value="1">
+                </div>
+                <div class="converter-equals">=</div>
+                <div class="converter-footer">
+                    <select class="unit-to"></select>
+                    <input type="number" class="value-to" readonly>
+                </div>
+                <div class="conversion-formula"></div>
+            </div>
+            
+            <div class="keypad currency-keypad hidden">
+                <div class="converter-container"></div>
+            </div>
+            
+            <div class="keypad volume-keypad hidden">
+                <div class="converter-container"></div>
+            </div>
         </div>
     </div>
-    <a href="/">返回首页</a>
-
-    <scrip src="/static/js/calculator.js"></script>
+    
+    <script src="/static/js/calculator.js"></script>
 </body>
 </html>

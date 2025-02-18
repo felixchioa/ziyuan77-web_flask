@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供HTML格式化工具，支持HTML代码格式化、美化、压缩、转义等功能，方便快捷。">
+    <title>HTML格式化工具</title>
+    <link rel="stylesheet" href="/static/css/html_formatter.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>HTML格式化工具</h1>
+        
+        <div class="formatter-container">
+            <div class="input-section">
+                <div class="section-header">
+                    <h3>输入HTML</h3>
+                    <div class="controls">
+                        <button id="clear-input">清空</button>
+                        <button id="paste-input">粘贴</button>
+                        <input type="file" id="file-input" accept=".html,.htm" hidden>
+                        <button id="upload-file">上传文件</button>
+                    </div>
+                </div>
+                <textarea id="input-html" placeholder="在此输入HTML代码或上传HTML文件..."></textarea>
+            </div>
+            
+            <div class="options">
+                <div class="format-options">
+                    <label>
+                        <input type="checkbox" id="remove-comments" checked>
+                        移除注释
+                    </label>
+                    <label>
+                        <input type="checkbox" id="remove-empty-lines" checked>
+                        移除空行
+                    </label>
+                    <label>
+                        <input type="checkbox" id="format-css">
+                        格式化CSS
+                    </label>
+                    <label>
+                        <input type="checkbox" id="format-js">
+                        格式化JavaScript
+                    </label>
+                </div>
+                <div class="indent-options">
+                    <label>缩进类型：</label>
+                    <select id="indent-type">
+                        <option value="spaces">空格</option>
+                        <option value="tabs">制表符</option>
+                    </select>
+                    <label>缩进大小：</label>
+                    <input type="number" id="indent-size" value="4" min="1" max="8">
+                </div>
+                <button id="format" class="primary">格式化</button>
+            </div>
+            
+            <div class="output-section">
+                <div class="section-header">
+                    <h3>格式化结果</h3>
+                    <div class="controls">
+                        <button id="copy-output">复制</button>
+                        <button id="download">下载</button>
+                        <select id="output-type">
+                            <option value="formatted">格式化HTML</option>
+                            <option value="minified">压缩HTML</option>
+                            <option value="escaped">转义HTML</option>
+                        </select>
+                    </div>
+                </div>
+                <pre><code id="output-html" class="html"></code></pre>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="stats">
+                <div class="stat-item">
+                    <span>原始大小：</span>
+                    <span id="original-size">0 B</span>
+                </div>
+                <div class="stat-item">
+                    <span>处理后大小：</span>
+                    <span id="processed-size">0 B</span>
+                </div>
+                <div class="stat-item">
+                    <span>压缩率：</span>
+                    <span id="compression-ratio">0%</span>
+                </div>
+            </div>
+            <div id="error-message" class="error-message"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/languages/xml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-beautify@1.14.7/js/lib/beautify-html.min.js"></script>
+    <script src="/static/js/html_formatter.js"></script>
+</body>
+</html> 

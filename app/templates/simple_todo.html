@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供简单待办事项，支持任务添加、任务列表、任务过滤、任务统计、任务提示等功能，方便快捷。">
+    <title>简单待办事项 - 任务清单管理工具</title>
+    <link rel="stylesheet" href="/static/css/simple_todo.css">
+</head>
+<body>
+    <div class="container">
+        <h1>简单待办事项</h1>
+        
+        <div class="todo-container">
+            <div class="add-task">
+                <input type="text" id="task-input" placeholder="输入新任务...">
+                <button id="add-btn">添加</button>
+            </div>
+            
+            <div class="task-filters">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="active">进行中</button>
+                <button class="filter-btn" data-filter="completed">已完成</button>
+            </div>
+            
+            <div class="task-list" id="task-list">
+                <!-- 任务列表将通过JavaScript动态生成 -->
+            </div>
+            
+            <div class="task-stats">
+                <span id="tasks-count">0 个任务</span>
+                <button id="clear-completed">清除已完成</button>
+            </div>
+        </div>
+        
+        <div class="tips">
+            <h3>使用提示</h3>
+            <ul>
+                <li>点击复选框标记任务完成状态</li>
+                <li>双击任务文本可以编辑内容</li>
+                <li>点击删除按钮移除任务</li>
+                <li>任务会自动保存在本地</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script src="/static/js/simple_todo.js"></script>
+</body>
+</html> 

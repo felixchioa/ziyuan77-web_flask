@@ -1,0 +1,72 @@
+<a href="/text_analyzer">文本分析器</a>
+<a href="/color_picker">颜色选择器</a>
+<a href="/markdown_editor">Markdown编辑器</a>
+<a href="/base64_encoder">Base64编码器</a>
+<a href="/base64_decoder">Base64解码器</a>
+<a href="/html_formatter">HTML格式化工具</a>
+<a href="/css_minifier">CSS压缩工具</a>
+<a href="/js_minifier">JavaScript压缩工具</a>
+<a href="/uuid_generator">UUID生成器</a>
+<a href="/text_replacer">文本替换工具</a>
+————————————以上全部完成————————————————————————————————————————————————————————
+    <a href="/stopwatch">秒表</a>
+    <a href="/timer">计时器</a>
+    <a href="/notepad">记事本</a>
+    <a href="/character_counter">字符计数器</a>
+    <a href="/word_counter">单词计数器</a>
+————————————以上全部完成————————————————————————————————————————————————————————
+    <a href="/random_number">随机数生成器</a>
+    <a href="/tip_calculator">小费计算器</a>
+    <a href="/bmi_calculator">BMI计算器</a>
+    <a href="/age_calculator">年龄计算器</a>
+    <a href="/simple_todo">简单待办事项</a>
+————————————以上全部完成————————————————————————————————————————————————————————
+<a href="/morse_code">摩尔斯电码转换器</a>
+    <a href="/roman_numerals">罗马数字转换器</a>
+    <a href="/temperature_converter">温度转换器</a>
+    <a href="/length_converter">长度单位转换器</a>
+    <a href="/weight_converter">重量单位转换器</a>
+
+    <a href="/volume_converter">体积单位转换器</a>
+    <a href="/area_converter">面积单位转换器</a>
+    <a href="/speed_converter">速度单位转换器</a>
+    <a href="/time_converter">时间单位转换器</a>
+    <a href="/angle_converter">角度单位转换器</a>
+    <a href="/pressure_converter">压力单位转换器</a>
+    <a href="/energy_converter">能量单位转换器</a>
+    <a href="/power_converter">功率单位转换器</a>
+    <a href="/frequency_converter">频率单位转换器</a>
+    <a href="/data_converter">数据单位转换器</a>
+    <a href="/currency_converter">货币单位转换器</a>
+
+
+    <a href="/fraction_calculator">分数计算器</a>
+    <a href="/percentage_calculator">百分比计算器</a>
+    <a href="/loan_calculator">贷款计算器</a>
+    <a href="/mortgage_calculator">抵押贷款计算器</a>
+    <a href="/compound_interest_calculator">复利计算器</a>
+    <a href="/simple_interest_calculator">单利计算器</a>
+    <a href="/investment_calculator">投资回报计算器</a>
+    <a href="/retirement_calculator">退休储蓄计算器</a>
+    <a href="/calorie_calculator">卡路里计算器</a>
+    <a href="/macronutrient_calculator">宏量营养素计算器</a>
+    <a href="/water_intake_calculator">每日饮水量计算器</a>
+    <a href="/step_counter">步数计数器</a>
+    <a href="/heart_rate_calculator">心率计算器</a>
+    <a href="/sleep_calculator">睡眠时间计算器</a>
+    <a href="/grade_calculator">成绩计算器</a>
+    <a href="/reading_speed_calculator">阅读速度计算器</a>
+    <a href="/typing_speed_calculator">打字速度计算器</a>
+    <a href="/fuel_efficiency_calculator">燃油效率计算器</a>
+    <a href="/carbon_footprint_calculator">碳足迹计算器</a>
+    <a href="/emissions_calculator">排放量计算器</a>
+    <a href="/solar_calculator">太阳能计算器</a>
+    <a href="/wind_calculator">风能计算器</a>
+    <a href="/hydro_calculator">水能计算器</a>
+    <a href="/battery_calculator">电池寿命计算器</a>
+    <a href="/resistor_calculator">电阻计算器</a>
+    <a href="/capacitor_calculator">电容计算器</a>
+    <a href="/inductor_calculator">电感计算器</a>
+    <a href="/circuit_calculator">电路计算器</a>
+    <a href="/ohms_law_calculator">欧姆定律计算器</a>
+    <a href="/voltage_divider_calculator">分压器计算器</a>

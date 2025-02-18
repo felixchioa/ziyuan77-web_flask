@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供速度单位转换器，支持米/秒、千米/小时、英里/小时、节、马赫、英尺/秒等多种速度单位的转换，方便快捷。">
+    <title>速度单位转换器</title>
+    <link rel="stylesheet" href="/static/css/speed_converter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>速度单位转换器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <div class="unit-input">
+                    <label>米/秒 (m/s)</label>
+                    <input type="number" id="meters-per-second" step="any" placeholder="输入速度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>千米/小时 (km/h)</label>
+                    <input type="number" id="kilometers-per-hour" step="any" placeholder="输入速度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>英里/小时 (mph)</label>
+                    <input type="number" id="miles-per-hour" step="any" placeholder="输入速度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>节 (knot)</label>
+                    <input type="number" id="knots" step="any" placeholder="输入速度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>马赫 (Mach)</label>
+                    <input type="number" id="mach" step="any" placeholder="输入速度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>英尺/秒 (ft/s)</label>
+                    <input type="number" id="feet-per-second" step="any" placeholder="输入速度...">
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>常用换算关系</h3>
+                <ul>
+                    <li>1 米/秒 = 3.6 千米/小时</li>
+                    <li>1 千米/小时 = 0.621371 英里/小时</li>
+                    <li>1 节 = 1.852 千米/小时</li>
+                    <li>1 马赫 ≈ 340.3 米/秒 (海平面)</li>
+                    <li>1 米/秒 = 3.28084 英尺/秒</li>
+                    <li>1 英里/小时 = 1.60934 千米/小时</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/speed_converter.js"></script>
+</body>
+</html> 

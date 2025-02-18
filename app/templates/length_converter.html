@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供长度单位转换器，支持米、千米、厘米、毫米、英里、码、英尺、英寸等多种长度单位的转换，方便快捷。">
+    <title>长度单位转换器</title>
+    <link rel="stylesheet" href="/static/css/length_converter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>长度单位转换器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <div class="unit-input">
+                    <label>米 (m)</label>
+                    <input type="number" id="meter" step="any" placeholder="输入长度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>千米 (km)</label>
+                    <input type="number" id="kilometer" step="any" placeholder="输入长度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>厘米 (cm)</label>
+                    <input type="number" id="centimeter" step="any" placeholder="输入长度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>毫米 (mm)</label>
+                    <input type="number" id="millimeter" step="any" placeholder="输入长度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>英里 (mi)</label>
+                    <input type="number" id="mile" step="any" placeholder="输入长度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>码 (yd)</label>
+                    <input type="number" id="yard" step="any" placeholder="输入长度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>英尺 (ft)</label>
+                    <input type="number" id="foot" step="any" placeholder="输入长度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>英寸 (in)</label>
+                    <input type="number" id="inch" step="any" placeholder="输入长度...">
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>常用换算关系</h3>
+                <ul>
+                    <li>1 米 = 100 厘米 = 1000 毫米</li>
+                    <li>1 千米 = 1000 米</li>
+                    <li>1 英里 ≈ 1.609344 千米</li>
+                    <li>1 码 = 3 英尺 = 36 英寸</li>
+                    <li>1 英尺 = 12 英寸</li>
+                    <li>1 米 ≈ 3.28084 英尺</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/length_converter.js"></script>
+</body>
+</html> 

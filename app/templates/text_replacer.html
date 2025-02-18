@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供文本替换工具，支持文本替换、文本查找、文本过滤、文本排序、文本统计等功能，方便快捷。">
+    <title>文本替换工具</title>
+    <link rel="stylesheet" href="/static/css/text_replacer.css">
+</head>
+<body>
+    <div class="container">
+        <h1>文本替换工具</h1>
+        
+        <div class="replacer-container">
+            <div class="input-section">
+                <div class="section-header">
+                    <h3>输入文本</h3>
+                    <div class="controls">
+                        <button id="clear-input">清空</button>
+                        <button id="paste-input">粘贴</button>
+                        <input type="file" id="file-input" accept=".txt,.md,.json,.xml,.html,.css,.js" hidden>
+                        <button id="upload-file">上传文件</button>
+                    </div>
+                </div>
+                <textarea id="input-text" placeholder="在此输入需要处理的文本或上传文件..."></textarea>
+            </div>
+            
+            <div class="rules-section">
+                <div class="section-header">
+                    <h3>替换规则</h3>
+                    <div class="controls">
+                        <button id="add-rule" class="primary">添加规则</button>
+                        <button id="clear-rules">清空规则</button>
+                        <button id="import-rules">导入规则</button>
+                        <button id="export-rules">导出规则</button>
+                    </div>
+                </div>
+                <div class="rules-list" id="rules-list"></div>
+                <div class="options">
+                    <label>
+                        <input type="checkbox" id="case-sensitive">
+                        区分大小写
+                    </label>
+                    <label>
+                        <input type="checkbox" id="use-regex">
+                        使用正则表达式
+                    </label>
+                    <label>
+                        <input type="checkbox" id="whole-word">
+                        全词匹配
+                    </label>
+                    <label>
+                        <input type="checkbox" id="preview-mode">
+                        预览模式
+                    </label>
+                </div>
+                <button id="replace-all" class="primary">替换全部</button>
+            </div>
+            
+            <div class="output-section">
+                <div class="section-header">
+                    <h3>替换结果</h3>
+                    <div class="controls">
+                        <button id="copy-output">复制</button>
+                        <button id="download">下载</button>
+                        <select id="output-format">
+                            <option value="text">文本格式</option>
+                            <option value="html">HTML格式</option>
+                            <option value="markdown">Markdown格式</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="output-text" class="output-content"></div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="stats">
+                <div class="stat-item">
+                    <span>替换次数：</span>
+                    <span id="replace-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>处理字数：</span>
+                    <span id="word-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>处理用时：</span>
+                    <span id="process-time">0ms</span>
+                </div>
+            </div>
+            <div id="error-message" class="error-message"></div>
+        </div>
+    </div>
+    
+    <template id="rule-template">
+        <div class="rule-item">
+            <div class="rule-inputs">
+                <input type="text" class="find-text" placeholder="查找内容...">
+                <span class="arrow">→</span>
+                <input type="text" class="replace-text" placeholder="替换为...">
+            </div>
+            <div class="rule-controls">
+                <button class="test-rule">测试</button>
+                <button class="remove-rule">删除</button>
+            </div>
+        </div>
+    </template>
+    
+    <script src="/static/js/text_replacer.js"></script>
+</body>
+</html> 

@@ -1,0 +1,139 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.calculator-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+textarea {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: monospace;
+}
+
+.hash-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.hash-option {
+    padding: 10px;
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.hash-option:hover {
+    background: #e9ecef;
+}
+
+.hash-option.active {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+}
+
+.file-input-container {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 2px dashed #ddd;
+    border-radius: 4px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.file-input-container.dragover {
+    background: #e9ecef;
+    border-color: #007bff;
+}
+
+.result-container {
+    margin-top: 20px;
+}
+
+.result-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    position: relative;
+}
+
+.result-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.result-value {
+    word-break: break-all;
+    font-family: monospace;
+    padding: 5px;
+    background: #fff;
+    border-radius: 2px;
+}
+
+.copy-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    padding: 5px 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.copy-btn:hover {
+    background: #218838;
+}
+
+.progress-bar {
+    height: 4px;
+    background: #f0f0f0;
+    margin-top: 10px;
+    border-radius: 2px;
+    overflow: hidden;
+    display: none;
+}
+
+.progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, #007bff, #28a745);
+    width: 0%;
+    transition: width 0.3s;
+}
+
+.error {
+    color: #dc3545;
+    margin-top: 5px;
+    display: none;
+}

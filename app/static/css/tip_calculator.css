@@ -1,0 +1,179 @@
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.calculator-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 30px;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-group label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon .currency,
+.input-with-icon .icon {
+    position: absolute;
+    left: 15px;
+    color: #666;
+}
+
+.input-with-icon.people .icon {
+    font-size: 1.2rem;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 12px;
+    padding-left: 40px;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    text-align: right;
+}
+
+.input-with-icon input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.tip-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.tip-buttons button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    color: #333;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tip-buttons button:hover {
+    background-color: #e2e6ea;
+}
+
+.tip-buttons button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+#custom-tip {
+    padding: 10px;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+#custom-tip:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.result-section {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.result-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.result-item .label {
+    display: flex;
+    flex-direction: column;
+}
+
+.result-item .label span {
+    color: #333;
+    font-size: 1rem;
+}
+
+.result-item .label small {
+    color: #666;
+    font-size: 0.8rem;
+}
+
+.result-item .amount {
+    font-family: monospace;
+    font-size: 1.5rem;
+    color: #007bff;
+    font-weight: bold;
+}
+
+#reset-btn {
+    grid-column: span 2;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#reset-btn:hover {
+    background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+    .calculator-container {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 25px;
+    }
+    
+    #reset-btn {
+        grid-column: span 1;
+    }
+    
+    .tip-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+} 

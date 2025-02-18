@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>日常管理</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .controls {
+            margin-bottom: 20px;
+        }
+        
+        .entry-form {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .entry-form input,
+        .entry-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .entry-form textarea {
+            height: 100px;
+        }
+        
+        .entries-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .entry {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .entry-actions {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+        
+        .entry-date {
+            font-weight: bold;
+            color: #666;
+        }
+        
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>日常管理</h1>
+    
+    <div class="controls">
+        <button class="btn-primary" onclick="showAddForm()">添加新记录</button>
+        <a href="/daily"><button class="btn-secondary">返回日常页面</button></a>
+    </div>
+    
+    <div id="addEntryForm" class="entry-form">
+        <h3>添加新记录</h3>
+        <input type="text" id="newDate" placeholder="日期 (YYYY-MM-DD)">
+        <textarea id="newContent" placeholder="内容"></textarea>
+        <button class="btn-primary" onclick="submitNewEntry()">提交</button>
+        <button class="btn-secondary" onclick="hideAddForm()">取消</button>
+    </div>
+    
+    <ul id="entriesList" class="entries-list">
+        <!-- 条目将通过JavaScript动态加载 -->
+    </ul>
+
+    <script>
+        function showAddForm() {
+            document.getElementById('addEntryForm').style.display = 'block';
+        }
+        
+        function hideAddForm() {
+            document.getElementById('addEntryForm').style.display = 'none';
+            document.getElementById('newDate').value = '';
+            document.getElementById('newContent').value = '';
+        }
+        
+        function submitNewEntry() {
+            const date = document.getElementById('newDate').value;
+            const content = document.getElementById('newContent').value;
+            
+            if (!date || !content) {
+                alert('请填写日期和内容');
+                return;
+            }
+            
+            fetch('/api/admin/daily/entries', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ date, content })
+            })
+            .then(response => {
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = '/admin/login';
+                    throw new Error('请先登录');
+                }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    loadEntries();
+                    hideAddForm();
+                } else {
+                    throw new Error(data.error || '未知错误');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (error.message !== '请先登录') {
+                    alert('添加失败：' + error.message);
+                }
+            });
+        }
+        
+        function deleteEntry(id) {
+            if (!confirm('确定要删除这条记录吗？')) {
+                return;
+            }
+            
+            fetch(`/api/admin/daily/entries?id=${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = '/admin/login';
+                    throw new Error('请先登录');
+                }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    loadEntries();
+                } else {
+                    throw new Error(data.error || '未知错误');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (error.message !== '请先登录') {
+                    alert('删除失败：' + error.message);
+                }
+            });
+        }
+        
+        function editEntry(id) {
+            const entry = document.querySelector(`[data-id="${id}"]`);
+            const dateSpan = entry.querySelector('.entry-date');
+            const contentSpan = entry.querySelector('.entry-content');
+            
+            const date = dateSpan.textContent;
+            const content = contentSpan.textContent;
+            
+            entry.innerHTML = `
+                <input type="text" class="edit-date" value="${date}">
+                <textarea class="edit-content">${content}</textarea>
+                <div class="entry-actions">
+                    <button class="btn-primary" onclick="saveEntry('${id}')">保存</button>
+                    <button class="btn-secondary" onclick="loadEntries()">取消</button>
+                </div>
+            `;
+        }
+        
+        function saveEntry(id) {
+            const entry = document.querySelector(`[data-id="${id}"]`);
+            const date = entry.querySelector('.edit-date').value;
+            const content = entry.querySelector('.edit-content').value;
+            
+            if (!date || !content) {
+                alert('请填写日期和内容');
+                return;
+            }
+            
+            fetch('/api/admin/daily/entries', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: id,
+                    date: date,
+                    content: content
+                })
+            })
+            .then(response => {
+                if (response.status === 401 || response.status === 403) {
+                    window.location.href = '/admin/login';
+                    throw new Error('请先登录');
+                }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    loadEntries();
+                } else {
+                    throw new Error(data.error || '未知错误');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (error.message !== '请先登录') {
+                    alert('保存失败：' + error.message);
+                }
+            });
+        }
+        
+        function loadEntries() {
+            fetch('/api/admin/daily/entries')
+                .then(response => {
+                    // 检查响应状态
+                    if (response.status === 401 || response.status === 403) {
+                        // 如果未认证或未授权，重定向到登录页面
+                        window.location.href = '/admin/login';
+                        throw new Error('请先登录');
+                    }
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    // 检查内容类型
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('返回的不是JSON数据');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data.success) {
+                        throw new Error(data.error || '加载失败');
+                    }
+                    
+                    const entries = JSON.parse(data.entries);
+                    const list = document.getElementById('entriesList');
+                    
+                    list.innerHTML = entries.map(entry => `
+                        <li class="entry" data-id="${entry._id.$oid}">
+                            <span class="entry-date">${entry.date}</span>：
+                            <span class="entry-content">${entry.content}</span>
+                            <div class="entry-actions">
+                                <button class="btn-primary" onclick="editEntry('${entry._id.$oid}')">编辑</button>
+                                <button class="btn-danger" onclick="deleteEntry('${entry._id.$oid}')">删除</button>
+                            </div>
+                        </li>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    if (error.message !== '请先登录') {
+                        alert('加载失败：' + error.message);
+                    }
+                });
+        }
+        
+        // 页面加载时获取数据
+        loadEntries();
+    </script>
+</body>
+</html> 

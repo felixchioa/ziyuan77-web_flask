@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供围棋游戏，支持黑方和白方对战，提供落子记录、当前回合、黑方和白方提子、黑方和白方领地、协调世界时、游戏时长、总时间、当前手、黑方时间、白方时间等功能，方便快捷。">
+    <title>围棋</title>
+    <link rel="stylesheet" href="/static/css/go.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="move-history">
+            <h3>落子记录</h3>
+            <div id="moves-list"></div>
+        </div>
+        
+        <div id="board-container">
+            <div id="coordinates">
+                <!-- 坐标会由 JavaScript 动态生成 -->
+            </div>
+            <div id="board"></div>
+        </div>
+        
+        <div id="game-info">
+            <div id="current-turn">当前回合: 黑方</div>
+            <div id="captures">
+                <div>黑方提子: <span id="black-captures">0</span></div>
+                <div>白方提子: <span id="white-captures">0</span></div>
+            </div>
+            <div id="territory">
+                <div>黑方领地: <span id="black-territory">0</span></div>
+                <div>白方领地: <span id="white-territory">0</span></div>
+            </div>
+            <div id="utc-time" class="timer-item">
+                <div class="timer-label">协调世界时</div>
+                <div class="timer-display utc-timer">
+                    <span id="utc-display">00:00:00.00</span>
+                </div>
+            </div>
+            <div id="game-duration" class="timer-item">
+                <div class="timer-label">游戏时长</div>
+                <div class="timer-display game-timer">
+                    <span id="game-time">00:00</span>
+                </div>
+            </div>
+            <div id="timer">
+                <div class="timer-item">
+                    <div class="timer-label">总时间</div>
+                    <div class="timer-display">
+                        <span id="total-time">00:00</span>
+                    </div>
+                </div>
+                <div class="timer-item">
+                    <div class="timer-label">当前手</div>
+                    <div class="timer-display current-timer">
+                        <span id="current-time">00:00</span>
+                    </div>
+                </div>
+                <div class="timer-item">
+                    <div class="timer-label">黑方时间</div>
+                    <div class="timer-display black-timer">
+                        <span id="black-time">00:00</span>
+                    </div>
+                </div>
+                <div class="timer-item">
+                    <div class="timer-label">白方时间</div>
+                    <div class="timer-display white-timer">
+                        <span id="white-time">00:00</span>
+                    </div>
+                </div>
+            </div>
+            <div id="controls">
+                <button id="pass">虚手</button>
+                <button id="resign">认输</button>
+                <button id="count">点目</button>
+                <button id="vs-ai">对战AI</button>
+                <button id="delete-room">删除房间</button>
+            </div>
+            <div id="chat-box">
+                <div id="chat-messages"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="输入消息...">
+                    <button id="send-message">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="/static/js/go.js"></script>
+</body>
+</html> 

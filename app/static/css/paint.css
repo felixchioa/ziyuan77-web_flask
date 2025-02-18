@@ -1,0 +1,195 @@
+.paint-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.toolbar {
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tool-group {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding: 0 10px;
+    border-right: 1px solid #eee;
+}
+
+.tool-group:last-child {
+    border-right: none;
+}
+
+.tool {
+    padding: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 1.2em;
+}
+
+.tool:hover {
+    background-color: #f0f0f0;
+}
+
+.tool.active {
+    background-color: #e0e0e0;
+}
+
+.canvas-container {
+    flex: 1;
+    overflow: auto;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#paint-canvas {
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* 对话框样式 */
+.dialog {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.dialog-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 300px;
+}
+
+.input-group {
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-group label {
+    min-width: 100px;
+}
+
+.input-group input,
+.input-group select {
+    flex: 1;
+    padding: 5px;
+}
+
+.dialog-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.dialog-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dialog-buttons button:first-child {
+    background-color: #007bff;
+    color: white;
+}
+
+.dialog-buttons button:last-child {
+    background-color: #6c757d;
+    color: white;
+}
+
+.color-palette {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    padding: 4px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0 5px;
+}
+
+.color-swatch {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.color-swatch:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+}
+
+.color-swatch.active {
+    border: 2px solid #007bff;
+}
+
+.color-picker-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.color-preview {
+    position: relative;
+    width: 32px;
+    height: 32px;
+}
+
+#primary-color {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid #ccc;
+}
+
+#secondary-color {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid #ccc;
+}
+
+#swap-colors {
+    padding: 4px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 1.2em;
+}
+
+#swap-colors:hover {
+    background-color: #f0f0f0;
+} 

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>屏幕测试工具 - 检测显示器坏点、色彩和均匀性</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        #screen {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            z-index: 1000;
+            display: none;
+        }
+
+        #controls:hover {
+            display: block;
+        }
+
+        #info {
+            display: none;  /* 隐藏中间提示 */
+        }
+
+        button {
+            padding: 8px 12px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #eee;
+        }
+
+        #mouse-info {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .mix-color-btn {
+            background: linear-gradient(45deg, var(--color1), var(--color2));
+            color: white;
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="screen">
+        <div id="info">点击屏幕或使用方向键切换测试</div>
+    </div>
+
+    <div id="controls">
+        <button onclick="setColor('white')">白色</button>
+        <button onclick="setColor('black')">黑色</button>
+        <button onclick="setColor('red')">红色</button>
+        <button onclick="setColor('green')">绿色</button>
+        <button onclick="setColor('blue')">蓝色</button>
+        <button onclick="setColor('rgb(255, 255, 0)')">黄色(RG)</button>
+        <button onclick="setColor('rgb(0, 255, 255)')">青色(GB)</button>
+        <button onclick="setColor('rgb(255, 0, 255)')">品红(RB)</button>
+        <button onclick="startGradientTest()">渐变测试</button>
+        <button onclick="startGridTest()">网格测试</button>
+        <button onclick="toggleMouseTracker()">鼠标追踪</button>
+        <button onclick="toggleFullscreen()">全屏</button>
+    </div>
+
+    <div id="mouse-info"></div>
+
+    <script>
+        const screen = document.getElementById('screen');
+        const info = document.getElementById('info');
+        const controls = document.getElementById('controls');
+        const mouseInfo = document.getElementById('mouse-info');
+        
+        let currentTest = 0;
+        let isMouseTracking = false;
+        const tests = [
+            { color: 'white', name: '白色测试' },
+            { color: 'black', name: '黑色测试' },
+            { color: 'red', name: '红色测试' },
+            { color: 'green', name: '绿色测试' },
+            { color: 'blue', name: '蓝色测试' },
+            { color: 'rgb(255, 255, 0)', name: '黄色测试' },
+            { color: 'rgb(0, 255, 255)', name: '青色测试' },
+            { color: 'rgb(255, 0, 255)', name: '品红测试' },
+            { color: 'rgb(128, 128, 128)', name: '灰度测试' }
+        ];
+
+        function setColor(color) {
+            screen.style.background = color;
+        }
+
+        function nextTest() {
+            currentTest = (currentTest + 1) % tests.length;
+            setColor(tests[currentTest].color);
+        }
+
+        function previousTest() {
+            currentTest = (currentTest - 1 + tests.length) % tests.length;
+            setColor(tests[currentTest].color);
+        }
+
+        function startGradientTest() {
+            screen.style.background = 'linear-gradient(to right, black, white)';
+            info.textContent = '渐变测试 - 点击切换';
+        }
+
+        function startGridTest() {
+            screen.style.background = `
+                repeating-linear-gradient(0deg, 
+                    transparent, 
+                    transparent 9px, 
+                    #000 9px, 
+                    #000 10px
+                ),
+                repeating-linear-gradient(90deg, 
+                    transparent, 
+                    transparent 9px, 
+                    #000 9px, 
+                    #000 10px
+                )
+            `;
+            info.textContent = '网格测试 - 点击切换';
+        }
+
+        function toggleMouseTracker() {
+            isMouseTracking = !isMouseTracking;
+            mouseInfo.style.display = isMouseTracking ? 'block' : 'none';
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // 鼠标移动事件
+        screen.addEventListener('mousemove', (e) => {
+            if (e.clientY > window.innerHeight - 100) {
+                controls.style.display = 'block';
+            }
+            if (isMouseTracking) {
+                mouseInfo.textContent = `X: ${e.clientX}, Y: ${e.clientY}`;
+            }
+        });
+
+        // 显示/隐藏控制面板
+        screen.addEventListener('mousemove', (e) => {
+            if (e.clientY < 100) {
+                controls.style.display = 'block';
+            }
+        });
+
+        controls.addEventListener('mouseleave', () => {
+            setTimeout(() => {
+                if (!controls.matches(':hover')) {
+                    controls.style.display = 'none';
+                }
+            }, 1000);
+        });
+
+        // 点击和键盘事件
+        screen.addEventListener('click', nextTest);
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    nextTest();
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    previousTest();
+                    break;
+                case 'f':
+                    toggleFullscreen();
+                    break;
+            }
+        });
+
+        // 初始化
+        setColor(tests[0].color);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供JSON格式化工具，支持JSON代码格式化、美化、压缩、转义等功能，方便快捷。">
+    <title>JSON格式化工具</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/json_formatter.css') }}">
+</head>
+<body>
+    <div class="formatter-container">
+        <h1>JSON格式化工具</h1>
+        
+        <div class="toolbar">
+            <div class="tool-group">
+                <button onclick="formatJSON()">格式化</button>
+                <button onclick="minifyJSON()">压缩</button>
+                <button onclick="copyJSON()">复制</button>
+                <button onclick="clearJSON()">清空</button>
+            </div>
+            <div class="tool-group">
+                <label>
+                    <input type="checkbox" id="auto-format" checked>
+                    自动格式化
+                </label>
+                <label>
+                    <input type="number" id="indent-size" value="2" min="1" max="8">
+                    缩进空格数
+                </label>
+            </div>
+        </div>
+
+        <div class="editor-container">
+            <div class="input-section">
+                <div class="section-header">
+                    <h3>输入JSON</h3>
+                    <div class="file-input">
+                        <input type="file" id="file-input" accept=".json,.txt">
+                        <label for="file-input">导入文件</label>
+                    </div>
+                </div>
+                <textarea id="input-json" placeholder="请输入要格式化的JSON"></textarea>
+                <div class="error-message" id="error-message"></div>
+            </div>
+
+            <div class="output-section">
+                <div class="section-header">
+                    <h3>格式化结果</h3>
+                    <button onclick="downloadJSON()">下载</button>
+                </div>
+                <pre id="output-json"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/json_formatter.js') }}"></script>
+</body>
+</html> 

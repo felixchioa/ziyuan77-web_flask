@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供小费计算器，支持账单金额、小费比例、分摊人数计算，方便快捷。">
+    <title>小费计算器 - 餐饮小费计算工具</title>
+    <link rel="stylesheet" href="/static/css/tip_calculator.css">
+</head>
+<body>
+    <div class="container">
+        <h1>小费计算器</h1>
+        
+        <div class="calculator-container">
+            <div class="input-section">
+                <div class="input-group">
+                    <label>账单金额</label>
+                    <div class="input-with-icon">
+                        <span class="currency">¥</span>
+                        <input type="number" id="bill-amount" min="0" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>小费比例</label>
+                    <div class="tip-buttons">
+                        <button data-tip="10">10%</button>
+                        <button data-tip="15" class="active">15%</button>
+                        <button data-tip="18">18%</button>
+                        <button data-tip="20">20%</button>
+                        <input type="number" id="custom-tip" min="0" max="100" placeholder="自定义%">
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>分摊人数</label>
+                    <div class="input-with-icon people">
+                        <span class="icon">👥</span>
+                        <input type="number" id="people-count" min="1" value="1">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <div class="result-group">
+                    <div class="result-item">
+                        <div class="label">
+                            <span>小费金额</span>
+                            <small>每人</small>
+                        </div>
+                        <div class="amount" id="tip-per-person">¥0.00</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="label">
+                            <span>总金额</span>
+                            <small>每人</small>
+                        </div>
+                        <div class="amount" id="total-per-person">¥0.00</div>
+                    </div>
+                </div>
+                
+                <div class="result-group">
+                    <div class="result-item">
+                        <div class="label">
+                            <span>小费总额</span>
+                        </div>
+                        <div class="amount" id="total-tip">¥0.00</div>
+                    </div>
+                    
+                    <div class="result-item">
+                        <div class="label">
+                            <span>总计</span>
+                        </div>
+                        <div class="amount" id="total-amount">¥0.00</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="reset-btn">重置</button>
+        </div>
+    </div>
+    
+    <script src="/static/js/tip_calculator.js"></script>
+</body>
+</html> 

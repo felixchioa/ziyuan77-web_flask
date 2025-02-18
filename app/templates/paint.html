@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供在线画图工具，支持铅笔、橡皮擦、直线、矩形、圆形、文本、填充等功能，方便快捷。">
+    <title>在线画图工具</title>
+    <link rel="stylesheet" href="/static/css/paint.css">
+</head>
+<body>
+    <h1>在线画图工具</h1>
+    <div class="paint-container">
+        <!-- 工具栏 -->
+        <div class="toolbar">
+            <div class="tool-group">
+                <button id="pencil" class="tool active" title="铅笔">✏️</button>
+                <button id="eraser" class="tool" title="橡皮擦">🧹</button>
+                <button id="line" class="tool" title="直线">📏</button>
+                <button id="rectangle" class="tool" title="矩形">⬜</button>
+                <button id="circle" class="tool" title="圆形">⭕</button>
+                <button id="text" class="tool" title="文本">📝</button>
+                <button id="fill" class="tool" title="填充">🪣</button>
+            </div>
+            
+            <div class="tool-group">
+                <div class="color-picker-container">
+                    <div class="color-preview">
+                        <input type="color" id="primary-color" value="#000000" title="前景色">
+                        <input type="color" id="secondary-color" value="#FFFFFF" title="背景色">
+                    </div>
+                    <button id="swap-colors" title="交换颜色">🔄</button>
+                </div>
+                <div class="color-palette">
+                    <div class="color-swatch" style="background-color: #000000" data-color="#000000"></div>
+                    <div class="color-swatch" style="background-color: #FFFFFF" data-color="#FFFFFF"></div>
+                    <div class="color-swatch" style="background-color: #FF0000" data-color="#FF0000"></div>
+                    <div class="color-swatch" style="background-color: #00FF00" data-color="#00FF00"></div>
+                    <div class="color-swatch" style="background-color: #0000FF" data-color="#0000FF"></div>
+                    <div class="color-swatch" style="background-color: #FFFF00" data-color="#FFFF00"></div>
+                    <div class="color-swatch" style="background-color: #FF00FF" data-color="#FF00FF"></div>
+                    <div class="color-swatch" style="background-color: #00FFFF" data-color="#00FFFF"></div>
+                    <div class="color-swatch" style="background-color: #808080" data-color="#808080"></div>
+                    <div class="color-swatch" style="background-color: #800000" data-color="#800000"></div>
+                    <div class="color-swatch" style="background-color: #808000" data-color="#808000"></div>
+                    <div class="color-swatch" style="background-color: #008000" data-color="#008000"></div>
+                    <div class="color-swatch" style="background-color: #800080" data-color="#800080"></div>
+                    <div class="color-swatch" style="background-color: #008080" data-color="#008080"></div>
+                    <div class="color-swatch" style="background-color: #000080" data-color="#000080"></div>
+                </div>
+                <select id="line-width" title="线条粗细">
+                    <option value="1">1px</option>
+                    <option value="2">2px</option>
+                    <option value="4">4px</option>
+                    <option value="6">6px</option>
+                    <option value="8">8px</option>
+                    <option value="10">10px</option>
+                </select>
+            </div>
+            
+            <div class="tool-group">
+                <button id="undo" title="撤销">↩️</button>
+                <button id="redo" title="重做">↪️</button>
+                <button id="clear" title="清空">🗑️</button>
+            </div>
+            
+            <div class="tool-group">
+                <button id="save-draft" title="保存草稿">💾</button>
+                <button id="load-draft" title="加载草稿">📂</button>
+            </div>
+            
+            <div class="tool-group">
+                <button id="new-canvas" title="新建">📄</button>
+                <button id="export" title="导出">💫</button>
+            </div>
+        </div>
+
+        <!-- 画布容器 -->
+        <div class="canvas-container">
+            <canvas id="paint-canvas"></canvas>
+        </div>
+
+        <!-- 新建画布对话框 -->
+        <div id="new-canvas-dialog" class="dialog">
+            <div class="dialog-content">
+                <h3>新建画布</h3>
+                <div class="input-group">
+                    <label>宽度 (px):</label>
+                    <input type="number" id="canvas-width" value="800" min="1">
+                </div>
+                <div class="input-group">
+                    <label>高度 (px):</label>
+                    <input type="number" id="canvas-height" value="600" min="1">
+                </div>
+                <div class="dialog-buttons">
+                    <button id="create-canvas">创建</button>
+                    <button id="cancel-create">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导出对话框 -->
+        <div id="export-dialog" class="dialog">
+            <div class="dialog-content">
+                <h3>导出图片</h3>
+                <div class="input-group">
+                    <label>格式:</label>
+                    <select id="export-format">
+                        <option value="png">PNG</option>
+                        <option value="jpeg">JPEG</option>
+                        <option value="webp">WebP</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>质量 (仅用于JPEG/WebP):</label>
+                    <input type="range" id="export-quality" min="0" max="1" step="0.1" value="0.8">
+                    <span id="quality-value">0.8</span>
+                </div>
+                <div class="dialog-buttons">
+                    <button id="do-export">导出</button>
+                    <button id="cancel-export">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/paint.js"></script>
+</body>
+</html> 

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供UUID生成器，支持UUID v4和UUID v1的生成，方便快捷。">
+    <title>UUID生成器</title>
+    <link rel="stylesheet" href="/static/css/uuid_generator.css">
+</head>
+<body>
+    <div class="container">
+        <h1>UUID生成器</h1>
+        
+        <div class="generator-container">
+            <div class="options">
+                <div class="version-select">
+                    <label>UUID版本：</label>
+                    <select id="uuid-version">
+                        <option value="4">v4 (随机)</option>
+                        <option value="1">v1 (时间戳)</option>
+                    </select>
+                </div>
+                <div class="format-options">
+                    <label>
+                        <input type="checkbox" id="uppercase">
+                        大写字母
+                    </label>
+                    <label>
+                        <input type="checkbox" id="no-hyphens">
+                        移除连字符
+                    </label>
+                    <label>
+                        <input type="checkbox" id="braces">
+                        添加大括号
+                    </label>
+                </div>
+                <div class="quantity-select">
+                    <label>生成数量：</label>
+                    <input type="number" id="quantity" value="1" min="1" max="100">
+                </div>
+                <button id="generate" class="primary">生成UUID</button>
+            </div>
+            
+            <div class="output-section">
+                <div class="section-header">
+                    <h3>生成结果</h3>
+                    <div class="controls">
+                        <button id="copy-all">复制全部</button>
+                        <button id="download">下载</button>
+                        <select id="output-format">
+                            <option value="text">文本格式</option>
+                            <option value="json">JSON格式</option>
+                            <option value="csv">CSV格式</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="uuid-list" id="uuid-list"></div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="uuid-info">
+                <h3>关于UUID</h3>
+                <p>UUID（通用唯一识别码）是一个128位的标识符，可以保证在分布式系统中的唯一性。</p>
+                <ul>
+                    <li><strong>UUID v1</strong>：基于时间戳和MAC地址生成</li>
+                    <li><strong>UUID v4</strong>：完全随机生成，使用加密强度的随机数</li>
+                </ul>
+            </div>
+            <div id="error-message" class="error-message"></div>
+        </div>
+    </div>
+    
+    <script src="/static/js/uuid_generator.js"></script>
+</body>
+</html> 

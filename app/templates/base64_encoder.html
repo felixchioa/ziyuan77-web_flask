@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供Base64编码器/解码器，支持文本和文件的Base64编码和解码，方便快捷。">
+    <title>Base64编码器</title>
+    <link rel="stylesheet" href="/static/css/base64_encoder.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Base64编码器/解码器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <div class="section-header">
+                    <h3>输入</h3>
+                    <div class="controls">
+                        <button id="clear-input">清空</button>
+                        <button id="paste-input">粘贴</button>
+                        <input type="file" id="file-input" hidden>
+                        <button id="upload-file">上传文件</button>
+                    </div>
+                </div>
+                <textarea id="input-text" placeholder="在此输入文本或上传文件..."></textarea>
+            </div>
+            
+            <div class="actions">
+                <button id="encode" class="primary">编码 ⬇</button>
+                <button id="decode" class="primary">解码 ⬇</button>
+                <div class="options">
+                    <label>
+                        <input type="checkbox" id="url-safe">
+                        URL安全模式
+                    </label>
+                    <label>
+                        <input type="checkbox" id="auto-detect">
+                        自动检测编码
+                    </label>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <div class="section-header">
+                    <h3>输出</h3>
+                    <div class="controls">
+                        <button id="copy-output">复制</button>
+                        <button id="download">下载</button>
+                        <select id="download-format">
+                            <option value="txt">文本文件</option>
+                            <option value="json">JSON</option>
+                            <option value="xml">XML</option>
+                        </select>
+                    </div>
+                </div>
+                <textarea id="output-text" readonly></textarea>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="stats">
+                <div class="stat-item">
+                    <span>输入长度：</span>
+                    <span id="input-length">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>输出长度：</span>
+                    <span id="output-length">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>压缩率：</span>
+                    <span id="compression-ratio">0%</span>
+                </div>
+            </div>
+            <div id="error-message" class="error-message"></div>
+        </div>
+    </div>
+    
+    <script src="/static/js/base64_encoder.js"></script>
+</body>
+</html> 

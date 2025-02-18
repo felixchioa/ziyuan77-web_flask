@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供IP地址查询工具，支持IP地址查询、域名查询、地理位置查询、网络信息查询、安全信息查询等功能，方便快捷。">
+    <title>IP地址查询</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ip_lookup.css') }}">
+</head>
+<body>
+    <div class="lookup-container">
+        <h1>IP地址查询</h1>
+        
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="ip-input" placeholder="输入IP地址或域名">
+                <button onclick="lookupIP()">查询</button>
+            </div>
+            <div class="current-ip">
+                <span>您的IP地址：</span>
+                <span id="current-ip"></span>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <div class="result-tabs">
+                <button class="tab-btn active" data-tab="basic">基本信息</button>
+                <button class="tab-btn" data-tab="location">地理位置</button>
+                <button class="tab-btn" data-tab="network">网络信息</button>
+                <button class="tab-btn" data-tab="security">安全信息</button>
+            </div>
+
+            <div class="tab-content active" id="basic-info">
+                <div class="info-group">
+                    <div class="info-item">
+                        <span class="label">IP地址：</span>
+                        <span class="value" id="ip-address"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">IP版本：</span>
+                        <span class="value" id="ip-version"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">主机名：</span>
+                        <span class="value" id="hostname"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">类型：</span>
+                        <span class="value" id="ip-type"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="location-info">
+                <div class="info-group">
+                    <div class="info-item">
+                        <span class="label">国家/地区：</span>
+                        <span class="value" id="country"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">省份：</span>
+                        <span class="value" id="region"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">城市：</span>
+                        <span class="value" id="city"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">经纬度：</span>
+                        <span class="value" id="coordinates"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">时区：</span>
+                        <span class="value" id="timezone"></span>
+                    </div>
+                </div>
+                <div id="map" class="map-container"></div>
+            </div>
+
+            <div class="tab-content" id="network-info">
+                <div class="info-group">
+                    <div class="info-item">
+                        <span class="label">ISP：</span>
+                        <span class="value" id="isp"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">组织：</span>
+                        <span class="value" id="organization"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">AS号：</span>
+                        <span class="value" id="asn"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">网络：</span>
+                        <span class="value" id="network"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="security-info">
+                <div class="info-group">
+                    <div class="info-item">
+                        <span class="label">代理：</span>
+                        <span class="value" id="proxy"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">VPN：</span>
+                        <span class="value" id="vpn"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">TOR：</span>
+                        <span class="value" id="tor"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">威胁等级：</span>
+                        <span class="value" id="threat-level"></span>
+                    </div>
+                </div>
+                <div class="security-details">
+                    <h4>安全报告</h4>
+                    <div id="security-report"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tools-section">
+            <div class="tool-group">
+                <h3>IP工具</h3>
+                <button onclick="pingIP()">Ping测试</button>
+                <button onclick="tracerouteIP()">路由追踪</button>
+                <button onclick="whoisLookup()">Whois查询</button>
+                <button onclick="reverseDNS()">反向DNS</button>
+            </div>
+            <div class="tool-group">
+                <h3>端口扫描</h3>
+                <div class="port-scan">
+                    <input type="text" id="port-range" placeholder="端口范围 (例如: 80,443 或 1-1000)">
+                    <button onclick="scanPorts()">扫描</button>
+                </div>
+                <div id="port-results"></div>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h3>查询历史</h3>
+            <div class="history-list" id="lookup-history"></div>
+        </div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+    <script src="{{ url_for('static', filename='js/ip_lookup.js') }}"></script>
+</body>
+</html> 

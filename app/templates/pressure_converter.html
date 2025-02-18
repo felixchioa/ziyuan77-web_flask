@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供压力单位转换器，支持帕斯卡、千帕、兆帕、大气压、巴、毫巴、磅/平方英寸、毫米汞柱等多种压力单位的转换，方便快捷。">
+    <title>压力单位转换器</title>
+    <link rel="stylesheet" href="/static/css/pressure_converter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>压力单位转换器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <div class="unit-input">
+                    <label>帕斯卡 (Pa)</label>
+                    <input type="number" id="pascal" step="any" placeholder="输入压力...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>千帕 (kPa)</label>
+                    <input type="number" id="kilopascal" step="any" placeholder="输入压力...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>兆帕 (MPa)</label>
+                    <input type="number" id="megapascal" step="any" placeholder="输入压力...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>大气压 (atm)</label>
+                    <input type="number" id="atmosphere" step="any" placeholder="输入压力...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>巴 (bar)</label>
+                    <input type="number" id="bar" step="any" placeholder="输入压力...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>毫巴 (mbar)</label>
+                    <input type="number" id="millibar" step="any" placeholder="输入压力...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>磅/平方英寸 (psi)</label>
+                    <input type="number" id="psi" step="any" placeholder="输入压力...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>毫米汞柱 (mmHg)</label>
+                    <input type="number" id="mmhg" step="any" placeholder="输入压力...">
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>常用换算关系</h3>
+                <ul>
+                    <li>1 大气压 = 101325 帕斯卡</li>
+                    <li>1 巴 = 100000 帕斯卡</li>
+                    <li>1 兆帕 = 1000000 帕斯卡</li>
+                    <li>1 psi ≈ 6894.76 帕斯卡</li>
+                    <li>1 毫米汞柱 ≈ 133.322 帕斯卡</li>
+                    <li>1 巴 = 1000 毫巴</li>
+                    <li>1 大气压 = 760 毫米汞柱</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/pressure_converter.js"></script>
+</body>
+</html> 

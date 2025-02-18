@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供年龄计算器，精确计算年龄和日期，支持出生日期和计算日期选择，计算总月数、总天数、总小时数，并显示下次生日倒计时。">
+    <title>年龄计算器 - 精确计算年龄和日期</title>
+    <link rel="stylesheet" href="/static/css/age_calculator.css">
+</head>
+<body>
+    <div class="container">
+        <h1>年龄计算器</h1>
+        
+        <div class="calculator-container">
+            <div class="input-section">
+                <div class="date-group">
+                    <h3>出生日期</h3>
+                    <input type="date" id="birth-date">
+                </div>
+                
+                <div class="date-group">
+                    <h3>计算日期</h3>
+                    <div class="date-options">
+                        <label>
+                            <input type="radio" name="calc-date" value="today" checked>
+                            今天
+                        </label>
+                        <label>
+                            <input type="radio" name="calc-date" value="custom">
+                            指定日期
+                        </label>
+                    </div>
+                    <input type="date" id="calc-date" disabled>
+                </div>
+                
+                <button id="calculate-btn">计算年龄</button>
+            </div>
+            
+            <div class="result-section">
+                <div class="age-display">
+                    <div class="main-age">
+                        <span>年龄</span>
+                        <span id="years">-</span>
+                        <small>岁</small>
+                    </div>
+                    
+                    <div class="detailed-age">
+                        <div class="age-item">
+                            <span id="months">-</span>
+                            <small>个月</small>
+                        </div>
+                        <div class="age-item">
+                            <span id="days">-</span>
+                            <small>天</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="time-details">
+                    <div class="detail-item">
+                        <span>总月数：</span>
+                        <span id="total-months">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>总天数：</span>
+                        <span id="total-days">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>总小时：</span>
+                        <span id="total-hours">-</span>
+                    </div>
+                </div>
+                
+                <div class="next-birthday">
+                    <h3>下次生日</h3>
+                    <div class="birthday-info">
+                        <div class="date" id="next-birthday">-</div>
+                        <div class="countdown" id="birthday-countdown">还有 - 天</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="zodiac-section">
+                <div class="zodiac-item">
+                    <h3>生肖</h3>
+                    <div id="chinese-zodiac">-</div>
+                </div>
+                <div class="zodiac-item">
+                    <h3>星座</h3>
+                    <div id="zodiac-sign">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/age_calculator.js"></script>
+</body>
+</html> 

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供体积单位转换器，支持立方米、立方厘米、立方毫米、升、毫升、加仑、夸脱、品脱等多种体积单位的转换，方便快捷。">
+    <title>体积单位转换器</title>
+    <link rel="stylesheet" href="/static/css/volume_converter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>体积单位转换器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <div class="unit-input">
+                    <label>立方米 (m³)</label>
+                    <input type="number" id="cubic-meter" step="any" placeholder="输入体积...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>立方厘米 (cm³)</label>
+                    <input type="number" id="cubic-centimeter" step="any" placeholder="输入体积...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>立方毫米 (mm³)</label>
+                    <input type="number" id="cubic-millimeter" step="any" placeholder="输入体积...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>升 (L)</label>
+                    <input type="number" id="liter" step="any" placeholder="输入体积...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>毫升 (mL)</label>
+                    <input type="number" id="milliliter" step="any" placeholder="输入体积...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>加仑 (gal)</label>
+                    <input type="number" id="gallon" step="any" placeholder="输入体积...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>夸脱 (qt)</label>
+                    <input type="number" id="quart" step="any" placeholder="输入体积...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>品脱 (pt)</label>
+                    <input type="number" id="pint" step="any" placeholder="输入体积...">
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>常用换算关系</h3>
+                <ul>
+                    <li>1 立方米 = 1000 升</li>
+                    <li>1 升 = 1000 毫升 = 1000 立方厘米</li>
+                    <li>1 加仑 ≈ 3.78541 升</li>
+                    <li>1 加仑 = 4 夸脱</li>
+                    <li>1 夸脱 = 2 品脱</li>
+                    <li>1 立方米 = 1000000 立方厘米</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/volume_converter.js"></script>
+</body>
+</html> 

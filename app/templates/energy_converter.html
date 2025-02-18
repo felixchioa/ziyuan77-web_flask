@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供能量单位转换器，支持焦耳、千焦、卡路里、千卡、瓦时、千瓦时、电子伏、英热单位等多种能量单位的转换，方便快捷。">
+    <title>能量单位转换器</title>
+    <link rel="stylesheet" href="/static/css/energy_converter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>能量单位转换器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <div class="unit-input">
+                    <label>焦耳 (J)</label>
+                    <input type="number" id="joule" step="any" placeholder="输入能量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>千焦 (kJ)</label>
+                    <input type="number" id="kilojoule" step="any" placeholder="输入能量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>卡路里 (cal)</label>
+                    <input type="number" id="calorie" step="any" placeholder="输入能量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>千卡 (kcal)</label>
+                    <input type="number" id="kilocalorie" step="any" placeholder="输入能量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>瓦时 (Wh)</label>
+                    <input type="number" id="watt-hour" step="any" placeholder="输入能量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>千瓦时 (kWh)</label>
+                    <input type="number" id="kilowatt-hour" step="any" placeholder="输入能量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>电子伏 (eV)</label>
+                    <input type="number" id="electron-volt" step="any" placeholder="输入能量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>英热单位 (BTU)</label>
+                    <input type="number" id="btu" step="any" placeholder="输入能量...">
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>常用换算关系</h3>
+                <ul>
+                    <li>1 千焦 = 1000 焦耳</li>
+                    <li>1 卡路里 = 4.184 焦耳</li>
+                    <li>1 千卡 = 4184 焦耳</li>
+                    <li>1 瓦时 = 3600 焦耳</li>
+                    <li>1 千瓦时 = 3600000 焦耳</li>
+                    <li>1 电子伏 = 1.602176634×10⁻¹⁹ 焦耳</li>
+                    <li>1 英热单位 = 1055.06 焦耳</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/energy_converter.js"></script>
+</body>
+</html> 

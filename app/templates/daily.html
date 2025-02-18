@@ -2,6 +2,7 @@
 <html lang="zh-CN">
     <head>
         <meta charset="UTF-8" />
+        <meta name="description" content="资源77提供日常记录，包括网站更新、节日祝福、重要事件等，方便快捷。">
         <title>日常</title>
         <link rel="stylesheet" href="/static/css/daily.css" />
     </head>
@@ -10,17 +11,488 @@
         <div class="container">
             <h1>日常</h1>
             <p>这里是一些日常记录。</p>
-            <ul>
-                <!-- 示例：<li>2024-12-20: 今天天气不错，心情很好。</li> -->
-                <li>2024-12-20：前端页面太丑了，所以赶工改了一下</li>
-                <li>2024-12-10：才反应过来。我的域名不正适合建资源站吗？所以建了个资源站<a href="https://file.ziyuan77.com" target="_blank"> file.ziyuan77.com </a></li>
-                <li>2024-12-05：找了一台不用的电脑，搞了台自己的服务器</li>
-                <li>2024-11-29：开始自己建站</li>
-                <li>2024-11-24：给域名解析上了</li>
-                <li>2024-11-22：今天天气不错，心情很好。</li>
-                <li>2024-11-21: 成功在同学的怂恿下建立了自己的网站，虽然很简陋，但是还是很有成就感的。顺便说一句，这是同学的网站：<a href="https://xhdndmm.cn"> xhdndmm.cn </a></li>
+            
+            <!-- 添加编辑按钮 -->
+            <div id="editControls" style="display: none;">
+                <button onclick="addEntry()">添加新记录</button>
+                <button onclick="toggleEditMode()">退出编辑</button>
+            </div>
+            
+            <!-- 修改添加新记录的表单 -->
+            <div id="addEntryForm" style="display: none;">
+                <input type="text" id="newDate" placeholder="日期 (YYYY/MM/DD)">
+                <textarea id="newContent" placeholder="内容"></textarea>
+                <div class="image-upload">
+                    <input type="file" id="imageInput" accept="image/*" multiple style="display: none">
+                    <button type="button" onclick="document.getElementById('imageInput').click()" class="upload-btn">
+                        选择图片
+                    </button>
+                    <div id="imagePreview" class="image-preview"></div>
+                </div>
+                <button onclick="submitNewEntry()">提交</button>
+                <button onclick="cancelAdd()">取消</button>
+            </div>
+
+            <ul id="entriesList">
+                <!-- 现有的日常记录会在这里动态加载 -->
             </ul>
         </div>
-        <script src="/static/js/daily.js"></script>
+        
+        <script>
+            // 检查是否是管理员
+            fetch('/api/admin/check_auth')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.is_admin) {
+                        document.getElementById('editControls').style.display = 'block';
+                    }
+                });
+
+            let isEditMode = false;
+
+            function toggleEditMode() {
+                isEditMode = !isEditMode;
+                const entries = document.querySelectorAll('.entry');
+                entries.forEach(entry => {
+                    const controls = entry.querySelector('.entry-controls');
+                    if (controls) {
+                        controls.style.display = isEditMode ? 'block' : 'none';
+                    }
+                });
+            }
+
+            function addEntry() {
+                document.getElementById('addEntryForm').style.display = 'block';
+            }
+
+            function cancelAdd() {
+                document.getElementById('addEntryForm').style.display = 'none';
+                document.getElementById('newDate').value = '';
+                document.getElementById('newContent').value = '';
+                uploadedImages = [];
+                updateImagePreview();
+            }
+
+            // 存储图片数据
+            let uploadedImages = [];
+
+            // 监听图片上传
+            document.getElementById('imageInput').addEventListener('change', function(e) {
+                const files = e.target.files;
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageData = {
+                            data: e.target.result,
+                            position: uploadedImages.length // 默认位置
+                        };
+                        uploadedImages.push(imageData);
+                        updateImagePreview();
+                    };
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            function updateImagePreview() {
+                const preview = document.getElementById('imagePreview');
+                preview.innerHTML = uploadedImages.map((img, index) => `
+                    <div class="image-item">
+                        <img src="${img.data}" alt="预览">
+                        <div class="image-controls">
+                            <input type="number" value="${img.position}" 
+                                   onchange="updateImagePosition(${index}, this.value)"
+                                   min="0" class="position-input">
+                            <button onclick="removeImage(${index})" class="remove-btn">删除</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            function updateImagePosition(index, newPosition) {
+                uploadedImages[index].position = parseInt(newPosition);
+            }
+
+            function removeImage(index) {
+                uploadedImages.splice(index, 1);
+                updateImagePreview();
+            }
+
+            function submitNewEntry() {
+                const date = document.getElementById('newDate').value;
+                const formattedDate = formatDate(date);
+                let content = document.getElementById('newContent').value;
+                
+                // 自动识别并转换URL为链接
+                content = convertUrlsToLinks(content);
+                
+                // 处理图片插入
+                const contentArr = content.split('');
+                uploadedImages.sort((a, b) => a.position - b.position)
+                             .forEach(img => {
+                    const imgHtml = `<img src="${img.data}" class="entry-image">`;
+                    if (img.position <= contentArr.length) {
+                        contentArr.splice(img.position, 0, imgHtml);
+                    } else {
+                        contentArr.push(imgHtml);
+                    }
+                });
+                content = contentArr.join('');
+                
+                fetch('/api/admin/daily/entries', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        date: formattedDate,
+                        content: content,
+                        rawContent: document.getElementById('newContent').value,
+                        images: uploadedImages
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadEntries();
+                        cancelAdd();
+                        uploadedImages = []; // 清空图片数组
+                    }
+                });
+            }
+
+            function convertUrlsToLinks(text) {
+                // URL正则表达式
+                const urlRegex = /(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/g;
+                
+                // 替换URL为带链接的HTML
+                return text.replace(urlRegex, (url) => {
+                    let displayText = url;
+                    // 如果URL过长，可以选择截断显示
+                    if (url.length > 50) {
+                        displayText = url.substring(0, 47) + '...';
+                    }
+                    return `<a href="${url}" class="entry-link" target="_blank">${displayText}</a>`;
+                });
+            }
+
+            function formatDate(dateStr) {
+                try {
+                    // 处理YYYY/MM/DD格式
+                    const parts = dateStr.split('/');
+                    if (parts.length === 3) {
+                        const year = parts[0];
+                        const month = parts[1].padStart(2, '0');
+                        const day = parts[2].padStart(2, '0');
+                        return `${year}年${month}月${day}日`;
+                    }
+                    return dateStr; // 如果格式不匹配，返回原始值
+                } catch (e) {
+                    console.error('Date format error:', e);
+                    return dateStr;
+                }
+            }
+
+            function editEntry(id) {
+                const entry = document.querySelector(`[data-id="${id}"]`);
+                // 获取原始内容而不是HTML
+                const content = entry.querySelector('.entry-content').getAttribute('data-raw-content') || 
+                              entry.querySelector('.entry-content').textContent;
+                const date = entry.querySelector('.entry-date').textContent;
+                
+                // 保存原始内容，以便取消时恢复
+                entry.setAttribute('data-original-content', entry.innerHTML);
+                
+                entry.innerHTML = `
+                    <input type="text" value="${date}" class="edit-date">
+                    <textarea class="edit-content">${content}</textarea>
+                    <div class="entry-controls">
+                        <button onclick="saveEntry('${id}')">保存</button>
+                        <button onclick="cancelEdit('${id}')">取消</button>
+                    </div>
+                `;
+            }
+
+            function saveEntry(id) {
+                const entry = document.querySelector(`[data-id="${id}"]`);
+                const date = entry.querySelector('.edit-date').value;
+                let content = entry.querySelector('.edit-content').value;
+                
+                // 自动识别并转换URL为链接
+                content = convertUrlsToLinks(content);
+                
+                fetch('/api/admin/daily/entries', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: id,
+                        date: date,
+                        content: content,
+                        rawContent: entry.querySelector('.edit-content').value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadEntries();
+                    } else {
+                        alert('保存失败：' + (data.error || '未知错误'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('保存失败：' + error.message);
+                });
+            }
+
+            function cancelEdit(id) {
+                const entry = document.querySelector(`[data-id="${id}"]`);
+                entry.innerHTML = entry.getAttribute('data-original-content');
+            }
+
+            function deleteEntry(id) {
+                if (confirm('确定要删除这条记录吗？')) {
+                    fetch(`/api/admin/daily/entries?id=${id}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            loadEntries(); // 重新加载所有条目
+                        } else {
+                            alert('删除失败：' + (data.error || '未知错误'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('删除失败：' + error.message);
+                    });
+                }
+            }
+
+            function loadEntries() {
+                fetch('/api/admin/daily/entries')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (!data.success) {
+                            throw new Error(data.error || '加载失败');
+                        }
+                        
+                        const entries = JSON.parse(data.entries);
+                        const list = document.getElementById('entriesList');
+                        const isAdmin = document.getElementById('editControls').style.display === 'block';
+                        
+                        list.innerHTML = entries.map(entry => `
+                            <li class="entry" data-id="${entry._id.$oid}">
+                                <span class="entry-date">${entry.date}</span>：
+                                <span class="entry-content" data-raw-content="${entry.rawContent || ''}">${entry.content}</span>
+                                ${isAdmin ? `
+                                    <div class="entry-controls" style="display: none;">
+                                        <button onclick="editEntry('${entry._id.$oid}')">编辑</button>
+                                        <button onclick="deleteEntry('${entry._id.$oid}')">删除</button>
+                                    </div>
+                                ` : ''}
+                            </li>
+                        `).join('');
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('加载失败：' + error.message);
+                    });
+            }
+
+            // 初始加载
+            loadEntries();
+
+            // 添加新的样式
+            const style = document.createElement('style');
+            style.textContent = `
+                .links-container {
+                    margin: 10px 0;
+                }
+
+                .link-inputs {
+                    display: flex;
+                    gap: 10px;
+                    margin: 10px 0;
+                    align-items: center;
+                }
+
+                .link-inputs input,
+                .link-inputs select {
+                    flex: 1;
+                    padding: 5px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                }
+
+                .add-link-btn {
+                    background-color: #28a745;
+                    color: white;
+                    border: none;
+                    padding: 5px 10px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    margin-top: 5px;
+                }
+
+                .remove-link-btn {
+                    background-color: #dc3545;
+                    color: white;
+                    border: none;
+                    padding: 5px 10px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+
+                .entry-link {
+                    display: inline-block;
+                    margin: 0 5px;
+                    color: #007bff;
+                    text-decoration: none;
+                    padding: 2px 8px;
+                    border-radius: 4px;
+                    background-color: #e7f3ff;
+                }
+                
+                .entry-link:hover {
+                    background-color: #cce5ff;
+                    text-decoration: none;
+                }
+
+                .image-upload {
+                    margin: 10px 0;
+                }
+
+                .upload-btn {
+                    background-color: #28a745;
+                    color: white;
+                    border: none;
+                    padding: 8px 15px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+
+                .image-preview {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    margin-top: 10px;
+                }
+
+                .image-item {
+                    position: relative;
+                    width: 150px;
+                }
+
+                .image-item img {
+                    width: 100%;
+                    height: auto;
+                    border-radius: 4px;
+                }
+
+                .image-controls {
+                    display: flex;
+                    gap: 5px;
+                    margin-top: 5px;
+                }
+
+                .position-input {
+                    width: 60px;
+                    padding: 2px 5px;
+                }
+
+                .remove-btn {
+                    background-color: #dc3545;
+                    color: white;
+                    border: none;
+                    padding: 2px 8px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                }
+
+                .entry-image {
+                    max-width: 100%;
+                    height: auto;
+                    margin: 10px 0;
+                    border-radius: 4px;
+                }
+            `;
+            document.head.appendChild(style);
+        </script>
+        
+        <style>
+            .entry-controls {
+                display: inline-block;
+                margin-left: 10px;
+            }
+            
+            .edit-date, .edit-content {
+                margin: 5px 0;
+                padding: 5px;
+            }
+            
+            .edit-content {
+                width: 100%;
+                min-height: 50px;
+            }
+            
+            #addEntryForm {
+                margin: 20px 0;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+            
+            #addEntryForm input,
+            #addEntryForm textarea {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+                padding: 5px;
+            }
+            
+            .edit-date {
+                width: 150px;
+                margin-right: 10px;
+            }
+            
+            .edit-content {
+                width: calc(100% - 20px);
+                min-height: 60px;
+                margin: 10px 0;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+            
+            .entry-controls button {
+                margin: 0 5px;
+                padding: 5px 10px;
+                border: none;
+                border-radius: 4px;
+                background-color: #007bff;
+                color: white;
+                cursor: pointer;
+            }
+            
+            .entry-controls button:hover {
+                background-color: #0056b3;
+            }
+            
+            .entry-controls button:last-child {
+                background-color: #dc3545;
+            }
+            
+            .entry-controls button:last-child:hover {
+                background-color: #c82333;
+            }
+        </style>
     </body>
 </html>

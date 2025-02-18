@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供BMI计算器，计算身体质量指数，评估体重状况，支持身高和体重输入，显示BMI值和分类。">
+    <title>BMI计算器 - 身体质量指数计算</title>
+    <link rel="stylesheet" href="/static/css/bmi_calculator.css">
+</head>
+<body>
+    <div class="container">
+        <h1>BMI计算器</h1>
+        
+        <div class="calculator-container">
+            <div class="input-section">
+                <div class="input-group">
+                    <label>身高</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="height" min="0" step="0.1" placeholder="0.0">
+                        <span class="unit">厘米</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label>体重</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="weight" min="0" step="0.1" placeholder="0.0">
+                        <span class="unit">公斤</span>
+                    </div>
+                </div>
+                
+                <button id="calculate-btn">计算BMI</button>
+            </div>
+            
+            <div class="result-section">
+                <div class="bmi-display">
+                    <div class="bmi-value">
+                        <span>您的BMI</span>
+                        <span id="bmi-number">-</span>
+                    </div>
+                    <div class="bmi-category" id="bmi-category">-</div>
+                </div>
+                
+                <div class="bmi-scale">
+                    <div class="scale-item">
+                        <div class="marker underweight"></div>
+                        <span>偏瘦</span>
+                        <small>&lt; 18.5</small>
+                    </div>
+                    <div class="scale-item">
+                        <div class="marker normal"></div>
+                        <span>正常</span>
+                        <small>18.5 - 24.9</small>
+                    </div>
+                    <div class="scale-item">
+                        <div class="marker overweight"></div>
+                        <span>偏胖</span>
+                        <small>25 - 29.9</small>
+                    </div>
+                    <div class="scale-item">
+                        <div class="marker obese"></div>
+                        <span>肥胖</span>
+                        <small>≥ 30</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>BMI说明</h3>
+                <p>BMI（身体质量指数）是评估人体胖瘦程度的常用指标，计算公式为：体重(kg) / 身高²(m²)</p>
+                <ul>
+                    <li>BMI ＜ 18.5：体重过轻</li>
+                    <li>BMI 18.5-24.9：正常范围</li>
+                    <li>BMI 25.0-29.9：体重过重</li>
+                    <li>BMI ≥ 30.0：肥胖</li>
+                </ul>
+                <p class="note">注意：BMI仅作为参考指标，不适用于运动员、孕妇等特殊人群。</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/bmi_calculator.js"></script>
+</body>
+</html> 

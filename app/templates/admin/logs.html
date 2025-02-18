@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>日志查看</title>
+    <link rel="stylesheet" href="/static/css/admin/logs.css">
+</head>
+<body>
+    <div class="admin-container">
+        <h1>系统日志</h1>
+        
+        <div class="filters">
+            <select id="log-level">
+                <option value="all">所有级别</option>
+                <option value="debug">Debug</option>
+                <option value="info">Info</option>
+                <option value="warning">Warning</option>
+                <option value="error">Error</option>
+            </select>
+            
+            <input type="text" id="search" placeholder="搜索日志...">
+            
+            <div class="date-filter">
+                <input type="date" id="start-date">
+                <span>至</span>
+                <input type="date" id="end-date">
+            </div>
+            
+            <button id="refresh">刷新</button>
+        </div>
+        
+        <div class="log-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>级别</th>
+                        <th>模块</th>
+                        <th>消息</th>
+                    </tr>
+                </thead>
+                <tbody id="log-content">
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="pagination">
+            <button id="prev-page">上一页</button>
+            <span id="page-info">第 1 页</span>
+            <button id="next-page">下一页</button>
+        </div>
+    </div>
+    <script src="/static/js/admin/logs.js"></script>
+</body>
+</html> 

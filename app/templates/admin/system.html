@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>系统监控</title>
+    <link rel="stylesheet" href="/static/css/admin/system.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>系统监控面板</h1>
+        
+        <div class="system-info panel">
+            <h2>系统信息</h2>
+            <div id="system-details"></div>
+        </div>
+        
+        <div class="resources-panel">
+            <div class="panel">
+                <h2>CPU 使用率</h2>
+                <canvas id="cpu-chart"></canvas>
+                <div id="cpu-details"></div>
+            </div>
+            
+            <div class="panel">
+                <h2>内存使用率</h2>
+                <canvas id="memory-chart"></canvas>
+                <div id="memory-details"></div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>磁盘使用情况</h2>
+            <div id="disk-chart-container"></div>
+        </div>
+        
+        <div class="panel">
+            <h2>网络流量</h2>
+            <canvas id="network-chart"></canvas>
+            <div id="network-details"></div>
+        </div>
+        
+        <div class="actions-panel">
+            <button id="refresh-btn">刷新数据</button>
+            <select id="update-interval">
+                <option value="1000">1秒</option>
+                <option value="2000">2秒</option>
+                <option value="3000">3秒</option>
+                <option value="5000">5秒</option>
+                <option value="10000">10秒</option>
+                <option value="15000">15秒</option>
+                <option value="30000">30秒</option>
+                <option value="60000">1分钟</option>
+            </select>
+        </div>
+    </div>
+    <script src="/static/js/admin/system.js"></script>
+</body>
+</html> 

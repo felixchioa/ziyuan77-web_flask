@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供JavaScript压缩工具，支持JavaScript代码压缩、美化、混淆、压缩等功能，方便快捷。">
+    <title>JavaScript压缩工具</title>
+    <link rel="stylesheet" href="/static/css/js_minifier.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>JavaScript压缩工具</h1>
+        
+        <div class="minifier-container">
+            <div class="input-section">
+                <div class="section-header">
+                    <h3>输入JavaScript</h3>
+                    <div class="controls">
+                        <button id="clear-input">清空</button>
+                        <button id="paste-input">粘贴</button>
+                        <input type="file" id="file-input" accept=".js" hidden>
+                        <button id="upload-file">上传文件</button>
+                    </div>
+                </div>
+                <textarea id="input-js" placeholder="在此输入JavaScript代码或上传JS文件..."></textarea>
+            </div>
+            
+            <div class="options">
+                <div class="minify-options">
+                    <label>
+                        <input type="checkbox" id="mangle" checked>
+                        混淆变量名
+                    </label>
+                    <label>
+                        <input type="checkbox" id="compress" checked>
+                        压缩代码
+                    </label>
+                    <label>
+                        <input type="checkbox" id="comments" checked>
+                        移除注释
+                    </label>
+                    <label>
+                        <input type="checkbox" id="beautify">
+                        美化输出
+                    </label>
+                </div>
+                <div class="advanced-options">
+                    <label>
+                        <input type="checkbox" id="es6">
+                        支持ES6+
+                    </label>
+                    <label>
+                        <input type="checkbox" id="sourcemap">
+                        生成Source Map
+                    </label>
+                    <label>
+                        <input type="checkbox" id="keep-fnames">
+                        保留函数名
+                    </label>
+                    <label>
+                        <input type="checkbox" id="keep-classnames">
+                        保留类名
+                    </label>
+                </div>
+                <button id="minify" class="primary">压缩</button>
+            </div>
+            
+            <div class="output-section">
+                <div class="section-header">
+                    <h3>压缩结果</h3>
+                    <div class="controls">
+                        <button id="copy-output">复制</button>
+                        <button id="download">下载</button>
+                        <select id="output-type">
+                            <option value="minified">压缩代码</option>
+                            <option value="beautified">美化代码</option>
+                            <option value="sourcemap">Source Map</option>
+                        </select>
+                    </div>
+                </div>
+                <pre><code id="output-js" class="javascript"></code></pre>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="stats">
+                <div class="stat-item">
+                    <span>原始大小：</span>
+                    <span id="original-size">0 B</span>
+                </div>
+                <div class="stat-item">
+                    <span>压缩后大小：</span>
+                    <span id="minified-size">0 B</span>
+                </div>
+                <div class="stat-item">
+                    <span>压缩率：</span>
+                    <span id="compression-ratio">0%</span>
+                </div>
+            </div>
+            <div id="error-message" class="error-message"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/languages/javascript.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/terser@5.16.3/dist/bundle.min.js"></script>
+    <script src="/static/js/js_minifier.js"></script>
+</body>
+</html> 

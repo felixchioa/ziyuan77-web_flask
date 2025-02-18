@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供欢迎页面，包括背景动画层、主要内容、光效果、进度条、装饰元素等，方便快捷。">
+    <title>欢迎</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loading.css') }}">
+</head>
+<body>
+    <div class="loading-container">
+        <!-- 背景动画层 -->
+        <div class="animated-bg">
+            <div class="particles"></div>
+            <div class="floating-shapes"></div>
+            <div class="bubbles">
+                <div class="bubble"></div>
+                <div class="bubble"></div>
+                <div class="bubble"></div>
+                <div class="bubble"></div>
+                <div class="bubble"></div>
+            </div>
+            
+            <div class="stars">
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+            </div>
+            
+            <div class="dna-helix">
+                <div class="dna-strand"></div>
+                <div class="dna-strand" style="transform: rotate(90deg)"></div>
+            </div>
+            
+            <div class="energy-pulse"></div>
+            <div class="scan-line"></div>
+            
+            <div class="particle-trail">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+            
+            <div class="audio-wave">
+                <div class="wave-bar"></div>
+                <div class="wave-bar" style="animation-delay: 0.1s"></div>
+                <div class="wave-bar" style="animation-delay: 0.2s"></div>
+                <div class="wave-bar" style="animation-delay: 0.3s"></div>
+                <div class="wave-bar" style="animation-delay: 0.4s"></div>
+            </div>
+            
+            <div class="magnetic-field"></div>
+            <div class="data-stream"></div>
+        </div>
+        
+        <!-- 主要内容 -->
+        <div class="content-wrapper">
+            <div class="loading-text">
+                <span>欢</span>
+                <span>迎</span>
+                <span>来</span>
+                <span>到</span>
+                <span>z</span>
+                <span>i</span>
+                <span>y</span>
+                <span>u</span>
+                <span>a</span>
+                <span>n</span>
+                <span>7</span>
+                <span>7</span>
+                <span>的</span>
+                <span>网</span>
+                <span>站</span>
+            </div>
+            
+            <!-- 光效果 -->
+            <div class="glow-effect"></div>
+            
+            <!-- 进度条 -->
+            <div class="loading-progress">
+                <div class="progress-bar"></div>
+                <div class="progress-text">Loading...</div>
+            </div>
+            
+            <!-- 装饰元素 -->
+            <div class="decorative-elements">
+                <div class="circle-pulse"></div>
+                <div class="wave-lines"></div>
+                <div class="rotating-squares"></div>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+</body>
+</html> 

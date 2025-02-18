@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供字符计数器，统计文本中的字符数、单词数、行数、字符分类（字母、数字、空格、标点符号）和中文统计（中文字符、中文标点），方便快捷。">
+    <title>字符计数器 - 文本字符统计工具</title>
+    <link rel="stylesheet" href="/static/css/character_counter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>字符计数器</h1>
+        
+        <div class="counter-container">
+            <div class="input-area">
+                <textarea id="text-input" placeholder="在此输入或粘贴文本..."></textarea>
+                <button id="clear-btn">清空</button>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-group">
+                    <h3>基本统计</h3>
+                    <div class="stat-item">
+                        <span>总字符数：</span>
+                        <span id="total-chars">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>不含空格字符数：</span>
+                        <span id="chars-no-spaces">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>单词数：</span>
+                        <span id="word-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>行数：</span>
+                        <span id="line-count">0</span>
+                    </div>
+                </div>
+                
+                <div class="stat-group">
+                    <h3>字符分类</h3>
+                    <div class="stat-item">
+                        <span>字母：</span>
+                        <span id="letter-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>数字：</span>
+                        <span id="number-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>空格：</span>
+                        <span id="space-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>标点符号：</span>
+                        <span id="punctuation-count">0</span>
+                    </div>
+                </div>
+                
+                <div class="stat-group">
+                    <h3>中文统计</h3>
+                    <div class="stat-item">
+                        <span>中文字符：</span>
+                        <span id="chinese-count">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>中文标点：</span>
+                        <span id="chinese-punct-count">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/character_counter.js"></script>
+</body>
+</html> 

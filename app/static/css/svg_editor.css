@@ -1,0 +1,193 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.editor-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 40px);
+}
+
+.toolbar {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.tool-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.tool-group button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tool-group button.active {
+    background: #007bff;
+    color: white;
+}
+
+.tool-group input[type="color"] {
+    width: 40px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.tool-group input[type="number"],
+.tool-group input[type="range"] {
+    width: 60px;
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.workspace {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.canvas-container {
+    flex: 1;
+    overflow: auto;
+    background: #fff;
+    position: relative;
+}
+
+#svg-canvas {
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin: 20px;
+}
+
+.properties-panel {
+    width: 300px;
+    padding: 20px;
+    border-left: 1px solid #ddd;
+    background: #f8f9fa;
+    overflow-y: auto;
+}
+
+.property-group {
+    margin-bottom: 15px;
+}
+
+.property-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.property-group input,
+.property-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.property-group button {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+}
+
+.property-group button.active {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+}
+
+.bottom-bar {
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.zoom-controls button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    background: #f8f9fa;
+    cursor: pointer;
+}
+
+.file-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.file-controls button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background: #28a745;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.file-controls button:hover {
+    background: #218838;
+}
+
+.coordinates {
+    color: #666;
+    font-family: monospace;
+}
+
+/* 选择框样式 */
+.selection-box {
+    position: absolute;
+    border: 1px solid #007bff;
+    background: rgba(0, 123, 255, 0.1);
+    pointer-events: none;
+}
+
+/* 控制点样式 */
+.control-point {
+    width: 8px;
+    height: 8px;
+    background: white;
+    border: 1px solid #007bff;
+    position: absolute;
+    cursor: pointer;
+}
+
+/* 旋转控制点 */
+.rotation-handle {
+    width: 10px;
+    height: 10px;
+    background: #007bff;
+    border-radius: 50%;
+    position: absolute;
+    cursor: pointer;
+} 

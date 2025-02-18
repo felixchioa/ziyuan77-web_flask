@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供单位换算器，支持长度、面积、体积、重量、温度、速度、时间、数据大小等多种单位的转换，方便快捷。">
+    <title>单位换算器</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/unit_converter.css') }}">
+</head>
+<body>
+    <div class="converter-container">
+        <h1>单位换算器</h1>
+        
+        <div class="category-selector">
+            <select id="category">
+                <option value="length">长度</option>
+                <option value="area">面积</option>
+                <option value="volume">体积</option>
+                <option value="weight">重量</option>
+                <option value="temperature">温度</option>
+                <option value="speed">速度</option>
+                <option value="time">时间</option>
+                <option value="data">数据大小</option>
+            </select>
+        </div>
+
+        <div class="conversion-panel">
+            <div class="input-group">
+                <input type="number" id="from-value" step="any">
+                <select id="from-unit"></select>
+            </div>
+            <button onclick="swapUnits()">⇄</button>
+            <div class="input-group">
+                <input type="number" id="to-value" step="any" readonly>
+                <select id="to-unit"></select>
+            </div>
+        </div>
+
+        <div class="common-conversions">
+            <h3>常用换算</h3>
+            <div id="quick-conversions"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/unit_converter.js') }}"></script>
+</body>
+</html> 

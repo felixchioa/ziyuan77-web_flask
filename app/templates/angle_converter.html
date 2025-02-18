@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供角度单位转换器，支持度、弧度、百分度、转、分、秒等多种角度单位的转换，方便快捷。">
+    <title>角度单位转换器</title>
+    <link rel="stylesheet" href="/static/css/angle_converter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>角度单位转换器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <div class="unit-input">
+                    <label>度 (°)</label>
+                    <input type="number" id="degrees" step="any" placeholder="输入角度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>弧度 (rad)</label>
+                    <input type="number" id="radians" step="any" placeholder="输入角度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>百分度 (grad)</label>
+                    <input type="number" id="gradians" step="any" placeholder="输入角度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>圆周率 (π rad)</label>
+                    <input type="number" id="pi-radians" step="any" placeholder="输入角度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>转 (turn)</label>
+                    <input type="number" id="turns" step="any" placeholder="输入角度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>分 (')</label>
+                    <input type="number" id="minutes" step="any" placeholder="输入角度...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>秒 (")</label>
+                    <input type="number" id="seconds" step="any" placeholder="输入角度...">
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>常用换算关系</h3>
+                <ul>
+                    <li>1 圆周 = 360°</li>
+                    <li>1 弧度 = 180/π 度</li>
+                    <li>1 百分度 = 0.9°</li>
+                    <li>1 转 = 360°</li>
+                    <li>1° = 60 分</li>
+                    <li>1 分 = 60 秒</li>
+                    <li>π 弧度 = 180°</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/angle_converter.js"></script>
+</body>
+</html> 

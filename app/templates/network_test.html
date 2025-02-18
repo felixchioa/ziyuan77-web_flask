@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供网络连通性测试工具，支持目标主机连通性测试、持续测试、间隔测试、测试结果导出等功能，方便快捷。">
+    <title>网络连通性测试</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/network_test.css') }}">
+</head>
+<body>
+    <div class="test-container">
+        <h1>网络连通性测试</h1>
+        
+        <div class="test-section">
+            <div class="test-input">
+                <input type="text" id="target-input" placeholder="输入目标主机（IP或域名）">
+                <div class="test-options">
+                    <label>
+                        <input type="checkbox" id="continuous-test" checked>
+                        持续测试
+                    </label>
+                    <label>
+                        <input type="number" id="interval" value="1" min="1" max="60">
+                        秒间隔
+                    </label>
+                </div>
+            </div>
+
+            <div class="test-tools">
+                <div class="tool-group">
+                    <h3>基础测试</h3>
+                    <button id="ping-btn" onclick="startPing()">Ping测试</button>
+                    <button onclick="startTCPing()">TCPing测试</button>
+                    <button onclick="testDNS()">DNS解析</button>
+                    <button onclick="testWebsite()">网站测试</button>
+                </div>
+
+                <div class="tool-group">
+                    <h3>端口测试</h3>
+                    <div class="port-input">
+                        <input type="text" id="port-input" placeholder="输入端口（例如：80,443 或 1-1000）">
+                        <button onclick="testPorts()">测试端口</button>
+                    </div>
+                </div>
+
+                <div class="tool-group">
+                    <h3>网络质量</h3>
+                    <button onclick="testBandwidth()">带宽测试</button>
+                    <button onclick="testLatency()">延迟测试</button>
+                    <button onclick="testPacketLoss()">丢包测试</button>
+                    <button onclick="testJitter()">抖动测试</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <div class="result-header">
+                <h3>测试结果</h3>
+                <div class="result-controls">
+                    <button onclick="clearResults()">清空</button>
+                    <button onclick="exportResults()">导出</button>
+                </div>
+            </div>
+
+            <div class="result-tabs">
+                <button class="tab-btn active" data-tab="realtime">实时数据</button>
+                <button class="tab-btn" data-tab="statistics">统计分析</button>
+                <button class="tab-btn" data-tab="chart">图表展示</button>
+            </div>
+
+            <div class="tab-content active" id="realtime-data">
+                <div class="status-panel">
+                    <div class="status-item">
+                        <span class="label">状态：</span>
+                        <span class="value" id="connection-status">未开始</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">已测试：</span>
+                        <span class="value" id="test-count">0</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">成功率：</span>
+                        <span class="value" id="success-rate">0%</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="label">平均延迟：</span>
+                        <span class="value" id="avg-latency">0ms</span>
+                    </div>
+                </div>
+                <div class="log-panel" id="test-log"></div>
+            </div>
+
+            <div class="tab-content" id="statistics-data">
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <h4>延迟统计</h4>
+                        <div class="stat-content" id="latency-stats"></div>
+                    </div>
+                    <div class="stat-item">
+                        <h4>丢包统计</h4>
+                        <div class="stat-content" id="loss-stats"></div>
+                    </div>
+                    <div class="stat-item">
+                        <h4>带宽统计</h4>
+                        <div class="stat-content" id="bandwidth-stats"></div>
+                    </div>
+                    <div class="stat-item">
+                        <h4>路由分析</h4>
+                        <div class="stat-content" id="route-stats"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="chart-data">
+                <div class="chart-container">
+                    <canvas id="latency-chart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="packet-loss-chart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="bandwidth-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h3>测试历史</h3>
+            <div class="history-list" id="test-history"></div>
+        </div>
+
+        <div class="result-item" id="port-scan-section" style="display:none">
+            <h3>端口扫描结果</h3>
+            <div class="scan-progress">
+                <div id="scan-status">准备就绪</div>
+                <div class="progress-bar">
+                    <div id="progress-inner"></div>
+                </div>
+            </div>
+            
+            <div class="open-ports-summary">
+                <h4>开放端口摘要</h4>
+                <div id="open-ports-list"></div>
+            </div>
+            
+            <div class="port-list">
+                <table id="port-table">
+                    <thead>
+                        <tr>
+                            <th>端口</th>
+                            <th>状态</th>
+                            <th>服务</th>
+                        </tr>
+                    </thead>
+                    <tbody id="port-results"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="result-item">
+            <h3>响应时间</h3>
+            <div class="chart-container">
+                <canvas id="response-chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/network_test.js') }}"></script>
+</body>
+</html> 

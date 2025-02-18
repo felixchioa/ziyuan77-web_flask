@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供Cron表达式生成器，支持简单模式和高级模式，方便快捷。">
+    <title>Cron表达式生成器</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/crontab_generator.css') }}">
+</head>
+<body>
+    <div class="generator-container">
+        <h1>Cron表达式生成器</h1>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="simple">简单模式</button>
+            <button class="tab-btn" data-tab="advanced">高级模式</button>
+        </div>
+
+        <div class="tab-content" id="simple-tab">
+            <div class="section">
+                <h3>分钟</h3>
+                <select id="minute-select">
+                    <option value="*">每分钟</option>
+                    <option value="*/5">每5分钟</option>
+                    <option value="*/10">每10分钟</option>
+                    <option value="*/15">每15分钟</option>
+                    <option value="*/30">每30分钟</option>
+                    <option value="0">整点</option>
+                    <option value="custom">自定义</option>
+                </select>
+                <input type="number" id="minute-custom" min="0" max="59" class="custom-input" style="display: none;">
+            </div>
+
+            <div class="section">
+                <h3>小时</h3>
+                <select id="hour-select">
+                    <option value="*">每小时</option>
+                    <option value="*/2">每2小时</option>
+                    <option value="*/3">每3小时</option>
+                    <option value="*/4">每4小时</option>
+                    <option value="*/6">每6小时</option>
+                    <option value="*/12">每12小时</option>
+                    <option value="custom">自定义</option>
+                </select>
+                <input type="number" id="hour-custom" min="0" max="23" class="custom-input" style="display: none;">
+            </div>
+
+            <div class="section">
+                <h3>日期</h3>
+                <select id="day-select">
+                    <option value="*">每天</option>
+                    <option value="*/2">每2天</option>
+                    <option value="*/7">每周</option>
+                    <option value="1">每月1号</option>
+                    <option value="15">每月15号</option>
+                    <option value="L">每月最后一天</option>
+                    <option value="custom">自定义</option>
+                </select>
+                <input type="number" id="day-custom" min="1" max="31" class="custom-input" style="display: none;">
+            </div>
+
+            <div class="section">
+                <h3>月份</h3>
+                <select id="month-select">
+                    <option value="*">每月</option>
+                    <option value="*/3">每季度</option>
+                    <option value="*/6">每半年</option>
+                    <option value="1">一月</option>
+                    <option value="custom">自定义</option>
+                </select>
+                <input type="number" id="month-custom" min="1" max="12" class="custom-input" style="display: none;">
+            </div>
+
+            <div class="section">
+                <h3>星期</h3>
+                <select id="week-select">
+                    <option value="*">每天</option>
+                    <option value="1-5">工作日</option>
+                    <option value="6,0">周末</option>
+                    <option value="1">周一</option>
+                    <option value="custom">自定义</option>
+                </select>
+                <div id="week-custom" class="week-checkboxes" style="display: none;">
+                    <label><input type="checkbox" value="0"> 周日</label>
+                    <label><input type="checkbox" value="1"> 周一</label>
+                    <label><input type="checkbox" value="2"> 周二</label>
+                    <label><input type="checkbox" value="3"> 周三</label>
+                    <label><input type="checkbox" value="4"> 周四</label>
+                    <label><input type="checkbox" value="5"> 周五</label>
+                    <label><input type="checkbox" value="6"> 周六</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="advanced-tab" style="display: none;">
+            <div class="section">
+                <h3>Cron表达式</h3>
+                <input type="text" id="cron-input" placeholder="* * * * *">
+                <div class="cron-format">
+                    格式：分钟 小时 日期 月份 星期
+                </div>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <div class="cron-expression">
+                <h3>生成的Cron表达式：</h3>
+                <div class="expression-display">
+                    <span id="cron-result">* * * * *</span>
+                    <button onclick="copyCron()">复制</button>
+                </div>
+            </div>
+
+            <div class="next-runs">
+                <h3>接下来的执行时间：</h3>
+                <ul id="next-runs-list"></ul>
+            </div>
+
+            <div class="description">
+                <h3>表达式说明：</h3>
+                <p id="cron-description"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/crontab_generator.js') }}"></script>
+</body>
+</html> 

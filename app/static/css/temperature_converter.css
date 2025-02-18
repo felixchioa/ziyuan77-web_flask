@@ -1,0 +1,93 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.converter-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.temp-input {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.temp-input label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+input {
+    padding: 12px;
+    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.info-section {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.info-section h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+.formulas {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.formula {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background-color: white;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.reference-points ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #666;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .converter-container {
+        padding: 15px;
+    }
+    
+    .formula {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+} 

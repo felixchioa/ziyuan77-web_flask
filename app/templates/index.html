@@ -2,8 +2,157 @@
 <html lang="zh-CN">
     <head>
         <meta charset="UTF-8" />
-        <title>主页</title>
+        <meta name="description" content="资源77主页，包括项目、日常、工具、资源站、博客、五子棋、常用控制台命令及其参数、网站更新、网站源码等，方便快捷。">
+        <title>77资源站，提供各种有用的工具和资源</title>
         <link rel="stylesheet" href="/static/css/index.css" />
+        <style>
+        .network-info {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .network-info-header {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+        }
+
+        .network-info-header:hover {
+            background-color: #f0f0f0;
+        }
+
+        .network-info-content {
+            display: none;
+        }
+
+        .network-info-content.show {
+            display: block;
+        }
+
+        .toggle-icon {
+            margin-right: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.rotated {
+            transform: rotate(90deg);
+        }
+
+        .info-item {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 10px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .info-value {
+            margin-left: 10px;
+        }
+
+        /* 时间显示的基础样式 */
+        .time-display {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            position: relative;
+        }
+
+        /* 样式1：默认简约风格 */
+        .time-style-1 {
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .time-style-1 .time-label { color: #333; }
+        .time-style-1 .time-value { color: #007bff; }
+
+        /* 样式2：深色现代风格 */
+        .time-style-2 {
+            background-color: #2c3e50;
+            color: white;
+        }
+        .time-style-2 .time-label { color: #ecf0f1; }
+        .time-style-2 .time-value { color: #3498db; }
+
+        /* 样式3：渐变风格 */
+        .time-style-3 {
+            background: linear-gradient(135deg, #6dd5ed, #2193b0);
+            color: white;
+        }
+        .time-style-3 .time-label { color: #fff; }
+        .time-style-3 .time-value { color: #ffeb3b; }
+
+        /* 样式4：边框风格 */
+        .time-style-4 {
+            background-color: white;
+            border: 2px solid #e74c3c;
+        }
+        .time-style-4 .time-label { color: #c0392b; }
+        .time-style-4 .time-value { color: #e74c3c; }
+
+        /* 样式5：极简风格 */
+        .time-style-5 {
+            background-color: transparent;
+            border-bottom: 2px solid #34495e;
+        }
+        .time-style-5 .time-label { color: #7f8c8d; }
+        .time-style-5 .time-value { color: #34495e; }
+
+        /* 样式选择器 */
+        .style-selector {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .style-selector select {
+            padding: 2px 5px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+
+        .device-info {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .device-info-header {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+        }
+
+        .device-info-header:hover {
+            background-color: #f0f0f0;
+        }
+
+        .device-info-content {
+            display: none;
+        }
+
+        .device-info-content.show {
+            display: block;
+        }
+        </style>
     </head>
     <body>
         <div class="container">
@@ -14,17 +163,436 @@
                     <li><a href="/tools">工具</a></li>
                     <li><a href="https://file.ziyuan77.com" target="_blank">资源站</a></li>
                     <li><a href="https://blog.ziyuan77.com" target="_blank">博客</a></li>
+                    <li><a href="/gomoku">五子棋，可联机对战</a></li>
+                    <li><a href="/cmd_commands">常用控制台命令及其参数</a></li>
                 </ul>
             </div>
             <div class="content">
                 <h1>ziyuan77的网站</h1>
+                
                 <h3>欢迎来到ziyuan77的网站，这里提供各种有用的工具和资源。</h3>
+                
+                <div class="time-display time-style-1">
+                    <span class="time-label">当前时间 (UTC+8):</span>
+                    <span class="time-value" id="current-time">{{ current_time }}</span>
+                    <div class="style-selector">
+                        <select onchange="changeTimeStyle(this.value)">
+                            <option value="1">简约风格</option>
+                            <option value="2">深色现代</option>
+                            <option value="3">渐变风格</option>
+                            <option value="4">边框风格</option>
+                            <option value="5">极简风格</option>
+                        </select>
+                    </div>
+                </div>
+
                 <audio controls>
                     <source src="/static/audio/index.mp3" type="audio/mpeg">
                     您的浏览器不支持音频元素。
                 </audio>
+                <audio controls>
+                    <source src="/static/audio/1.flac" type="audio/mpeg">
+                    您的浏览器不支持音频元素。
+                </audio>
+
+                <div class="device-info">
+                    <div class="device-info-header" onclick="toggleDeviceInfo()">
+                        <span class="toggle-icon">▶</span>
+                        <span>设备信息</span>
+                    </div>
+                    <div class="device-info-content">
+                        <div class="info-item">
+                            <span class="info-label">浏览器:</span>
+                            <span class="info-value" id="browser-info">检测中...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">浏览器语言:</span>
+                            <span class="info-value" id="browser-language">检测中...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">操作系统:</span>
+                            <span class="info-value" id="os-info">检测中...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">设备类型:</span>
+                            <span class="info-value" id="device-type">检测中...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">屏幕分辨率:</span>
+                            <span class="info-value" id="screen-resolution">检测中...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">像素比:</span>
+                            <span class="info-value" id="pixel-ratio">检测中...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="network-info">
+                    <div class="network-info-header" onclick="toggleNetworkInfo()">
+                        <span class="toggle-icon">▶</span>
+                        <span>网络信息</span>
+                    </div>
+                    <div class="network-info-content">
+                        <div class="info-item">
+                            <span class="info-label">您的IP地址:</span>
+                            <span class="info-value" id="visitor-ip">{{ visitor_ip }} (来自{{ location }})</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">服务器延迟（到达网站服务器）:</span>
+                            <span class="info-value" id="server-latency">检测中...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">网络速率（与网站服务器的连接速度）:</span>
+                            <span class="info-value" id="network-speed">检测中...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">网络类型:</span>
+                            <span class="info-value" id="connection-type">检测中...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 添加最近更新和热门工具区域 -->
+
+
+                    <div class="section popular-tools">
+                        <h2>热门工具</h2>
+                        <div class="tool-grid">
+                            <a href="/password" class="tool-item">
+                                <span class="tool-icon">🔑</span>
+                                <span class="tool-name">密码生成器</span>
+                            </a>
+                            <a href="/ping" class="tool-item">
+                                <span class="tool-icon">📟</span>
+                                <span class="tool-name">网络联通性测试</span>
+                            </a>
+                            <a href="/calculator" class="tool-item">
+                                <span class="tool-icon">🧮</span>
+                                <span class="tool-name">计算器</span>
+                            </a>
+                            <a href="/qrcode" class="tool-item">
+                                <span class="tool-icon">📱</span>
+                                <span class="tool-name">二维码生成</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <footer class="footer">
+                <div class="footer-links">
+                    <a href="/feedback">提供反馈</a>
+                    <span class="divider">|</span>
+                    <a href="/github">网站源码</a>
+                    <span class="divider">|</span>
+                    <a href="/update">网站更新</a>
+                </div>
+            </footer>
         </div>
         <script src="/static/js/index.js"></script>
+        <script>
+        function updateTime() {
+            const timeElement = document.getElementById('current-time');
+            const options = {
+                timeZone: 'Asia/Shanghai',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+            
+            setInterval(() => {
+                const now = new Date();
+                timeElement.textContent = now.toLocaleString('zh-CN', options);
+            }, 1000);
+        }
+
+        function checkLatency() {
+            const latencyElement = document.getElementById('server-latency');
+            
+            // 定义测试延迟的函数
+            const testLatency = () => {
+                const startTime = performance.now();
+                
+                fetch('/ping', {
+                    method: 'GET',
+                    cache: 'no-store'
+                })
+                .then(() => {
+                    const latency = Math.round(performance.now() - startTime);
+                    latencyElement.textContent = latency + ' ms';
+                    
+                    // 根据延迟设置不同的颜色
+                    if (latency < 200) {
+                        latencyElement.style.color = '#32CD32'; // 浅绿色
+                    } else if (latency < 500) {
+                        latencyElement.style.color = '#FFA500'; // 橙色
+                    } else {
+                        latencyElement.style.color = '#FF4500'; // 红橙色
+                    }
+                })
+                .catch(() => {
+                    latencyElement.textContent = '连接失败';
+                    latencyElement.style.color = '#FF4500';
+                });
+            };
+            
+            // 页面加载时立即测试一次
+            testLatency();
+            
+            // 然后每10秒测试一次
+            setInterval(testLatency, 10000);
+        }
+
+        function checkNetworkSpeed() {
+            const speedElement = document.getElementById('network-speed');
+            
+            const testSpeed = () => {
+                const startTime = performance.now();
+                let downloadSize = 0;
+                
+                fetch('/static/test.bin', {
+                    cache: 'no-store'
+                })
+                .then(response => {
+                    downloadSize = parseInt(response.headers.get('content-length') || '0');
+                    return response.blob();
+                })
+                .then(data => {
+                    const endTime = performance.now();
+                    const duration = (endTime - startTime) / 1000; // 转换为秒
+                    const bitsLoaded = downloadSize * 8;
+                    const speedBps = (bitsLoaded / duration).toFixed(2);
+                    const speedMbps = (speedBps / 1024 / 1024).toFixed(2);
+                    
+                    speedElement.textContent = speedMbps + ' Mbps';
+                    
+                    // 根据速度设置不同的颜色
+                    if (speedMbps > 5) {
+                        speedElement.style.color = '#32CD32'; // 浅绿色
+                    } else if (speedMbps > 1) {
+                        speedElement.style.color = '#FFA500'; // 橙色
+                    } else {
+                        speedElement.style.color = '#FF4500'; // 红橙色
+                    }
+                })
+                .catch(() => {
+                    speedElement.textContent = '测速失败';
+                    speedElement.style.color = '#FF4500';
+                });
+            };
+            
+            // 页面加载时立即测试一次
+            testSpeed();
+            
+            // 然后每10秒测试一次
+            setInterval(testSpeed, 10000);
+        }
+
+        function toggleNetworkInfo() {
+            const content = document.querySelector('.network-info-content');
+            const icon = document.querySelector('.toggle-icon');
+            content.classList.toggle('show');
+            icon.classList.toggle('rotated');
+            
+            // 只在展开时才开始检测网络状态
+            if (content.classList.contains('show')) {
+                checkLatency();
+                checkNetworkSpeed();
+            }
+        }
+
+        function updateSystemInfo() {
+            // 获取浏览器信息
+            const browserInfo = document.getElementById('browser-info');
+            const ua = navigator.userAgent;
+            let browser = 'Unknown';
+            if (ua.includes('Chrome')) browser = 'Chrome';
+            else if (ua.includes('Firefox')) browser = 'Firefox';
+            else if (ua.includes('Safari')) browser = 'Safari';
+            else if (ua.includes('Edge')) browser = 'Edge';
+            else if (ua.includes('MSIE') || ua.includes('Trident/')) browser = 'Internet Explorer';
+            browserInfo.textContent = browser;
+
+            // 获取浏览器语言
+            const browserLanguage = document.getElementById('browser-language');
+            browserLanguage.textContent = navigator.language || navigator.userLanguage || '未知';
+
+            // 获取设备类型和操作系统信息
+            const deviceType = document.getElementById('device-type');
+            const osInfo = document.getElementById('os-info');
+            const uaLower = navigator.userAgent.toLowerCase();
+            
+            // 更准确的设备类型检测
+            if (/ipad|android(?!.*mobile)/i.test(uaLower)) {
+                deviceType.textContent = '平板设备';
+            } else if (/iphone|android|webos|blackberry|iemobile|opera mini/i.test(uaLower)) {
+                deviceType.textContent = '移动设备';
+            } else if (/macintosh|windows|linux/i.test(uaLower)) {
+                deviceType.textContent = '桌面设备';
+            } else {
+                deviceType.textContent = '未知设备';
+            }
+
+            // 更详细的操作系统检测
+            let os = 'Unknown';
+            if (uaLower.includes('harmonyos')) {
+                os = 'HarmonyOS';  // 鸿蒙系统
+            } else if (uaLower.includes('windows')) {
+                if (uaLower.includes('windows nt 10.0')) os = 'Windows 10/11';
+                else if (uaLower.includes('windows nt 6.3')) os = 'Windows 8.1';
+                else if (uaLower.includes('windows nt 6.2')) os = 'Windows 8';
+                else if (uaLower.includes('windows nt 6.1')) os = 'Windows 7';
+                else os = 'Windows';
+            } else if (uaLower.includes('mac')) {
+                if (uaLower.includes('iphone')) os = 'iOS';
+                else if (uaLower.includes('ipad')) os = 'iPadOS';
+                else os = 'macOS';
+            } else if (uaLower.includes('android')) {
+                const match = uaLower.match(/android\s([0-9.]+)/);
+                os = match ? `Android ${match[1]}` : 'Android';
+            } else if (uaLower.includes('linux')) {
+                if (uaLower.includes('ubuntu')) os = 'Ubuntu';
+                else if (uaLower.includes('fedora')) os = 'Fedora';
+                else if (uaLower.includes('debian')) os = 'Debian';
+                else if (uaLower.includes('centos')) os = 'CentOS';
+                else os = 'Linux';
+            } else if (uaLower.includes('cros')) {
+                os = 'Chrome OS';
+            }
+            osInfo.textContent = os;
+
+            // 获取设备像素比
+            const pixelRatio = document.getElementById('pixel-ratio');
+            pixelRatio.textContent = window.devicePixelRatio.toFixed(2);
+
+            // 获取屏幕分辨率
+            const screenResolution = document.getElementById('screen-resolution');
+            screenResolution.textContent = `${window.screen.width} x ${window.screen.height}`;
+
+            // 获取网络连接类型
+            const connectionType = document.getElementById('connection-type');
+            const ip = document.getElementById('visitor-ip').textContent;
+            
+            // 检查是否为本地地址
+            if (ip === '127.0.0.1' || ip === 'localhost' || ip.startsWith('192.168.') || ip.startsWith('10.')) {
+                connectionType.textContent = '本地网络';
+            } else if ('connection' in navigator) {
+                const conn = navigator.connection;
+                let type = '未知';
+                
+                // 优先检查实际的连接类型
+                if (conn.type) {
+                    switch (conn.type) {
+                        case 'wifi':
+                            type = 'WiFi';
+                            break;
+                        case 'cellular':
+                            // 如果是移动网络，再检查具体的网络代
+                            if (conn.effectiveType) {
+                                switch (conn.effectiveType) {
+                                    case 'slow-2g':
+                                        type = '2G弱网';
+                                        break;
+                                    case '2g':
+                                        type = '2G';
+                                        break;
+                                    case '3g':
+                                        type = '3G';
+                                        break;
+                                    case '4g':
+                                        type = '4G/LTE';
+                                        break;
+                                    default:
+                                        type = '移动网络';
+                                }
+                            } else {
+                                type = '移动网络';
+                            }
+                            break;
+                        case 'ethernet':
+                            type = '有线网络';
+                            break;
+                        case 'none':
+                            type = '离线';
+                            break;
+                        default:
+                            // 如果type无法判断，使用effectiveType
+                            if (conn.effectiveType) {
+                                switch (conn.effectiveType) {
+                                    case 'slow-2g':
+                                        type = '低速网络';
+                                        break;
+                                    case '2g':
+                                        type = '2G';
+                                        break;
+                                    case '3g':
+                                        type = '3G';
+                                        break;
+                                    case '4g':
+                                        type = '4G/LTE';
+                                        break;
+                                    default:
+                                        type = '宽带网络';
+                                }
+                            }
+                    }
+                } else if (conn.effectiveType) {
+                    // 如果只有effectiveType可用
+                    switch (conn.effectiveType) {
+                        case 'slow-2g':
+                            type = '低速网络';
+                            break;
+                        case '2g':
+                            type = '2G';
+                            break;
+                        case '3g':
+                            type = '3G';
+                            break;
+                        case '4g':
+                            type = '4G/LTE';
+                            break;
+                        default:
+                            type = '宽带网络';
+                    }
+                }
+                connectionType.textContent = type;
+            } else {
+                connectionType.textContent = '浏览器不支持此功能';
+            }
+        }
+
+        function changeTimeStyle(style) {
+            const timeDisplay = document.querySelector('.time-display');
+            // 移除所有样式类
+            timeDisplay.classList.remove('time-style-1', 'time-style-2', 'time-style-3', 'time-style-4', 'time-style-5');
+            // 添加选中的样式类
+            timeDisplay.classList.add(`time-style-${style}`);
+            
+            // 保存用户选择到 localStorage
+            localStorage.setItem('preferredTimeStyle', style);
+        }
+
+        function toggleDeviceInfo() {
+            const content = document.querySelector('.device-info-content');
+            const icon = document.querySelector('.device-info-header .toggle-icon');
+            content.classList.toggle('show');
+            icon.classList.toggle('rotated');
+        }
+
+        // 页面加载时恢复用户的样式选择
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedStyle = localStorage.getItem('preferredTimeStyle');
+            if (savedStyle) {
+                changeTimeStyle(savedStyle);
+                document.querySelector('.style-selector select').value = savedStyle;
+            }
+            updateTime();
+            updateSystemInfo();
+        });
+        </script>
     </body>
 </html>

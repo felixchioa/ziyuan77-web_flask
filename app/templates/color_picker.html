@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供颜色选择器，支持HEX、RGB、HSL、CMYK等多种颜色格式选择，方便快捷。">
+    <title>颜色选择器</title>
+    <link rel="stylesheet" href="/static/css/color_picker.css">
+</head>
+<body>
+    <div class="container">
+        <h1>颜色选择器</h1>
+        
+        <div class="color-picker-container">
+            <div class="color-display">
+                <div id="color-preview"></div>
+                <div class="color-values">
+                    <div class="value-group">
+                        <label>HEX</label>
+                        <input type="text" id="hex-value" spellcheck="false">
+                    </div>
+                    <div class="value-group">
+                        <label>RGB</label>
+                        <input type="text" id="rgb-value" spellcheck="false">
+                    </div>
+                    <div class="value-group">
+                        <label>HSL</label>
+                        <input type="text" id="hsl-value" spellcheck="false">
+                    </div>
+                    <div class="value-group">
+                        <label>CMYK</label>
+                        <input type="text" id="cmyk-value" spellcheck="false">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="color-controls">
+                <div class="control-group">
+                    <label>色相 (H)</label>
+                    <input type="range" id="hue-slider" min="0" max="360" value="0">
+                    <input type="number" id="hue-input" min="0" max="360" value="0">
+                </div>
+                <div class="control-group">
+                    <label>饱和度 (S)</label>
+                    <input type="range" id="saturation-slider" min="0" max="100" value="100">
+                    <input type="number" id="saturation-input" min="0" max="100" value="100">
+                </div>
+                <div class="control-group">
+                    <label>亮度 (L)</label>
+                    <input type="range" id="lightness-slider" min="0" max="100" value="50">
+                    <input type="number" id="lightness-input" min="0" max="100" value="50">
+                </div>
+                <div class="control-group">
+                    <label>透明度 (A)</label>
+                    <input type="range" id="alpha-slider" min="0" max="100" value="100">
+                    <input type="number" id="alpha-input" min="0" max="100" value="100">
+                </div>
+            </div>
+            
+            <div class="color-palettes">
+                <div class="palette-section">
+                    <h3>调色板</h3>
+                    <div class="palette-grid" id="custom-palette"></div>
+                    <button id="add-to-palette">添加到调色板</button>
+                </div>
+                
+                <div class="harmony-section">
+                    <h3>色彩和谐</h3>
+                    <div class="harmony-options">
+                        <button data-harmony="complementary" class="active">互补色</button>
+                        <button data-harmony="analogous">邻近色</button>
+                        <button data-harmony="triadic">三角色</button>
+                        <button data-harmony="split-complementary">分裂互补色</button>
+                        <button data-harmony="tetradic">四角色</button>
+                    </div>
+                    <div class="harmony-colors" id="harmony-colors"></div>
+                </div>
+            </div>
+            
+            <div class="color-tools">
+                <div class="tool-section">
+                    <h3>工具</h3>
+                    <div class="tool-buttons">
+                        <button id="copy-color">复制颜色</button>
+                        <button id="random-color">随机颜色</button>
+                        <button id="invert-color">反转颜色</button>
+                        <button id="gradient-generator">渐变生成</button>
+                    </div>
+                </div>
+                
+                <div class="gradient-section" id="gradient-section" style="display: none;">
+                    <h3>渐变设置</h3>
+                    <div class="gradient-controls">
+                        <select id="gradient-type">
+                            <option value="linear">线性渐变</option>
+                            <option value="radial">径向渐变</option>
+                        </select>
+                        <input type="number" id="gradient-angle" min="0" max="360" value="90">
+                        <button id="add-gradient-color">添加颜色</button>
+                    </div>
+                    <div class="gradient-preview" id="gradient-preview"></div>
+                    <input type="text" id="gradient-code" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/color_picker.js"></script>
+</body>
+</html> 

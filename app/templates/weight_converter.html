@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供重量单位转换器，支持千克、克、毫克、磅、盎司、吨等多种重量单位的转换，方便快捷。">
+    <title>重量单位转换器</title>
+    <link rel="stylesheet" href="/static/css/weight_converter.css">
+</head>
+<body>
+    <div class="container">
+        <h1>重量单位转换器</h1>
+        
+        <div class="converter-container">
+            <div class="input-section">
+                <div class="unit-input">
+                    <label>千克 (kg)</label>
+                    <input type="number" id="kilogram" step="any" placeholder="输入重量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>克 (g)</label>
+                    <input type="number" id="gram" step="any" placeholder="输入重量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>毫克 (mg)</label>
+                    <input type="number" id="milligram" step="any" placeholder="输入重量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>磅 (lb)</label>
+                    <input type="number" id="pound" step="any" placeholder="输入重量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>盎司 (oz)</label>
+                    <input type="number" id="ounce" step="any" placeholder="输入重量...">
+                </div>
+                
+                <div class="unit-input">
+                    <label>吨 (t)</label>
+                    <input type="number" id="ton" step="any" placeholder="输入重量...">
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <h3>常用换算关系</h3>
+                <ul>
+                    <li>1 千克 = 1000 克</li>
+                    <li>1 克 = 1000 毫克</li>
+                    <li>1 千克 ≈ 2.20462 磅</li>
+                    <li>1 磅 = 16 盎司</li>
+                    <li>1 吨 = 1000 千克</li>
+                    <li>1 盎司 ≈ 28.3495 克</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/weight_converter.js"></script>
+</body>
+</html> 

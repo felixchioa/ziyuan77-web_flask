@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="资源77提供字符二进制转换工具，支持UTF-8、UTF-16、ASCII、GBK、GB2312、Big5、ISO-8859-1等多种编码格式，方便快捷。">
+    <title>字符二进制转换</title>
+    <style>
+        @import url("{{ url_for('static', filename='css/binary_converter.css') }}");
+    </style>
+</head>
+<body>
+    <div class="converter-container">
+        <h1>字符二进制转换工具</h1>
+        
+        <div class="input-group">
+            <label for="encoding">编码格式：</label>
+            <select id="encoding">
+                <option value="UTF-8">UTF-8</option>
+                <option value="UTF-16">UTF-16</option>
+                <option value="ASCII">ASCII</option>
+                <option value="GBK">GBK</option>
+                <option value="GB2312">GB2312</option>
+                <option value="Big5">Big5</option>
+                <option value="ISO-8859-1">ISO-8859-1</option>
+            </select>
+            <select id="encryption">
+                <option value="none">不加密</option>
+                <option value="aes">AES加密</option>
+                <option value="rsa">RSA-1024加密</option>
+                <option value="rsa4096">RSA-4096加密</option>
+                <option value="caesar">凯撒密码</option>
+                <option value="reverse">字符反转</option>
+                <option value="base64">Base64</option>
+            </select>
+            <div id="key-input" style="display: none;">
+                <input type="password" id="encryption-key" placeholder="请输入密钥">
+                <button onclick="generateKey()">生成密钥</button>
+                <button onclick="toggleKeyVisibility()">显示/隐藏密钥</button>
+                <div id="key-display">
+                    <div class="key-label">公钥：</div>
+                    <pre id="public-key"></pre>
+                    <div class="key-label">私钥：</div>
+                    <pre id="private-key"></pre>
+                    <button onclick="copyKeys()">复制密钥对</button>
+                </div>
+                <div id="aes-key-display">
+                    <div class="key-label">AES密钥：</div>
+                    <pre id="aes-key"></pre>
+                    <button onclick="copyAESKey()">复制AES密钥</button>
+                </div>
+            </div>
+            <label>
+                <input type="checkbox" id="no-space"> 不带空格输出
+            </label>
+        </div>
+        
+        <div class="input-group">
+            <label for="input-text">输入文本：</label>
+            <textarea id="input-text" placeholder="请输入要转换的文本"></textarea>
+            <div id="text-error" class="error"></div>
+        </div>
+
+        <div>
+            <button onclick="convertToBinary()">转换为二进制</button>
+            <button onclick="convertFromBinary()">二进制转文本</button>
+            <button onclick="copyResult()">复制结果</button>
+            <button onclick="clearAll()">清空</button>
+        </div>
+
+        <div class="animation-container" id="animation-container">
+            <div class="processor">
+                <div class="encryption-animation"></div>
+                <span>⚡</span>
+                <span class="processor-text" id="processor-text">处理中</span>
+            </div>
+        </div>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/binary_converter.js') }}"></script>
+</body>
+</html> 
