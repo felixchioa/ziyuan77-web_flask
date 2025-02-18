@@ -2080,3 +2080,22 @@ def math():
 def download_index():
     logger.debug("Rendering download.html")
     return render_template('download.html')
+
+# 添加新的路由处理密码验证
+@current_app.route('/api/admin/verify_ban_password', methods=['POST'])
+def verify_ban_password():
+    try:
+        data = request.get_json()
+        password = data.get('password')
+        
+        # 直接在服务器端设置密码
+        ADMIN_PASSWORD = "admin123456789"  # 建议使用更复杂的密码
+        
+        if password == ADMIN_PASSWORD:
+            return jsonify({'success': True})
+        else:
+            return jsonify({'success': False})
+            
+    except Exception as e:
+        logger.error(f"Error verifying ban password: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500

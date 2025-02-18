@@ -152,6 +152,31 @@
         .device-info-content.show {
             display: block;
         }
+
+        .test-btn {
+            margin-left: 10px;
+            padding: 2px 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .test-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .test-btn:active {
+            background-color: #dee2e6;
+        }
+
+        .test-btn.testing {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
         </style>
     </head>
     <body>
@@ -186,14 +211,9 @@
                     </div>
                 </div>
 
-                <audio controls>
-                    <source src="/static/audio/index.mp3" type="audio/mpeg">
-                    您的浏览器不支持音频元素。
-                </audio>
-                <audio controls>
-                    <source src="/static/audio/1.flac" type="audio/mpeg">
-                    您的浏览器不支持音频元素。
-                </audio>
+                <div id="audio-container">
+                    <!-- 音频将通过JavaScript动态加载 -->
+                </div>
 
                 <div class="device-info">
                     <div class="device-info-header" onclick="toggleDeviceInfo()">
@@ -239,16 +259,36 @@
                             <span class="info-value" id="visitor-ip">{{ visitor_ip }} (来自{{ location }})</span>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">服务器延迟（到达网站服务器）:</span>
-                            <span class="info-value" id="server-latency">检测中...</span>
+                            <span class="info-label">服务器延迟:</span>
+                            <span class="info-value" id="server-latency">等待测试</span>
+                            <button class="test-btn" data-test="latency">测试</button>
                         </div>
                         <div class="info-item">
-                            <span class="info-label">网络速率（与网站服务器的连接速度）:</span>
-                            <span class="info-value" id="network-speed">检测中...</span>
+                            <span class="info-label">下载速度:</span>
+                            <span class="info-value" id="download-speed">等待测试</span>
+                            <button class="test-btn" data-test="download">测试</button>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">上传速度:</span>
+                            <span class="info-value" id="upload-speed">等待测试</span>
+                            <button class="test-btn" data-test="upload">测试</button>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">DNS解析时间:</span>
+                            <span class="info-value" id="dns-lookup">等待测试</span>
+                            <button class="test-btn" data-test="dns">测试</button>
                         </div>
                         <div class="info-item">
                             <span class="info-label">网络类型:</span>
                             <span class="info-value" id="connection-type">检测中...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">网络状态:</span>
+                            <span class="info-value" id="connection-status">检测中...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">带宽限制:</span>
+                            <span class="info-value" id="bandwidth-limit">检测中...</span>
                         </div>
                     </div>
                 </div>
@@ -310,98 +350,240 @@
             }, 1000);
         }
 
-        function checkLatency() {
-            const latencyElement = document.getElementById('server-latency');
-            
-            // 定义测试延迟的函数
-            const testLatency = () => {
-                const startTime = performance.now();
+        // 添加节流函数
+        function throttle(func, limit) {
+            let inThrottle;
+            return function(...args) {
+                // 先检查点击行为
+                if (clickMonitor.recordClick()) {
+                    return; // 如果触发了强制关闭，直接返回
+                }
                 
-                fetch('/ping', {
-                    method: 'GET',
-                    cache: 'no-store'
-                })
-                .then(() => {
-                    const latency = Math.round(performance.now() - startTime);
-                    latencyElement.textContent = latency + ' ms';
-                    
-                    // 根据延迟设置不同的颜色
-                    if (latency < 200) {
-                        latencyElement.style.color = '#32CD32'; // 浅绿色
-                    } else if (latency < 500) {
-                        latencyElement.style.color = '#FFA500'; // 橙色
-                    } else {
-                        latencyElement.style.color = '#FF4500'; // 红橙色
-                    }
-                })
-                .catch(() => {
-                    latencyElement.textContent = '连接失败';
-                    latencyElement.style.color = '#FF4500';
-                });
-            };
-            
-            // 页面加载时立即测试一次
-            testLatency();
-            
-            // 然后每10秒测试一次
-            setInterval(testLatency, 10000);
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            }
         }
 
-        function checkNetworkSpeed() {
-            const speedElement = document.getElementById('network-speed');
-            
-            const testSpeed = () => {
-                const startTime = performance.now();
-                let downloadSize = 0;
-                
-                fetch('/static/test.bin', {
-                    cache: 'no-store'
-                })
-                .then(response => {
-                    downloadSize = parseInt(response.headers.get('content-length') || '0');
-                    return response.blob();
-                })
-                .then(data => {
-                    const endTime = performance.now();
-                    const duration = (endTime - startTime) / 1000; // 转换为秒
-                    const bitsLoaded = downloadSize * 8;
-                    const speedBps = (bitsLoaded / duration).toFixed(2);
-                    const speedMbps = (speedBps / 1024 / 1024).toFixed(2);
-                    
-                    speedElement.textContent = speedMbps + ' Mbps';
-                    
-                    // 根据速度设置不同的颜色
-                    if (speedMbps > 5) {
-                        speedElement.style.color = '#32CD32'; // 浅绿色
-                    } else if (speedMbps > 1) {
-                        speedElement.style.color = '#FFA500'; // 橙色
-                    } else {
-                        speedElement.style.color = '#FF4500'; // 红橙色
+        // 修改测试函数，添加节流
+        const throttledLatencyTest = throttle(testLatency, 3000);  // 3秒内只能测试一次
+        const throttledDownloadTest = throttle(testDownloadSpeed, 5000);  // 5秒内只能测试一次
+        const throttledUploadTest = throttle(testUploadSpeed, 5000);  // 5秒内只能测试一次
+        const throttledDNSTest = throttle(testDNS, 3000);  // 3秒内只能测试一次
+
+        // 修改按钮点击事件
+        function updateButtonHandlers() {
+            const buttons = document.querySelectorAll('.test-btn');
+            buttons.forEach(button => {
+                const originalOnClick = button.getAttribute('onclick');
+                if (originalOnClick) {
+                    switch(originalOnClick) {
+                        case 'testLatency()':
+                            button.onclick = () => throttledLatencyTest();
+                            break;
+                        case 'testDownloadSpeed()':
+                            button.onclick = () => throttledDownloadTest();
+                            break;
+                        case 'testUploadSpeed()':
+                            button.onclick = () => throttledUploadTest();
+                            break;
+                        case 'testDNS()':
+                            button.onclick = () => throttledDNSTest();
+                            break;
                     }
+                }
+            });
+        }
+
+        function testLatency() {
+            const latencyElement = document.getElementById('server-latency');
+            const button = latencyElement.nextElementSibling;
+            
+            button.classList.add('testing');
+            button.disabled = true;
+            latencyElement.textContent = '测试中...';
+            
+            const startTime = performance.now();
+            
+            fetch('/ping', {
+                method: 'GET',
+                cache: 'no-store'
+            })
+            .then(() => {
+                const latency = Math.round(performance.now() - startTime);
+                latencyElement.textContent = latency + ' ms';
+                latencyElement.style.color = latency < 200 ? '#32CD32' : latency < 500 ? '#FFA500' : '#FF4500';
+            })
+            .catch(() => {
+                latencyElement.textContent = '测试失败';
+                latencyElement.style.color = '#FF4500';
+            })
+            .finally(() => {
+                button.classList.remove('testing');
+                button.disabled = false;
+            });
+        }
+
+        function testDownloadSpeed() {
+            const speedElement = document.getElementById('download-speed');
+            const button = speedElement.nextElementSibling;
+            
+            button.classList.add('testing');
+            button.disabled = true;
+            speedElement.textContent = '测试中...';
+            
+            const startTime = performance.now();
+            const testFileSize = 1024 * 1024; // 1MB
+            
+            fetch('/static/test.bin?' + new Date().getTime(), {
+                cache: 'no-store'
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.blob();
+            })
+            .then(blob => {
+                const endTime = performance.now();
+                const duration = (endTime - startTime) / 1000;
+                const speedMbps = ((testFileSize * 8) / (duration * 1024 * 1024)).toFixed(2);
+                
+                speedElement.textContent = `${speedMbps} Mbps`;
+                speedElement.style.color = speedMbps > 5 ? '#32CD32' : speedMbps > 1 ? '#FFA500' : '#FF4500';
+            })
+            .catch(() => {
+                speedElement.textContent = '测试失败';
+                speedElement.style.color = '#FF4500';
+            })
+            .finally(() => {
+                button.classList.remove('testing');
+                button.disabled = false;
+            });
+        }
+
+        function testUploadSpeed() {
+            const speedElement = document.getElementById('upload-speed');
+            const button = speedElement.nextElementSibling;
+            
+            button.classList.add('testing');
+            button.disabled = true;
+            speedElement.textContent = '测试中...';
+            
+            const testData = new Blob([new ArrayBuffer(512 * 1024)]); // 512KB
+            const formData = new FormData();
+            formData.append('speedtest', testData);
+            
+            const startTime = performance.now();
+            
+            fetch('/speedtest', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                const endTime = performance.now();
+                const duration = (endTime - startTime) / 1000;
+                const speedMbps = ((512 * 8) / (duration * 1024)).toFixed(2);
+                
+                speedElement.textContent = `${speedMbps} Mbps`;
+                speedElement.style.color = speedMbps > 5 ? '#32CD32' : speedMbps > 1 ? '#FFA500' : '#FF4500';
+            })
+            .catch(() => {
+                speedElement.textContent = '测试失败';
+                speedElement.style.color = '#FF4500';
+            })
+            .finally(() => {
+                button.classList.remove('testing');
+                button.disabled = false;
+            });
+        }
+
+        function testDNS() {
+            const dnsElement = document.getElementById('dns-lookup');
+            const button = dnsElement.nextElementSibling;
+            
+            button.classList.add('testing');
+            button.disabled = true;
+            dnsElement.textContent = '测试中...';
+            
+            const dnsStart = performance.now();
+            const testDomain = 'www.google.com';
+            
+            fetch(`https://${testDomain}/favicon.ico`, { mode: 'no-cors' })
+                .then(() => {
+                    const dnsTime = performance.now() - dnsStart;
+                    dnsElement.textContent = `${Math.round(dnsTime)} ms`;
+                    dnsElement.style.color = dnsTime < 100 ? '#32CD32' : dnsTime < 300 ? '#FFA500' : '#FF4500';
                 })
                 .catch(() => {
-                    speedElement.textContent = '测速失败';
-                    speedElement.style.color = '#FF4500';
+                    dnsElement.textContent = '测试失败';
+                    dnsElement.style.color = '#FF4500';
+                })
+                .finally(() => {
+                    button.classList.remove('testing');
+                    button.disabled = false;
                 });
-            };
-            
-            // 页面加载时立即测试一次
-            testSpeed();
-            
-            // 然后每10秒测试一次
-            setInterval(testSpeed, 10000);
+        }
+
+        function checkNetworkStatus() {
+            const statusElement = document.getElementById('connection-status');
+            const bandwidthElement = document.getElementById('bandwidth-limit');
+            const dnsLookupElement = document.getElementById('dns-lookup');
+            const uploadSpeedElement = document.getElementById('upload-speed');
+            const downloadSpeedElement = document.getElementById('download-speed');
+
+            // 检查网络在线状态
+            function updateOnlineStatus() {
+                statusElement.textContent = navigator.onLine ? '在线' : '离线';
+                statusElement.style.color = navigator.onLine ? '#32CD32' : '#FF4500';
+            }
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            updateOnlineStatus();
+
+            // 检查带宽限制
+            if ('connection' in navigator) {
+                const conn = navigator.connection;
+                if (conn.downlinkMax) {
+                    bandwidthElement.textContent = `${conn.downlinkMax} Mbps`;
+                    } else {
+                    bandwidthElement.textContent = '未知';
+                }
+            }
+
+            // 测量DNS解析时间
+            const dnsStart = performance.now();
+            const testDomain = 'www.google.com';
+            fetch(`https://${testDomain}/favicon.ico`, { mode: 'no-cors' })
+                .then(() => {
+                    const dnsTime = performance.now() - dnsStart;
+                    dnsLookupElement.textContent = `${Math.round(dnsTime)} ms`;
+                })
+                .catch(() => {
+                    dnsLookupElement.textContent = '测试失败';
+                });
+
+            // 定期更新网络状态
+            setInterval(() => {
+                if ('connection' in navigator) {
+                    const conn = navigator.connection;
+                    if (conn.downlink) {
+                        downloadSpeedElement.textContent = `${conn.downlink} Mbps`;
+                    }
+                }
+            }, 10000);
         }
 
         function toggleNetworkInfo() {
             const content = document.querySelector('.network-info-content');
-            const icon = document.querySelector('.toggle-icon');
+            const icon = document.querySelector('.network-info-header .toggle-icon');
             content.classList.toggle('show');
             icon.classList.toggle('rotated');
             
-            // 只在展开时才开始检测网络状态
             if (content.classList.contains('show')) {
-                checkLatency();
-                checkNetworkSpeed();
+                checkNetworkStatus();
             }
         }
 
@@ -583,8 +765,188 @@
             icon.classList.toggle('rotated');
         }
 
-        // 页面加载时恢复用户的样式选择
+        // 添加异步加载音频的函数
+        function loadAudioFiles() {
+            const audioContainer = document.getElementById('audio-container');
+            const audioFiles = [
+                { src: '/static/audio/index.mp3', type: 'audio/mpeg' },
+                { src: '/static/audio/1.flac', type: 'audio/flac' }
+            ];
+
+            audioFiles.forEach(file => {
+                // 创建audio元素
+                const audio = document.createElement('audio');
+                audio.controls = true;
+                
+                // 创建source元素
+                const source = document.createElement('source');
+                source.src = file.src;
+                source.type = file.type;
+                
+                // 添加错误提示文本
+                audio.appendChild(source);
+                audio.appendChild(document.createTextNode('您的浏览器不支持音频元素。'));
+                
+                // 将audio元素添加到容器中
+                audioContainer.appendChild(audio);
+                
+                // 添加加载错误处理
+                audio.onerror = () => {
+                    console.error(`Error loading audio file: ${file.src}`);
+                };
+            });
+        }
+
+        // 修改点击监控对象
+        const clickMonitor = {
+            clicks: 0,
+            lastClickTime: 0,
+            warningShown: false,
+            monitorPeriod: 30000, // 30秒监测期
+            banPeriod: 480000,    // 480秒(8分钟)封禁期
+            
+            // 记录点击
+            recordClick() {
+                const now = Date.now();
+                
+                // 如果距离上次点击超过监测期，重置计数
+                if (now - this.lastClickTime > this.monitorPeriod) {
+                    this.clicks = 1;
+                    this.warningShown = false;
+                } else {
+                    this.clicks++;
+                }
+                
+                this.lastClickTime = now;
+                
+                // 检查点击频率
+                if (this.clicks >= 10 && !this.warningShown) {
+                    // 显示警告
+                    alert(`请不要频繁点击！继续点击将封禁页面${this.banPeriod/1000}秒。`);
+                    this.warningShown = true;
+                } else if (this.clicks >= 15) {
+                    // 强制关闭页面
+                    this.banPage();
+                    return true;
+                }
+                return false;
+            },
+
+            // 封禁页面
+            banPage() {
+                const banTime = Date.now();
+                // 使用多个存储方式来防止绕过
+                localStorage.setItem('pageClosed', banTime.toString());
+                sessionStorage.setItem('pageClosed', banTime.toString());
+                document.cookie = `pageClosed=${banTime};path=/;max-age=${this.banPeriod/1000}`;
+                
+                this.showBanPage(this.banPeriod/1000);
+            },
+
+            // 显示封禁页面
+            showBanPage(remainingSeconds) {
+                document.body.innerHTML = `
+                    <div style="text-align: center; padding: 50px;">
+                        <h1>页面已被强制关闭</h1>
+                        <p>由于检测到异常频繁的点击行为，页面已被封禁。</p>
+                        <p>请等待 ${Math.ceil(remainingSeconds)} 秒后刷新页面。</p>
+                        <p>注意：使用隐私模式或清除浏览器数据不会重置封禁时间。</p>
+                        <p id="countdown">${Math.ceil(remainingSeconds)}</p>
+                        
+                        <!-- 添加管理员恢复区域 -->
+                        <div style="margin-top: 30px; padding: 20px; border-top: 1px solid #ddd;">
+                            <h3>管理员恢复</h3>
+                            <input type="password" id="adminPassword" placeholder="请输入管理员密码" 
+                                style="padding: 5px; margin-right: 10px;">
+                            <button onclick="clickMonitor.adminRecover()" 
+                                style="padding: 5px 15px; cursor: pointer;">
+                                解除封禁
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                const countdownElement = document.getElementById('countdown');
+                const timer = setInterval(() => {
+                    remainingSeconds--;
+                    countdownElement.textContent = Math.ceil(remainingSeconds);
+                    if (remainingSeconds <= 0) {
+                        clearInterval(timer);
+                        this.clearBan();
+                        location.reload();
+                    }
+                }, 1000);
+            },
+
+            // 清除封禁状态
+            clearBan() {
+                localStorage.removeItem('pageClosed');
+                sessionStorage.removeItem('pageClosed');
+                document.cookie = 'pageClosed=;path=/;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            },
+
+            // 检查是否在封禁状态
+            checkBanStatus() {
+                const now = Date.now();
+                const sources = [
+                    localStorage.getItem('pageClosed'),
+                    sessionStorage.getItem('pageClosed'),
+                    this.getCookie('pageClosed')
+                ];
+
+                // 使用所有存储源中的最新封禁时间
+                const banTime = Math.max(...sources.map(time => parseInt(time) || 0));
+                
+                if (banTime && now - banTime < this.banPeriod) {
+                    const remaining = this.banPeriod - (now - banTime);
+                    this.showBanPage(remaining/1000);
+                    return true;
+                }
+                return false;
+            },
+
+            // 获取cookie值
+            getCookie(name) {
+                const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                return match ? match[2] : null;
+            },
+
+            // 添加管理员恢复功能
+            adminRecover() {
+                const password = document.getElementById('adminPassword').value;
+                
+                // 发送到服务器验证
+                fetch('/api/admin/verify_ban_password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password: password })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.clearBan();
+                        alert('封禁已解除，页面将重新加载。');
+                        location.reload();
+                    } else {
+                        alert('管理员密码错误！');
+                    }
+                })
+                .catch(error => {
+                    alert('验证失败，请稍后重试。');
+                });
+            }
+        };
+
+        // 修改页面加载时的检查
         document.addEventListener('DOMContentLoaded', () => {
+            // 首先检查封禁状态
+            if (clickMonitor.checkBanStatus()) {
+                return;
+            }
+            
+            // 如果没有被封禁，继续正常初始化
             const savedStyle = localStorage.getItem('preferredTimeStyle');
             if (savedStyle) {
                 changeTimeStyle(savedStyle);
@@ -592,6 +954,26 @@
             }
             updateTime();
             updateSystemInfo();
+            loadAudioFiles();
+            
+            // 设置测试按钮的事件处理器
+            document.querySelectorAll('.test-btn').forEach(button => {
+                const testType = button.dataset.test;
+                switch(testType) {
+                    case 'latency':
+                        button.onclick = () => throttledLatencyTest();
+                        break;
+                    case 'download':
+                        button.onclick = () => throttledDownloadTest();
+                        break;
+                    case 'upload':
+                        button.onclick = () => throttledUploadTest();
+                        break;
+                    case 'dns':
+                        button.onclick = () => throttledDNSTest();
+                        break;
+                }
+            });
         });
         </script>
     </body>
