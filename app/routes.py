@@ -27,6 +27,10 @@ from app.network import (
     ping_host, tcp_ping, check_dns, check_website, scan_ports,
     USER_AGENTS, COMMON_PORTS, MAX_THREADS, TIMEOUT
 )
+from app.daily import (
+    get_daily_entries, create_daily_entry,
+    update_daily_entry, delete_daily_entry
+)
 
 logger = Logger('routes')
 
@@ -1969,23 +1973,8 @@ def transition():
 def manage_daily_entries():
     """处理日常记录的 CRUD 操作"""
     try:
-        client = get_mongo_client()
-        db = client['chat']
-
         if request.method == 'GET':
-            # GET 请求不需要管理员权限，所有人都可以查看
-            try:
-                entries = list(db.daily.find().sort('date', -1))
-                return jsonify({
-                    'success': True,
-                    'entries': json_util.dumps(entries)
-                })
-            except Exception as e:
-                logger.error(f"Error fetching entries: {str(e)}")
-                return jsonify({
-                    'success': False,
-                    'error': f'获取数据失败: {str(e)}'
-                }), 500
+            return jsonify(get_daily_entries())
 
         # 其他方法需要管理员权限
         if not session.get('is_admin'):
@@ -1995,95 +1984,13 @@ def manage_daily_entries():
             }), 403
 
         if request.method == 'POST':
-            try:
-                data = request.get_json()
-                if not data or 'date' not in data or 'content' not in data:
-                    return jsonify({
-                        'success': False,
-                        'error': '缺少必要的字段'
-                    }), 400
-
-                entry = {
-                    'date': data['date'],
-                    'content': data['content'],
-                    'rawContent': data.get('rawContent', ''),
-                    'images': data.get('images', []),  # 存储图片数据
-                    'created_at': datetime.now()
-                }
-
-                result = db.daily.insert_one(entry)
-                return jsonify({
-                    'success': True,
-                    'id': str(result.inserted_id)
-                })
-            except Exception as e:
-                logger.error(f"Error creating entry: {str(e)}")
-                return jsonify({
-                    'success': False,
-                    'error': f'创建记录失败: {str(e)}'
-                }), 500
+            return jsonify(create_daily_entry(request.get_json()))
 
         elif request.method == 'PUT':
-            try:
-                data = request.get_json()
-                if not data or 'id' not in data:
-                    return jsonify({
-                        'success': False,
-                        'error': '缺少ID字段'
-                    }), 400
-
-                entry_id = data.pop('id')
-                update_data = {
-                    'date': data.get('date'),
-                    'content': data.get('content'),
-                    'rawContent': data.get('rawContent', ''),
-                    'images': data.get('images', []),  # 存储图片数据
-                    'updated_at': datetime.now()
-                }
-
-                result = db.daily.update_one(
-                    {'_id': ObjectId(entry_id)},
-                    {'$set': update_data}
-                )
-
-                if result.modified_count > 0:
-                    return jsonify({'success': True})
-                else:
-                    return jsonify({
-                        'success': False,
-                        'error': '记录未找到或未修改'
-                    }), 404
-            except Exception as e:
-                logger.error(f"Error updating entry: {str(e)}")
-                return jsonify({
-                    'success': False,
-                    'error': '更新记录失败'
-                }), 500
+            return jsonify(update_daily_entry(request.get_json()))
 
         elif request.method == 'DELETE':
-            try:
-                entry_id = request.args.get('id')
-                if not entry_id:
-                    return jsonify({
-                        'success': False,
-                        'error': '缺少ID参数'
-                    }), 400
-
-                result = db.daily.delete_one({'_id': ObjectId(entry_id)})
-
-                if result.deleted_count > 0:
-                    return jsonify({'success': True})
-                else:
-                    return jsonify({
-                        'success': False,
-                        'error': '记录未找到'
-                    }), 404
-            except Exception as e:
-                logger.error(f"Error deleting entry: {str(e)}")
-                return jsonify({
-                    'success': False,
-                    'error': '删除记录失败'
-                }), 500
+            return jsonify(delete_daily_entry(request.args.get('id')))
 
     except Exception as e:
         logger.error(f"Database connection error: {str(e)}")
