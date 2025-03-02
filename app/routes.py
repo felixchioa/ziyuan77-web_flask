@@ -2100,11 +2100,6 @@ def verify_ban_password():
         logger.error(f"Error verifying ban password: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
     
-@current_app.route('/update', methods=['POST'])
-def update():
-    logger.debug("Rendering update.html")
-    return render_template('update.html')
-
 
 
 
