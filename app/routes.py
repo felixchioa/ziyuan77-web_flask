@@ -2099,3 +2099,17 @@ def verify_ban_password():
     except Exception as e:
         logger.error(f"Error verifying ban password: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
+    
+@current_app.route('/update', methods=['POST'])
+def update():
+    logger.debug("Rendering update.html")
+    return render_template('update.html')
+
+
+@current_app.route('/ping', methods=['POST'])
+def ping():
+    logger.debug("Rendering ping.html")
+    return render_template('network_test.html')
+
+
+
