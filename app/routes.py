@@ -2106,10 +2106,6 @@ def update():
     return render_template('update.html')
 
 
-@current_app.route('/ping', methods=['POST'])
-def ping():
-    logger.debug("Rendering ping.html")
-    return render_template('network_test.html')
 
 
 
